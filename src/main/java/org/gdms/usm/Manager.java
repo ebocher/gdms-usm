@@ -13,7 +13,7 @@ import java.util.List;
 public class Manager {
     
     private List<Household> householdList;
-    private List<Plot> plotList;
+    private List<Parcel> plotList;
     private List<Household> homelessList;
     
     /**
@@ -32,7 +32,7 @@ public class Manager {
     /**
      * @return the plotList
      */
-    public List<Plot> getPlotList() {
+    public List<Parcel> getPlotList() {
         return plotList;
     }
 

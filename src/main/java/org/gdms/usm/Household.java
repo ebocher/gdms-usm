@@ -15,7 +15,7 @@ public class Household {
     private int age;
     private int maxWealth;
     private Queue<Integer> dissatisfactionMemory;
-    private Plot housingPlot;
+    private Parcel housingPlot;
     
     /**
      * Builds a new Household.
@@ -46,7 +46,7 @@ public class Household {
     /**
      * @return the housingPlot
      */
-    public Plot getHousingPlot() {
+    public Parcel getHousingPlot() {
         return housingPlot;
     }
     
@@ -54,7 +54,7 @@ public class Household {
      * Increments the household age.
      */
     public void grow(){
-        throw new UnsupportedOperationException("Not implemented yet");
+        this.age++;
     }
     
     /**
@@ -62,7 +62,7 @@ public class Household {
      * @return the household's wealth
      */
     public int getWealth(){
-        throw new UnsupportedOperationException("Not implemented yet");
+        return this.maxWealth*this.age/60;
     }
     
     /**

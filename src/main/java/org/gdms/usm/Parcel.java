@@ -11,11 +11,11 @@ import java.util.List;
  * 
  * @author Thomas Salliou
  */
-public class Plot {
+public class Parcel {
 
     private int buildType;
-    private int density;
-    private int maxDensity;
+    private double density;
+    private double maxDensity;
     private final int amenitiesIndex;
     private final int constructibilityIndex;
     private final double inverseArea;
@@ -25,7 +25,7 @@ public class Plot {
     private List<Household> householdList;
 
     /**
-     * Builds a new Plot.
+     * Builds a new Parcel.
      * @param bT a build type
      * @param d a density
      * @param mD a maximum density
@@ -36,19 +36,20 @@ public class Plot {
      * @param z a zoning
      * @param geom a geometry
      */
-    public Plot(int bT, int d, int mD, int aI, int iA, int cI, int iC, String z, Geometry geom) {
+    public Parcel(int bT, double d, double mD, int aI, int cI, int iC, String z, Geometry geom) {
 
         this.buildType = bT;
         this.density = d;
         this.maxDensity = mD;
         this.amenitiesIndex = aI;
+        this.inverseArea = 1.0/geom.getArea();
         this.constructibilityIndex = cI;
         this.inseeCode = iC;
         this.zoning = z;
         this.the_geom = geom;
-        this.inverseArea = iA;
 
     }
+    
 
     /**
      * Adds the Household to the Household list and increases the density.
@@ -75,10 +76,12 @@ public class Plot {
     
     /**
      * Indicates if the Plot is full or not.
+     * Tests if we can add a Household without breaking the maxDensity limit.
      * @return a boolean
      */
     public boolean isFull() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        double incrementedDensity = this.density + this.inverseArea;
+        return (incrementedDensity > this.maxDensity);
     }
 
     /**
@@ -99,14 +102,14 @@ public class Plot {
     /**
      * @return the density
      */
-    public int getDensity() {
+    public double getDensity() {
         return density;
     }
 
     /**
      * @return the maxDensity
      */
-    public int getMaxDensity() {
+    public double getMaxDensity() {
         return maxDensity;
     }
 
@@ -136,5 +139,19 @@ public class Plot {
      */
     public String getZoning() {
         return zoning;
+    }
+
+    /**
+     * @return the the_geom
+     */
+    public Geometry getThe_geom() {
+        return the_geom;
+    }
+
+    /**
+     * @return the householdList
+     */
+    public List<Household> getHouseholdList() {
+        return householdList;
     }
 }

@@ -39,7 +39,7 @@ public class ParcelTest extends TestCase {
     private Parcel defaultParcelBuilder(double density, double maxDensity) throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(2,density,maxDensity,10,50,44109,"AB",geometry);
+        return new Parcel(7,2,density,maxDensity,10,50,44109,"AB",geometry);
     }
     
     /**

@@ -12,8 +12,9 @@ import java.util.Queue;
  */
 public class Household {
     
+    private final int id;
     private int age;
-    private int maxWealth;
+    private final int maxWealth;
     private Queue<Integer> dissatisfactionMemory;
     private Parcel housingPlot;
     
@@ -22,7 +23,8 @@ public class Household {
      * @param a
      * @param mW 
      */
-    public Household(int a, int mW){
+    public Household(int id, int a, int mW){
+        this.id = id;
         this.age = a;
         this.maxWealth = mW;
     }
@@ -33,7 +35,8 @@ public class Household {
      * @param mW
      * @param hP 
      */
-    public Household(int a, int mW, Parcel hP){
+    public Household(int id, int a, int mW, Parcel hP){
+        this.id = id;
         this.age = a;
         this.maxWealth = mW;
         this.housingPlot = hP;
@@ -120,4 +123,10 @@ public class Household {
         throw new UnsupportedOperationException("Not implemented yet");
     }
     
+    /**
+     * @return the id 
+     */
+    public int getId() {
+        return id;
+    }
 }

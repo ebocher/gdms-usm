@@ -4,7 +4,8 @@
  */
 package org.gdms.usm;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * 
@@ -12,9 +13,8 @@ import java.util.List;
  */
 public class Manager {
     
-    private List<Household> householdList;
-    private List<Parcel> plotList;
-    private List<Household> homelessList;
+    private ArrayList<Parcel> parcelList;
+    private Stack<Household> homelessList;
     
     /**
      * Builds a new Manager.
@@ -23,23 +23,16 @@ public class Manager {
     }
 
     /**
-     * @return the householdList
-     */
-    public List<Household> getHouseholdList() {
-        return householdList;
-    }
-
-    /**
      * @return the plotList
      */
-    public List<Parcel> getPlotList() {
-        return plotList;
+    public ArrayList<Parcel> getParcelList() {
+        return parcelList;
     }
 
     /**
      * @return the homelessList
      */
-    public List<Household> getHomelessList() {
+    public Stack<Household> getHomelessList() {
         return homelessList;
     }
     

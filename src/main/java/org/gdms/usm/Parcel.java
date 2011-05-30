@@ -5,7 +5,7 @@
 package org.gdms.usm;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.util.List;
+import java.util.HashSet;
 
 /**
  * 
@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class Parcel {
 
+    private final int id;
     private int buildType;
     private double density;
     private double maxDensity;
@@ -22,10 +23,11 @@ public class Parcel {
     private final int inseeCode;
     private String zoning;
     private final Geometry the_geom;
-    private List<Household> householdList;
+    private HashSet<Household> householdList;
 
     /**
      * Builds a new Parcel.
+     * @param id an id
      * @param bT a build type
      * @param d a density
      * @param mD a maximum density
@@ -36,8 +38,9 @@ public class Parcel {
      * @param z a zoning
      * @param geom a geometry
      */
-    public Parcel(int bT, double d, double mD, int aI, int cI, int iC, String z, Geometry geom) {
+    public Parcel(int id, int bT, double d, double mD, int aI, int cI, int iC, String z, Geometry geom) {
 
+        this.id = id;
         this.buildType = bT;
         this.density = d;
         this.maxDensity = mD;
@@ -151,7 +154,14 @@ public class Parcel {
     /**
      * @return the householdList
      */
-    public List<Household> getHouseholdList() {
+    public HashSet<Household> getHouseholdList() {
         return householdList;
+    }
+    
+    /**
+     * @return the id
+     */
+    public int getId() {
+        return id;
     }
 }

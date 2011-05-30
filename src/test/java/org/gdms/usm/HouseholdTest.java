@@ -4,6 +4,9 @@
  */
 package org.gdms.usm;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 import junit.framework.TestCase;
 
 /**
@@ -25,7 +28,12 @@ public class HouseholdTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
     }
-    // TODO add test methods here. The name must begin with 'test'. For example:
+
+    private Parcel defaultParcelBuilder(int codeInsee) throws ParseException{
+        WKTReader wktr = new WKTReader();
+        Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
+        return new Parcel(2,30,40,10,50,codeInsee,"AB",geometry);
+    }
     
     /*
      * Tests age incrementation.
@@ -54,4 +62,19 @@ public class HouseholdTest extends TestCase {
         int wealth = simpson.getWealth();
         assertTrue(wealth == 19893);
     }
+    
+    /*
+     * Tests the getWillMoveCoefficient method, in two cases :
+     * Inside and outside Nantes (codeInsee == 44109)
+     */
+    public void testGetWMC() throws ParseException {
+        Parcel nantesParcel = defaultParcelBuilder(44109);
+        Household nantesHousehold = new Household(40,50000,nantesParcel);
+        assertTrue(nantesHousehold.getWillMoveCoefficient() == 30);
+        
+        Parcel notNantesParcel = defaultParcelBuilder(44789);
+        Household notNantesHousehold = new Household(65,50000,notNantesParcel);
+        assertTrue(notNantesHousehold.getWillMoveCoefficient() == 8);
+    }
+    
 }

@@ -46,7 +46,7 @@ public class Parcel {
         this.density = d;
         this.maxDensity = mD;
         this.amenitiesIndex = aI;
-        this.inverseArea = 1.0/geom.getArea();
+        this.inverseArea = 1.0 / geom.getArea();
         this.constructibilityIndex = cI;
         this.inseeCode = iC;
         this.zoning = z;
@@ -54,7 +54,6 @@ public class Parcel {
         this.householdList = new HashSet();
 
     }
-    
 
     /**
      * Adds the Household to the Household list and increases the density.
@@ -62,7 +61,7 @@ public class Parcel {
      */
     public void moveIn(Household movingHousehold) {
         householdList.add(movingHousehold);
-        density+=inverseArea;
+        density += inverseArea;
     }
 
     /**
@@ -71,7 +70,7 @@ public class Parcel {
      */
     public void moveOut(Household movingHousehold) {
         householdList.remove(movingHousehold);
-        density-=inverseArea;
+        density -= inverseArea;
     }
 
     /**
@@ -80,7 +79,7 @@ public class Parcel {
     public void updateBuildType() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
-    
+
     /**
      * Indicates if the Plot is full or not.
      * Tests if we can add a Household without breaking the maxDensity limit.
@@ -161,7 +160,7 @@ public class Parcel {
     public Set<Household> getHouseholdList() {
         return householdList;
     }
-    
+
     /**
      * @return the id
      */

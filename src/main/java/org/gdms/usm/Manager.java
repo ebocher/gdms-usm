@@ -13,14 +13,14 @@ import java.util.Stack;
  * @author Thomas Salliou
  */
 public class Manager {
-    
+
     private ArrayList<Parcel> parcelList;
     private Stack<Household> homelessList;
-    
+
     /**
      * Builds a new Manager.
      */
-    public Manager(){
+    public Manager() {
     }
 
     /**
@@ -36,43 +36,42 @@ public class Manager {
     public Stack<Household> getHomelessList() {
         return homelessList;
     }
-    
+
     /**
      * Saves relevant information about plots and households into the output database.
      */
-    public void saveState(){
+    public void saveState() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
-    
+
     /**
      * Creates an immigrant Household and adds it to the homeless list.
      */
-    public void createImmigrant(){
+    public void createImmigrant() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
-    
+
     /**
      * Creates a newborn Household and adds it to the homeless list.
      * @param parentHousehold the procreating household
      */
-    public void createNewborn(Household parentHousehold){
+    public void createNewborn(Household parentHousehold) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
-    
+
     /**
      * Moves out a household and deletes it from the global household list.
      * @param deceasedHousehold the dying household
      */
-    public void kill(Household deceasedHousehold){
+    public void kill(Household deceasedHousehold) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
-    
+
     /**
      * Gets the population count.
      * @return the population count
      */
-    public int getPopulation(){
+    public int getPopulation() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
-    
 }

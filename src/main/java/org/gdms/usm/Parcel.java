@@ -6,6 +6,7 @@ package org.gdms.usm;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -154,7 +155,7 @@ public class Parcel {
     /**
      * @return the householdList
      */
-    public HashSet<Household> getHouseholdList() {
+    public Set<Household> getHouseholdList() {
         return householdList;
     }
     

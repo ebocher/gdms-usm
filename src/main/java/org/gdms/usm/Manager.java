@@ -5,6 +5,7 @@
 package org.gdms.usm;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -25,7 +26,7 @@ public class Manager {
     /**
      * @return the plotList
      */
-    public ArrayList<Parcel> getParcelList() {
+    public List<Parcel> getParcelList() {
         return parcelList;
     }
 

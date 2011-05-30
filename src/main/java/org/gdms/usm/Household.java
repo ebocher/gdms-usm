@@ -75,7 +75,8 @@ public class Household {
      * @return the household's wealth
      */
     public int getWealth(){
-        return this.maxWealth*this.age/60;
+        if (age < 60) return maxWealth*age/60;
+        else return maxWealth;
     }
     
     /**
@@ -120,7 +121,55 @@ public class Household {
      * @return the ideal housing coefficient
      */
     public int getIdealHousingCoefficient(){
-        throw new UnsupportedOperationException("Not implemented yet");
+        
+        int ihcByWealth = 66;
+        int ihcByAge = 66;
+        
+        switch(this.housingPlot.getBuildType()) {
+            
+            case 1:
+                if      (this.getWealth() < 18000) ihcByWealth = 62;
+                else if (this.getWealth() < 25200) ihcByWealth = 67;
+                else if (this.getWealth() < 35400) ihcByWealth = 56;
+                else if (this.getWealth() < 45000) ihcByWealth = 57;
+                else                               ihcByWealth = 52;
+                
+                if      (this.getAge() < 25)       ihcByAge = 43;
+                else if (this.getAge() < 35)       ihcByAge = 58;
+                else if (this.getAge() < 50)       ihcByAge = 53;
+                else if (this.getAge() < 65)       ihcByAge = 63;
+                else                               ihcByAge = 81;
+                break;
+            case 2:
+                if      (this.getWealth() < 18000) ihcByWealth = 62;
+                else if (this.getWealth() < 25200) ihcByWealth = 61;
+                else if (this.getWealth() < 35400) ihcByWealth = 55;
+                else if (this.getWealth() < 45000) ihcByWealth = 49;
+                else                               ihcByWealth = 69;
+                
+                if      (this.getAge() < 25)       ihcByAge = 81;
+                else if (this.getAge() < 35)       ihcByAge = 54;
+                else if (this.getAge() < 50)       ihcByAge = 53;
+                else if (this.getAge() < 65)       ihcByAge = 59;
+                else                               ihcByAge = 61;
+                break;
+            case 3: case 4:
+                if      (this.getWealth() < 18000) ihcByWealth = 77;
+                else if (this.getWealth() < 25200) ihcByWealth = 72;
+                else if (this.getWealth() < 35400) ihcByWealth = 89;
+                else if (this.getWealth() < 45000) ihcByWealth = 94;
+                else                               ihcByWealth = 79;
+                
+                if      (this.getAge() < 25)       ihcByAge = 76;
+                else if (this.getAge() < 35)       ihcByAge = 88;
+                else if (this.getAge() < 50)       ihcByAge = 94;
+                else if (this.getAge() < 65)       ihcByAge = 79;
+                else                               ihcByAge = 58;
+                break;
+        }
+        
+        return (ihcByAge+ihcByWealth)/2;
+        
     }
     
     /**

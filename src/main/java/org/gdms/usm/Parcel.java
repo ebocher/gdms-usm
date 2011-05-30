@@ -51,6 +51,7 @@ public class Parcel {
         this.inseeCode = iC;
         this.zoning = z;
         this.the_geom = geom;
+        this.householdList = new HashSet();
 
     }
     
@@ -60,7 +61,8 @@ public class Parcel {
      * @param movingHousehold a household moving in
      */
     public void moveIn(Household movingHousehold) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        householdList.add(movingHousehold);
+        density+=inverseArea;
     }
 
     /**
@@ -68,7 +70,8 @@ public class Parcel {
      * @param movingHousehold a household moving out 
      */
     public void moveOut(Household movingHousehold) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        householdList.remove(movingHousehold);
+        density-=inverseArea;
     }
 
     /**

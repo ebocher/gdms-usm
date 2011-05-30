@@ -53,4 +53,22 @@ public class ParcelTest extends TestCase {
         Parcel rez2 = defaultParcelBuilder(30,30.0016);
         assertTrue(rez2.isFull());
     }
+    
+    public void testMoveInAndOut() throws ParseException {
+        WKTReader wktr = new WKTReader();
+        Geometry geometry = wktr.read("POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))");
+        
+        Parcel rez = new Parcel(8,1,2,20,10,50,44109,"AB",geometry);
+        Household movingInHousehold = new Household(9,40,50000);
+        
+        rez.moveIn(movingInHousehold);
+        assertTrue(Math.abs(rez.getDensity()-2.01) < 0.000001);
+        assertTrue(rez.getHouseholdList().contains(movingInHousehold));
+        assertTrue(rez.getHouseholdList().size() == 1);
+        
+        rez.moveOut(movingInHousehold);
+        assertTrue(rez.getHouseholdList().isEmpty());
+        assertTrue(Math.abs(rez.getDensity()-2.00) < 0.000001);
+    }
+    
 }

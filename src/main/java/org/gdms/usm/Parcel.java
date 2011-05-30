@@ -96,7 +96,7 @@ public class Parcel {
      * @return the population on the Plot
      */
     public int getLocalPopulation() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return householdList.size();
     }
 
     /**

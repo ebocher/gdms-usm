@@ -71,4 +71,20 @@ public class ParcelTest extends TestCase {
         assertTrue(Math.abs(rez.getDensity()-2.00) < 0.000001);
     }
     
+    public void testGetLocalPopulation() throws ParseException {
+        WKTReader wktr = new WKTReader();
+        Geometry geometry = wktr.read("POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))");
+        
+        Parcel rez = new Parcel(8,1,2,20,10,50,44109,"AB",geometry);
+        Household dupont = new Household(9,40,50000);
+        Household dupond = new Household(10,47,48000);
+        Household dhupondt = new Household(11,24,78000);
+        
+        rez.moveIn(dupont);
+        rez.moveIn(dupond);
+        rez.moveIn(dhupondt);
+        
+        assertTrue(rez.getLocalPopulation() == 3);
+    }
+    
 }

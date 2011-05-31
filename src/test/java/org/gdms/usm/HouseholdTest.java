@@ -7,6 +7,8 @@ package org.gdms.usm;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import java.util.ArrayList;
+import java.util.Iterator;
 import junit.framework.TestCase;
 
 /**
@@ -115,4 +117,34 @@ public class HouseholdTest extends TestCase {
         assertTrue(Math.abs(nantesHousehold.getImmediateDissatisfaction() - 1.315) < 0.000001);
     }
     
+    //Won't pass if the HOUSEHOLD_MEMORY exceeds 3
+    public void testAddDissQueue() throws ParseException {
+        Household annoyedHousehold = new Household(2,47,54789);
+        annoyedHousehold.addToDissatisfactionQueue(1.5478);
+        annoyedHousehold.addToDissatisfactionQueue(2.14752);
+        annoyedHousehold.addToDissatisfactionQueue(0.4971);
+        annoyedHousehold.addToDissatisfactionQueue(4.12765);
+        Iterator<Double> i = annoyedHousehold.getDissatisfactionMemory().iterator();
+        
+        ArrayList<Double> control = new ArrayList();
+        control.add(2.14752);
+        control.add(0.4971);
+        control.add(4.12765);
+        Iterator<Double> j = control.iterator();
+        
+        while(j.hasNext()) {
+            assertTrue(Math.abs(i.next() - j.next()) < 0.000001);
+        }
+        assertFalse(i.hasNext());
+    }
+    
+    public void testGetCumulDiss() throws ParseException {
+        Household annoyedHousehold = new Household(2,47,54789);
+        annoyedHousehold.addToDissatisfactionQueue(1.5478);
+        annoyedHousehold.addToDissatisfactionQueue(2.14752);
+        annoyedHousehold.addToDissatisfactionQueue(0.4971);
+        annoyedHousehold.addToDissatisfactionQueue(4.12765);
+        
+        assertTrue(Math.abs(annoyedHousehold.getCumulatedDissatisfaction() - 6.77227) < 0.000001);
+    }
 }

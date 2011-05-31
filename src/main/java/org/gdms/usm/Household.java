@@ -4,7 +4,7 @@
  */
 package org.gdms.usm;
 
-import java.util.Queue;
+import java.util.Iterator;
 
 /**
  *
@@ -12,11 +12,11 @@ import java.util.Queue;
  */
 public class Household {
 
-    public static final int HOUSEHOLD_MEMORY = 5;
+    public static final int HOUSEHOLD_MEMORY = 3;
     private final int id;
     private int age;
     private final int maxWealth;
-    private Queue<Integer> dissatisfactionMemory;
+    private LimitedQueue<Double> dissatisfactionMemory;
     private Parcel housingPlot;
 
     /**
@@ -28,6 +28,7 @@ public class Household {
         this.id = id;
         this.age = a;
         this.maxWealth = mW;
+        this.dissatisfactionMemory = new LimitedQueue<Double>(HOUSEHOLD_MEMORY);
     }
 
     /**
@@ -41,6 +42,7 @@ public class Household {
         this.age = a;
         this.maxWealth = mW;
         this.housingPlot = hP;
+        this.dissatisfactionMemory = new LimitedQueue<Double>(HOUSEHOLD_MEMORY);
     }
 
     /**
@@ -95,15 +97,24 @@ public class Household {
         return amenitiesPart + willMoveCoeffPart + idealHousingCoeffPart;
     }
 
-    public void addToDissatisfactionQueue() {
-        throw new UnsupportedOperationException("Not implemented yet");
+    /**
+     * Adds a double to the dissatisfaction limited queue.
+     */
+    public void addToDissatisfactionQueue(double immdis) {
+        dissatisfactionMemory.add(immdis);
     }
+
     /**
      * Gets the cumulated dissatisfaction index, based on the dissatisfaction memory.
      * @return the cumulated dissatisfaction index.
      */
     public double getCumulatedDissatisfaction() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        Iterator<Double> i = dissatisfactionMemory.iterator();
+        double cumulatedDissatisfaction = 0;
+        while (i.hasNext()) {
+            cumulatedDissatisfaction += i.next();
+        }
+        return cumulatedDissatisfaction;
     }
 
     /**
@@ -245,4 +256,12 @@ public class Household {
     public void setHousingPlot(Parcel p) {
         this.housingPlot = p;
     }
+    
+    /**
+     * @return the dissatisfactionMemory 
+     */
+    public LimitedQueue<Double> getDissatisfactionMemory() {
+        return dissatisfactionMemory;
+    }
+    
 }

@@ -62,6 +62,7 @@ public class Parcel {
     public void moveIn(Household movingHousehold) {
         householdList.add(movingHousehold);
         density += inverseArea;
+        movingHousehold.setHousingPlot(this);
     }
 
     /**
@@ -71,6 +72,7 @@ public class Parcel {
     public void moveOut(Household movingHousehold) {
         householdList.remove(movingHousehold);
         density -= inverseArea;
+        movingHousehold.setHousingPlot(null);
     }
 
     /**

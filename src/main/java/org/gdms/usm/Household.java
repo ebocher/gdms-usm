@@ -229,4 +229,12 @@ public class Household {
     public int getId() {
         return id;
     }
+    
+    /**
+     * Sets the housing parcel.
+     * @param p a Parcel
+     */
+    public void setHousingPlot(Parcel p) {
+        this.housingPlot = p;
+    }
 }

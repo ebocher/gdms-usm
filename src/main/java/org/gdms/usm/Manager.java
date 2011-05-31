@@ -21,6 +21,8 @@ public class Manager {
      * Builds a new Manager.
      */
     public Manager() {
+        this.parcelList = new ArrayList();
+        this.homelessList = new Stack();
     }
 
     /**
@@ -72,6 +74,20 @@ public class Manager {
      * @return the population count
      */
     public int getPopulation() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        int pop = 0;
+
+        for (Parcel p : parcelList) {
+            pop += p.getLocalPopulation();
+        }
+
+        return pop;
+    }
+    
+    /**
+     * Adds the specified parcel to the parcelList.
+     * @param p a Parcel
+     */
+    public void addParcel(Parcel p) {
+        parcelList.add(p);
     }
 }

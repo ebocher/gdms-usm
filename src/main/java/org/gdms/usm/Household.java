@@ -12,6 +12,7 @@ import java.util.Queue;
  */
 public class Household {
 
+    public static final int HOUSEHOLD_MEMORY = 5;
     private final int id;
     private int age;
     private final int maxWealth;
@@ -86,15 +87,22 @@ public class Household {
      * Gets the immediate dissatisfaction index.
      * @return the immediate dissatisfaction index
      */
-    public int getImmediateDissatisfaction() {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public double getImmediateDissatisfaction() {
+        double amenitiesPart = (20.0 - housingPlot.getAmenitiesIndex()) / 20.0;
+        double willMoveCoeffPart = getWillMoveCoefficient() / 48.0;
+        double idealHousingCoeffPart = getIdealHousingCoefficient() / 100.0;
+
+        return amenitiesPart + willMoveCoeffPart + idealHousingCoeffPart;
     }
 
+    public void addToDissatisfactionQueue() {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
     /**
      * Gets the cumulated dissatisfaction index, based on the dissatisfaction memory.
      * @return the cumulated dissatisfaction index.
      */
-    public int getCumulatedDissatisfaction() {
+    public double getCumulatedDissatisfaction() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
@@ -229,7 +237,7 @@ public class Household {
     public int getId() {
         return id;
     }
-    
+
     /**
      * Sets the housing parcel.
      * @param p a Parcel

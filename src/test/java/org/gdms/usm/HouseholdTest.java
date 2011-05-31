@@ -41,6 +41,12 @@ public class HouseholdTest extends TestCase {
         return new Parcel(0,buildType,30,40,10,50,44147,"AB",geometry);
     }
     
+    private Parcel defaultParcelBuilderByAmenitiesIndex(int amenitiesIndex) throws ParseException{
+        WKTReader wktr = new WKTReader();
+        Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
+        return new Parcel(0,2,30,40,amenitiesIndex,50,44109,"AB",geometry);
+    }
+    
     /*
      * Tests age incrementation.
      */
@@ -101,6 +107,12 @@ public class HouseholdTest extends TestCase {
         assertTrue(youngRich.getIdealHousingCoefficient() == 77);
         assertTrue(oldPoor.getIdealHousingCoefficient() == 65);
         assertTrue(oldRich.getIdealHousingCoefficient() == 66);
+    }
+    
+    public void testGetImmDiss() throws ParseException {
+        Parcel nantesParcel = defaultParcelBuilderByAmenitiesIndex(17);
+        Household nantesHousehold = new Household(2,40,50000,nantesParcel);
+        assertTrue(Math.abs(nantesHousehold.getImmediateDissatisfaction() - 1.315) < 0.000001);
     }
     
 }

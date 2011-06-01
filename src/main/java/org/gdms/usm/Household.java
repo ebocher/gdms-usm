@@ -250,11 +250,12 @@ public class Household {
     }
 
     /**
-     * Sets the housing parcel.
+     * Sets the housing parcel and adds the household to this parcel household list.
      * @param p a Parcel
      */
-    public void setHousingPlot(Parcel p) {
-        this.housingPlot = p;
+    public void moveIn(Parcel p) {
+        p.addHousehold(this);
+        housingPlot = p;
     }
     
     /**
@@ -262,6 +263,14 @@ public class Household {
      */
     public LimitedQueue<Double> getDissatisfactionMemory() {
         return dissatisfactionMemory;
+    }
+    
+    /**
+     * Resets the housing parcel to null, and removes the household of this parcel household list.
+     */
+    public void moveOut() {
+        housingPlot.removeHousehold(this);
+        housingPlot = null;
     }
     
 }

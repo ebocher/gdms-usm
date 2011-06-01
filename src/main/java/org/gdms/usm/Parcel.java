@@ -60,20 +60,18 @@ public class Parcel {
      * Adds the Household to the Household list and increases the density.
      * @param movingHousehold a household moving in
      */
-    public void moveIn(Household movingHousehold) {
+    public void addHousehold(Household movingHousehold) {
         householdList.add(movingHousehold);
         density += inverseArea;
-        movingHousehold.setHousingPlot(this);
     }
 
     /**
      * Removes the Household from the Household list and decreases the density.
      * @param movingHousehold a household moving out 
      */
-    public void moveOut(Household movingHousehold) {
+    public void removeHousehold(Household movingHousehold) {
         householdList.remove(movingHousehold);
         density -= inverseArea;
-        movingHousehold.setHousingPlot(null);
     }
 
     /**

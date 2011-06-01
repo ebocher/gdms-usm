@@ -62,11 +62,11 @@ public class Manager {
     }
 
     /**
-     * Moves out a household and deletes it from the global household list.
+     * Moves out a household without putting it into the homeless list.
      * @param deceasedHousehold the dying household
      */
     public void kill(Household deceasedHousehold) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        deceasedHousehold.moveOut();
     }
 
     /**

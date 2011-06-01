@@ -147,4 +147,15 @@ public class HouseholdTest extends TestCase {
         
         assertTrue(Math.abs(annoyedHousehold.getCumulatedDissatisfaction() - 6.77227) < 0.000001);
     }
+    
+    public void testMoveInAndOut() throws ParseException {
+        Household movingHousehold = new Household(3,41,58719);
+        Parcel rez = defaultParcelBuilderByBuildType(3);
+        
+        movingHousehold.moveIn(rez);
+        assertTrue(movingHousehold.getHousingPlot().equals(rez));
+        
+        movingHousehold.moveOut();
+        assertTrue(movingHousehold.getHousingPlot() == null);
+    }
 }

@@ -61,12 +61,12 @@ public class ParcelTest extends TestCase {
         Parcel rez = new Parcel(8,1,2,20,10,50,44109,"AB",geometry);
         Household movingInHousehold = new Household(9,40,50000);
         
-        rez.moveIn(movingInHousehold);
+        rez.addHousehold(movingInHousehold);
         assertTrue(Math.abs(rez.getDensity()-2.01) < 0.000001);
         assertTrue(rez.getHouseholdList().contains(movingInHousehold));
         assertTrue(rez.getHouseholdList().size() == 1);
         
-        rez.moveOut(movingInHousehold);
+        rez.removeHousehold(movingInHousehold);
         assertTrue(rez.getHouseholdList().isEmpty());
         assertTrue(Math.abs(rez.getDensity()-2.00) < 0.000001);
     }
@@ -80,9 +80,9 @@ public class ParcelTest extends TestCase {
         Household dupond = new Household(10,47,48000);
         Household dhupondt = new Household(11,24,78000);
         
-        rez.moveIn(dupont);
-        rez.moveIn(dupond);
-        rez.moveIn(dhupondt);
+        rez.addHousehold(dupont);
+        rez.addHousehold(dupond);
+        rez.addHousehold(dhupondt);
         
         assertTrue(rez.getLocalPopulation() == 3);
     }
@@ -99,12 +99,12 @@ public class ParcelTest extends TestCase {
         Household fifthHousehold = new Household(5,25,69703); //29042
         Household sixthHousehold = new Household(6,64,87012); //87012
         
-        parisSeizieme.moveIn(firstHousehold);
-        parisSeizieme.moveIn(secondHousehold);
-        parisSeizieme.moveIn(thirdHousehold);
-        parisSeizieme.moveIn(fourthHousehold);
-        parisSeizieme.moveIn(fifthHousehold);
-        parisSeizieme.moveIn(sixthHousehold);
+        parisSeizieme.addHousehold(firstHousehold);
+        parisSeizieme.addHousehold(secondHousehold);
+        parisSeizieme.addHousehold(thirdHousehold);
+        parisSeizieme.addHousehold(fourthHousehold);
+        parisSeizieme.addHousehold(fifthHousehold);
+        parisSeizieme.addHousehold(sixthHousehold);
         
         //Wealth is an integer, averageWealth too, be careful !
         assertTrue(parisSeizieme.getAverageWealth() == 47459);

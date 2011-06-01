@@ -58,9 +58,19 @@ public class ManagerTest extends TestCase {
         Household h9 = defaultHouseholdBuilder();
         Household h10 = defaultHouseholdBuilder();
         Household h11 = defaultHouseholdBuilder();
-        a.moveIn(h1);a.moveIn(h6);a.moveIn(h10);
-        b.moveIn(h2);b.moveIn(h8);
-        c.moveIn(h11);c.moveIn(h3);c.moveIn(h4);c.moveIn(h5);c.moveIn(h7);c.moveIn(h9);
+        a.addHousehold(h1);a.addHousehold(h6);a.addHousehold(h10);
+        b.addHousehold(h2);b.addHousehold(h8);
+        c.addHousehold(h11);c.addHousehold(h3);c.addHousehold(h4);c.addHousehold(h5);c.addHousehold(h7);c.addHousehold(h9);
         assertTrue(m.getPopulation() == 11);
+    }
+    
+    public void testKill() throws ParseException {
+        Manager m = new Manager();
+        Parcel a = defaultParcelBuilder();
+        Household iWantToDie = defaultHouseholdBuilder();
+        iWantToDie.moveIn(a);
+        assertTrue(a.getHouseholdList().contains(iWantToDie));
+        m.kill(iWantToDie);
+        assertFalse(a.getHouseholdList().contains(iWantToDie));
     }
 }

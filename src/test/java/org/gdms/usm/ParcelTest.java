@@ -87,4 +87,27 @@ public class ParcelTest extends TestCase {
         assertTrue(rez.getLocalPopulation() == 3);
     }
     
+    public void testGetAverageWealth() throws ParseException {
+        WKTReader wktr = new WKTReader();
+        Geometry geometry = wktr.read("POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))");
+        
+        Parcel parisSeizieme = new Parcel(8,1,2,20,10,50,44109,"AB",geometry);
+        Household firstHousehold = new Household(1,24,48752); //19500
+        Household secondHousehold = new Household(2,35,143258); //83567
+        Household thirdHousehold = new Household(3,68,26587); //26587
+        Household fourthHousehold = new Household(4,47,49852); //39050
+        Household fifthHousehold = new Household(5,25,69703); //29042
+        Household sixthHousehold = new Household(6,64,87012); //87012
+        
+        parisSeizieme.moveIn(firstHousehold);
+        parisSeizieme.moveIn(secondHousehold);
+        parisSeizieme.moveIn(thirdHousehold);
+        parisSeizieme.moveIn(fourthHousehold);
+        parisSeizieme.moveIn(fifthHousehold);
+        parisSeizieme.moveIn(sixthHousehold);
+        
+        //Wealth is an integer, averageWealth too, be careful !
+        assertTrue(parisSeizieme.getAverageWealth() == 47459);
+    }
+    
 }

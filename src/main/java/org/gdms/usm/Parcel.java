@@ -6,6 +6,7 @@ package org.gdms.usm;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -168,5 +169,14 @@ public class Parcel {
      */
     public int getId() {
         return id;
+    }
+    
+    public int getAverageWealth() {
+        Iterator<Household> i = householdList.iterator();
+        int total = 0;
+        while (i.hasNext()) {
+            total += i.next().getWealth();
+        }
+        return total/this.getLocalPopulation();
     }
 }

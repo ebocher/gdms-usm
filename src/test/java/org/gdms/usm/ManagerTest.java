@@ -73,4 +73,21 @@ public class ManagerTest extends TestCase {
         m.kill(iWantToDie);
         assertFalse(a.getHouseholdList().contains(iWantToDie));
     }
+    
+    public void testCreateImmigrant() throws ParseException {
+        Manager m = new Manager();
+        m.createImmigrant();
+        assertFalse(m.getHomelessList().empty());
+        assertTrue(m.getHomelessList().peek().getAge() > 19 && m.getHomelessList().peek().getAge() < 60);
+        assertTrue(m.getHomelessList().peek().getMaxWealth() > 24999 && m.getHomelessList().peek().getMaxWealth() < 100001);
+    }
+    
+    public void testCreateNewborn() throws ParseException {
+        Manager m = new Manager();
+        Household hornyHousehold = new Household(1,60,58741);
+        m.createNewborn(hornyHousehold);
+        assertFalse(m.getHomelessList().empty());
+        assertTrue(m.getHomelessList().peek().getAge() == 20);
+        assertTrue(m.getHomelessList().peek().getMaxWealth() == 58741);
+    }
 }

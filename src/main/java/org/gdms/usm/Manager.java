@@ -6,6 +6,7 @@ package org.gdms.usm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 
 /**
@@ -16,6 +17,7 @@ public class Manager {
 
     private ArrayList<Parcel> parcelList;
     private Stack<Household> homelessList;
+    private int lastCreatedHouseholdId;
 
     /**
      * Builds a new Manager.
@@ -50,7 +52,10 @@ public class Manager {
      * Creates an immigrant Household and adds it to the homeless list.
      */
     public void createImmigrant() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        lastCreatedHouseholdId++;
+        Random generator = new Random();
+        Household immigrant = new Household(lastCreatedHouseholdId,20+generator.nextInt(40),25000+generator.nextInt(75000));
+        homelessList.add(immigrant);
     }
 
     /**
@@ -58,7 +63,9 @@ public class Manager {
      * @param parentHousehold the procreating household
      */
     public void createNewborn(Household parentHousehold) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        lastCreatedHouseholdId++;
+        Household newborn = new Household(lastCreatedHouseholdId,20,parentHousehold.getMaxWealth());
+        homelessList.add(newborn);
     }
 
     /**
@@ -82,7 +89,7 @@ public class Manager {
 
         return pop;
     }
-    
+
     /**
      * Adds the specified parcel to the parcelList.
      * @param p a Parcel

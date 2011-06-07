@@ -89,7 +89,7 @@ public class Parcel {
      */
     public void addHousehold(Household movingHousehold) {
         householdList.add(movingHousehold);
-        density += getInverseArea();
+        density += inverseArea;
     }
 
     /**
@@ -98,7 +98,7 @@ public class Parcel {
      */
     public void removeHousehold(Household movingHousehold) {
         householdList.remove(movingHousehold);
-        density -= getInverseArea();
+        density -= inverseArea;
     }
 
     /**
@@ -114,7 +114,7 @@ public class Parcel {
      * @return a boolean
      */
     public boolean isFull() {
-        double incrementedDensity = this.density + this.getInverseArea();
+        double incrementedDensity = this.density + this.inverseArea;
         return (incrementedDensity > this.maxDensity);
     }
 

@@ -41,8 +41,10 @@ public class ManagerTest extends TestCase {
         return new Household(1,25,48700);
     }
     
+    private String dataPathForTests = "src/resources/Basedonnesreduiterefaite4.shp";
+    
     public void testGetPopulation() throws ParseException {
-        Manager m = new Manager();
+        Manager m = new Manager(dataPathForTests);
         Parcel a = defaultParcelBuilder();
         Parcel b = defaultParcelBuilder();
         Parcel c = defaultParcelBuilder();
@@ -67,7 +69,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testKill() throws ParseException {
-        Manager m = new Manager();
+        Manager m = new Manager(dataPathForTests);
         Parcel a = defaultParcelBuilder();
         Household iWantToDie = defaultHouseholdBuilder();
         iWantToDie.moveIn(a);
@@ -77,7 +79,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateImmigrant() throws ParseException {
-        Manager m = new Manager();
+        Manager m = new Manager(dataPathForTests);
         m.createImmigrant();
         assertFalse(m.getHomelessList().empty());
         assertTrue(m.getHomelessList().peek().getAge() > 19 && m.getHomelessList().peek().getAge() < 60);
@@ -85,7 +87,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateNewborn() throws ParseException {
-        Manager m = new Manager();
+        Manager m = new Manager(dataPathForTests);
         Household hornyHousehold = new Household(1,60,58741);
         m.createNewborn(hornyHousehold);
         assertFalse(m.getHomelessList().empty());
@@ -94,7 +96,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForParcels() throws DataSourceCreationException, DriverException {
-        Manager m = new Manager();
+        Manager m = new Manager(dataPathForTests);
         m.initialize();
         
         assertTrue(m.getParcelList().size() == 6978);
@@ -111,7 +113,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForHouseholds() throws DataSourceCreationException, DriverException {
-        Manager m = new Manager();
+        Manager m = new Manager(dataPathForTests);
         m.initialize();
         
         assertTrue(m.getParcelList().get(3).getHouseholdList().size() == 22);

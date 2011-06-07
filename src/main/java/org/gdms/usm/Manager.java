@@ -24,14 +24,16 @@ public class Manager {
     private ArrayList<Parcel> parcelList;
     private Stack<Household> homelessList;
     private int lastCreatedHouseholdId;
+    private String dataPath;
 
     /**
      * Builds a new Manager.
      */
-    public Manager() {
+    public Manager(String dP) {
         this.parcelList = new ArrayList();
         this.homelessList = new Stack();
         this.lastCreatedHouseholdId = 0;
+        this.dataPath = dP;
     }
 
     /**
@@ -108,7 +110,7 @@ public class Manager {
     public void initialize() throws DataSourceCreationException, DriverException {
         Random generator = new Random();
         DataSourceFactory dsf = new DataSourceFactory();
-        File initialFile = new File("/home/tsalliou/OrbisGIS/baseUSM/Basedonnesreduiterefaite4.shp");
+        File initialFile = new File(dataPath);
         DataSource initialBase = dsf.getDataSource(initialFile);
         SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(initialBase);
         sds.open();

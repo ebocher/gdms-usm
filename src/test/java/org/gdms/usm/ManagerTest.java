@@ -8,6 +8,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import junit.framework.TestCase;
+import org.gdms.data.DataSourceCreationException;
+import org.gdms.driver.DriverException;
 
 /**
  *
@@ -89,5 +91,40 @@ public class ManagerTest extends TestCase {
         assertFalse(m.getHomelessList().empty());
         assertTrue(m.getHomelessList().peek().getAge() == 20);
         assertTrue(m.getHomelessList().peek().getMaxWealth() == 58741);
+    }
+    
+    public void testInitializeForParcels() throws DataSourceCreationException, DriverException {
+        Manager m = new Manager();
+        m.initialize();
+        
+        assertTrue(m.getParcelList().size() == 6978);
+        assertTrue(m.getParcelList().get(3).getId() == 3);
+        assertTrue(m.getParcelList().get(3).getBuildType() == 2);
+        System.out.println(m.getParcelList().get(3).getInverseArea());
+        System.out.println(m.getParcelList().get(3).getDensity());
+        assertTrue(Math.abs(m.getParcelList().get(3).getDensity()- 0.000177042857497) < 0.000000001);
+        assertTrue(Math.abs(m.getParcelList().get(3).getMaxDensity()- 0.000155) < 0.000000001);
+        assertTrue(m.getParcelList().get(3).getAmenitiesIndex() == 13);
+        assertTrue(m.getParcelList().get(3).getConstructibilityIndex() == 16);
+        assertTrue(m.getParcelList().get(3).getInseeCode() == 44171);
+        assertTrue("A".equals(m.getParcelList().get(3).getZoning()));
+    }
+    
+    public void testInitializeForHouseholds() throws DataSourceCreationException, DriverException {
+        Manager m = new Manager();
+        m.initialize();
+        
+        assertTrue(m.getParcelList().get(3).getHouseholdList().size() == 22);
+        assertTrue(m.getParcelList().contains(m.getParcelList().get(3).getHouseholdList().iterator().next().getHousingPlot()));
+        assertTrue(m.getParcelList().get(3).getHouseholdList().iterator().next().getMaxWealth() > 34132);
+        assertTrue(m.getParcelList().get(3).getHouseholdList().iterator().next().getMaxWealth() < 41717);
+        assertTrue(m.getPopulation() == 263461);
+        
+        assertTrue(m.getParcelList().get(6977).getHouseholdList().isEmpty());
+        
+        assertTrue(m.getParcelList().get(17).getHouseholdList().size() == 34);
+        assertTrue(m.getParcelList().contains(m.getParcelList().get(17).getHouseholdList().iterator().next().getHousingPlot()));
+        assertTrue(m.getParcelList().get(17).getHouseholdList().iterator().next().getMaxWealth() > 31718);
+        assertTrue(m.getParcelList().get(17).getHouseholdList().iterator().next().getMaxWealth() < 38767);
     }
 }

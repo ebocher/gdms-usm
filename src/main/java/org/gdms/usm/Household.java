@@ -257,14 +257,14 @@ public class Household {
         p.addHousehold(this);
         housingPlot = p;
     }
-    
+
     /**
      * @return the dissatisfactionMemory 
      */
     public LimitedQueue<Double> getDissatisfactionMemory() {
         return dissatisfactionMemory;
     }
-    
+
     /**
      * Resets the housing parcel to null, and removes the household of this parcel household list.
      */
@@ -272,5 +272,4 @@ public class Household {
         housingPlot.removeHousehold(this);
         housingPlot = null;
     }
-    
 }

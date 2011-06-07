@@ -57,12 +57,39 @@ public class Parcel {
     }
 
     /**
+     * Builds a new Parcel without providing the density, initializes it to zero.
+     * @param id
+     * @param bT
+     * @param mD
+     * @param aI
+     * @param cI
+     * @param iC
+     * @param z
+     * @param geom 
+     */
+    public Parcel(int id, int bT, double mD, int aI, int cI, int iC, String z, Geometry geom) {
+
+        this.id = id;
+        this.buildType = bT;
+        this.density = 0;
+        this.maxDensity = mD;
+        this.amenitiesIndex = aI;
+        this.inverseArea = 1.0 / geom.getArea();
+        this.constructibilityIndex = cI;
+        this.inseeCode = iC;
+        this.zoning = z;
+        this.the_geom = geom;
+        this.householdList = new HashSet();
+
+    }
+
+    /**
      * Adds the Household to the Household list and increases the density.
      * @param movingHousehold a household moving in
      */
     public void addHousehold(Household movingHousehold) {
         householdList.add(movingHousehold);
-        density += inverseArea;
+        density += getInverseArea();
     }
 
     /**
@@ -71,7 +98,7 @@ public class Parcel {
      */
     public void removeHousehold(Household movingHousehold) {
         householdList.remove(movingHousehold);
-        density -= inverseArea;
+        density -= getInverseArea();
     }
 
     /**
@@ -87,7 +114,7 @@ public class Parcel {
      * @return a boolean
      */
     public boolean isFull() {
-        double incrementedDensity = this.density + this.inverseArea;
+        double incrementedDensity = this.density + this.getInverseArea();
         return (incrementedDensity > this.maxDensity);
     }
 
@@ -168,13 +195,20 @@ public class Parcel {
     public int getId() {
         return id;
     }
-    
+
     public int getAverageWealth() {
         Iterator<Household> i = householdList.iterator();
         int total = 0;
         while (i.hasNext()) {
             total += i.next().getWealth();
         }
-        return total/this.getLocalPopulation();
+        return total / this.getLocalPopulation();
+    }
+
+    /**
+     * @return the inverseArea
+     */
+    public double getInverseArea() {
+        return inverseArea;
     }
 }

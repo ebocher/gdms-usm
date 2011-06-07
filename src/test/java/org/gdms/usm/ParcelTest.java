@@ -109,5 +109,5 @@ public class ParcelTest extends TestCase {
         //Wealth is an integer, averageWealth too, be careful !
         assertTrue(parisSeizieme.getAverageWealth() == 47459);
     }
-    
+      
 }

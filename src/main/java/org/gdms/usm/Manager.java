@@ -4,10 +4,16 @@
  */
 package org.gdms.usm;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Stack;
+import org.gdms.data.DataSource;
+import org.gdms.data.DataSourceCreationException;
+import org.gdms.data.DataSourceFactory;
+import org.gdms.data.SpatialDataSourceDecorator;
+import org.gdms.driver.DriverException;
 
 /**
  * 
@@ -25,6 +31,7 @@ public class Manager {
     public Manager() {
         this.parcelList = new ArrayList();
         this.homelessList = new Stack();
+        this.lastCreatedHouseholdId = 0;
     }
 
     /**
@@ -52,10 +59,10 @@ public class Manager {
      * Creates an immigrant Household and adds it to the homeless list.
      */
     public void createImmigrant() {
-        lastCreatedHouseholdId++;
         Random generator = new Random();
-        Household immigrant = new Household(lastCreatedHouseholdId,20+generator.nextInt(40),25000+generator.nextInt(75000));
+        Household immigrant = new Household(lastCreatedHouseholdId, 20 + generator.nextInt(40), 25000 + generator.nextInt(75000));
         homelessList.add(immigrant);
+        lastCreatedHouseholdId++;
     }
 
     /**
@@ -63,9 +70,9 @@ public class Manager {
      * @param parentHousehold the procreating household
      */
     public void createNewborn(Household parentHousehold) {
-        lastCreatedHouseholdId++;
-        Household newborn = new Household(lastCreatedHouseholdId,20,parentHousehold.getMaxWealth());
+        Household newborn = new Household(lastCreatedHouseholdId, 20, parentHousehold.getMaxWealth());
         homelessList.add(newborn);
+        lastCreatedHouseholdId++;
     }
 
     /**
@@ -96,5 +103,70 @@ public class Manager {
      */
     public void addParcel(Parcel p) {
         parcelList.add(p);
+    }
+
+    public void initialize() throws DataSourceCreationException, DriverException {
+        Random generator = new Random();
+        DataSourceFactory dsf = new DataSourceFactory();
+        File initialFile = new File("/home/tsalliou/OrbisGIS/baseUSM/Basedonnesreduiterefaite4.shp");
+        DataSource initialBase = dsf.getDataSource(initialFile);
+        SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(initialBase);
+        sds.open();
+
+        int id = 0;
+        long size = sds.getRowCount();
+        for (int j = 0; j < size; j++) {
+            //Parcel creation
+            Parcel newParcel = new Parcel(id, //id
+                    sds.getFieldValue(j, 1).getAsInt(), //buildType
+                    sds.getFieldValue(j, 17).getAsDouble() / 1000000, //maxDensity (WARNING : km² input)
+                    sds.getFieldValue(j, 19).getAsInt(), //amenitiesIndex
+                    sds.getFieldValue(j, 16).getAsInt(), //constructibilityIndex
+                    sds.getFieldValue(j, 18).getAsInt(), //inseeCode
+                    sds.getFieldValue(j, 15).getAsString(), //zoning
+                    sds.getGeometry(j));                                //the_geom
+            this.addParcel(newParcel);
+
+            //Households creation by age bracket
+            int maxWealth = sds.getFieldValue(j, 9).getAsInt();
+
+            //1-19 years old
+            for (int k = 0; k < sds.getFieldValue(j, 10).getAsInt(); k++) {
+                Household newHousehold = new Household(lastCreatedHouseholdId,
+                        1 + generator.nextInt(19),
+                        (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
+                lastCreatedHouseholdId++;
+                newHousehold.moveIn(newParcel);
+            }
+
+            //20-39 years old
+            for (int k = 0; k < sds.getFieldValue(j, 11).getAsInt(); k++) {
+                Household newHousehold = new Household(lastCreatedHouseholdId,
+                        20 + generator.nextInt(20),
+                        (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
+                lastCreatedHouseholdId++;
+                newHousehold.moveIn(newParcel);
+            }
+
+            //40-59 years old
+            for (int k = 0; k < sds.getFieldValue(j, 12).getAsInt(); k++) {
+                Household newHousehold = new Household(lastCreatedHouseholdId,
+                        40 + generator.nextInt(20),
+                        (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
+                lastCreatedHouseholdId++;
+                newHousehold.moveIn(newParcel);
+            }
+
+            //60-79 years old
+            for (int k = 0; k < sds.getFieldValue(j, 13).getAsInt(); k++) {
+                Household newHousehold = new Household(lastCreatedHouseholdId,
+                        60 + generator.nextInt(20),
+                        (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
+                lastCreatedHouseholdId++;
+                newHousehold.moveIn(newParcel);
+            }
+            id++;
+        }
+
     }
 }

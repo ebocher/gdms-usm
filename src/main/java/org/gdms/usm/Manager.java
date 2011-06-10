@@ -13,7 +13,13 @@ import org.gdms.data.DataSource;
 import org.gdms.data.DataSourceCreationException;
 import org.gdms.data.DataSourceFactory;
 import org.gdms.data.SpatialDataSourceDecorator;
+import org.gdms.data.file.FileSourceCreation;
+import org.gdms.data.schema.DefaultMetadata;
+import org.gdms.data.schema.Metadata;
+import org.gdms.data.types.Type;
+import org.gdms.data.types.TypeFactory;
 import org.gdms.driver.DriverException;
+import org.orbisgis.utils.FileUtils;
 
 /**
  * 
@@ -25,15 +31,20 @@ public class Manager {
     private Stack<Household> homelessList;
     private int lastCreatedHouseholdId;
     private String dataPath;
+    private String outputPath;
+    private DataSourceFactory dsf;
 
     /**
      * Builds a new Manager.
      */
-    public Manager(String dP) {
+    public Manager(String dP, String oP) {
         this.parcelList = new ArrayList();
         this.homelessList = new Stack();
         this.lastCreatedHouseholdId = 0;
         this.dataPath = dP;
+        this.outputPath = oP;
+        FileUtils.deleteDir(new File(oP, "gdms"));
+        this.dsf = new DataSourceFactory(oP+"gdms");
     }
 
     /**
@@ -50,6 +61,55 @@ public class Manager {
         return homelessList;
     }
 
+    /**
+     * Initializes the output database by creating the different tables as gdms files.
+     */
+    public void createOutputDatabase() throws DriverException {
+        Type integ = TypeFactory.createType(64);
+        Type geometry = TypeFactory.createType(4096);
+        Type bool = TypeFactory.createType(2);
+        
+        //Household table
+        File file1 = new File(outputPath+"Household.gdms");
+        String[] fieldNames1 = {"householdID", "maximumWealth"};
+        Type[] fieldTypes1 = {integ, integ};
+        Metadata m1 = new DefaultMetadata(fieldTypes1, fieldNames1);
+        FileSourceCreation f1 = new FileSourceCreation(file1, m1);
+        dsf.getSourceManager().register("Household",f1);
+        
+        //Plot table
+        File file2 = new File(outputPath+"Plot.gdms");
+        String[] fieldNames2 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex", "constructibilityIndex"};
+        Type[] fieldTypes2 = {integ, geometry, integ, integ, integ};
+        Metadata m2 = new DefaultMetadata(fieldTypes2, fieldNames2);
+        FileSourceCreation f2 = new FileSourceCreation(file2, m2);
+        dsf.getSourceManager().register("Plot",f2);
+        
+        //HouseholdState table
+        File file3 = new File(outputPath+"HouseholdState.gdms");
+        String[] fieldNames3 = {"householdID", "stepNumber", "plotID", "age", "alive"};
+        Type[] fieldTypes3 = {integ, integ, integ, integ, bool};
+        Metadata m3 = new DefaultMetadata(fieldTypes3, fieldNames3);
+        FileSourceCreation f3 = new FileSourceCreation(file3, m3);
+        dsf.getSourceManager().register("HouseholdState",f3);
+        
+        //PlotState table
+        File file4 = new File(outputPath+"PlotState.gdms");
+        String[] fieldNames4 = {"plotID", "stepNumber", "buildType", "averageWealth"};
+        Type[] fieldTypes4 = {integ, integ, integ, integ};
+        Metadata m4 = new DefaultMetadata(fieldTypes4, fieldNames4);
+        FileSourceCreation f4 = new FileSourceCreation(file4, m4);
+        dsf.getSourceManager().register("PlotState",f4);
+        
+        //Step table
+        File file5 = new File(outputPath+"Step.gdms");
+        String[] fieldNames5 = {"stepNumber", "year", "population"};
+        Type[] fieldTypes5 = {integ, integ, integ};
+        Metadata m5 = new DefaultMetadata(fieldTypes5, fieldNames5);
+        FileSourceCreation f5 = new FileSourceCreation(file5, m5);
+        dsf.getSourceManager().register("Step",f5);
+    }
+    
     /**
      * Saves relevant information about plots and households into the output database.
      */
@@ -107,9 +167,8 @@ public class Manager {
         parcelList.add(p);
     }
 
-    public void initialize() throws DataSourceCreationException, DriverException {
+    public void initializeSimulation() throws DataSourceCreationException, DriverException {
         Random generator = new Random();
-        DataSourceFactory dsf = new DataSourceFactory();
         File initialFile = new File(dataPath);
         DataSource initialBase = dsf.getDataSource(initialFile);
         SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(initialBase);
@@ -170,5 +229,12 @@ public class Manager {
             id++;
         }
 
+    }
+
+    /**
+     * @return the dsf
+     */
+    public DataSourceFactory getDsf() {
+        return dsf;
     }
 }

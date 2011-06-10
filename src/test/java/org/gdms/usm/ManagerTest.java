@@ -7,8 +7,12 @@ package org.gdms.usm;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import java.io.File;
 import junit.framework.TestCase;
+import org.gdms.data.DataSource;
 import org.gdms.data.DataSourceCreationException;
+import org.gdms.data.DataSourceFactory;
+import org.gdms.data.NoSuchTableException;
 import org.gdms.driver.DriverException;
 
 /**
@@ -29,6 +33,11 @@ public class ManagerTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
+        new File(outputPathForTests+"Household.gdms").delete();
+        new File(outputPathForTests+"HouseholdState.gdms").delete();
+        new File(outputPathForTests+"Plot.gdms").delete();
+        new File(outputPathForTests+"PlotState.gdms").delete();
+        new File(outputPathForTests+"Step.gdms").delete();
     }
 
     private Parcel defaultParcelBuilder() throws ParseException{
@@ -41,10 +50,11 @@ public class ManagerTest extends TestCase {
         return new Household(1,25,48700);
     }
     
-    private String dataPathForTests = "src/resources/Basedonnesreduiterefaite4.shp";
+    private String dataPathForTests = "src/test/resources/Basedonnesreduiterefaite4.shp";
+    private String outputPathForTests = "src/test/resources/";
     
     public void testGetPopulation() throws ParseException {
-        Manager m = new Manager(dataPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests);
         Parcel a = defaultParcelBuilder();
         Parcel b = defaultParcelBuilder();
         Parcel c = defaultParcelBuilder();
@@ -69,7 +79,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testKill() throws ParseException {
-        Manager m = new Manager(dataPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests);
         Parcel a = defaultParcelBuilder();
         Household iWantToDie = defaultHouseholdBuilder();
         iWantToDie.moveIn(a);
@@ -79,7 +89,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateImmigrant() throws ParseException {
-        Manager m = new Manager(dataPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests);
         m.createImmigrant();
         assertFalse(m.getHomelessList().empty());
         assertTrue(m.getHomelessList().peek().getAge() > 19 && m.getHomelessList().peek().getAge() < 60);
@@ -87,7 +97,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateNewborn() throws ParseException {
-        Manager m = new Manager(dataPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests);
         Household hornyHousehold = new Household(1,60,58741);
         m.createNewborn(hornyHousehold);
         assertFalse(m.getHomelessList().empty());
@@ -96,8 +106,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForParcels() throws DataSourceCreationException, DriverException {
-        Manager m = new Manager(dataPathForTests);
-        m.initialize();
+        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        m.initializeSimulation();
         
         assertTrue(m.getParcelList().size() == 6978);
         assertTrue(m.getParcelList().get(3).getId() == 3);
@@ -113,8 +123,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForHouseholds() throws DataSourceCreationException, DriverException {
-        Manager m = new Manager(dataPathForTests);
-        m.initialize();
+        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        m.initializeSimulation();
         
         assertTrue(m.getParcelList().get(3).getHouseholdList().size() == 22);
         assertTrue(m.getParcelList().contains(m.getParcelList().get(3).getHouseholdList().iterator().next().getHousingPlot()));
@@ -128,5 +138,45 @@ public class ManagerTest extends TestCase {
         assertTrue(m.getParcelList().contains(m.getParcelList().get(17).getHouseholdList().iterator().next().getHousingPlot()));
         assertTrue(m.getParcelList().get(17).getHouseholdList().iterator().next().getMaxWealth() > 31718);
         assertTrue(m.getParcelList().get(17).getHouseholdList().iterator().next().getMaxWealth() < 38767);
+    }
+    
+    public void testCreateOutputDatabase() throws NoSuchTableException, DataSourceCreationException, DriverException {
+        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        m.createOutputDatabase();
+        DataSourceFactory dsf = m.getDsf();
+        DataSource hh = dsf.getDataSource("Household");
+        DataSource hs = dsf.getDataSource("HouseholdState");
+        DataSource pl = dsf.getDataSource("Plot");
+        DataSource ps = dsf.getDataSource("PlotState");
+        DataSource st = dsf.getDataSource("Step");
+        
+        //Let's see if our files are created for real.
+        assertTrue(new File(outputPathForTests+"Household.gdms").exists());
+        assertTrue(new File(outputPathForTests+"HouseholdState.gdms").exists());
+        assertTrue(new File(outputPathForTests+"Plot.gdms").exists());
+        assertTrue(new File(outputPathForTests+"PlotState.gdms").exists());
+        assertTrue(new File(outputPathForTests+"Step.gdms").exists());
+        
+        //Now let's see if our tables are filled with correct metadata.
+        hh.open();
+        assertTrue(hh.getMetadata().getFieldName(1).equals("maximumWealth"));
+        hh.close();
+        
+        hs.open();
+        assertTrue(hs.getMetadata().getFieldName(3).equals("age"));
+        hs.close();
+        
+        pl.open();
+        assertTrue(pl.getMetadata().getFieldName(1).equals("the_geom"));
+        assertTrue(pl.getMetadata().getFieldType(1).getTypeCode() == 4096);
+        pl.close();
+        
+        ps.open();
+        assertTrue(ps.getMetadata().getFieldName(2).equals("buildType"));
+        ps.close();
+        
+        st.open();
+        assertTrue(st.getMetadata().getFieldName(0).equals("stepNumber"));
+        st.close();
     }
 }

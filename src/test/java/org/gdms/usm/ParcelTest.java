@@ -109,5 +109,28 @@ public class ParcelTest extends TestCase {
         //Wealth is an integer, averageWealth too, be careful !
         assertTrue(parisSeizieme.getAverageWealth() == 47459);
     }
+    
+    public void testUpdateBuildType() throws ParseException {
+        WKTReader wktr = new WKTReader();
+        Geometry geometry = wktr.read("POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))");
+        
+        Parcel rez = new Parcel(8,1,2,20,10,50,44109,"AB",geometry);
+        
+        rez.updateBuildType();
+        assertTrue(rez.getBuildType() == 2);
+        rez.updateBuildType();
+        assertTrue(rez.getBuildType() == 2);
+        
+        Parcel rez2 = new Parcel(8,2,158,2000,10,50,44109,"AB",geometry);
+        rez2.updateBuildType();
+        assertTrue(rez2.getBuildType() == 3);
+        
+        Parcel rez3 = new Parcel(8,1,1200,2000,10,50,44109,"AB",geometry);
+        rez3.updateBuildType();
+        assertTrue(rez3.getBuildType() == 4);
+        
+        Parcel rez4 = new Parcel(8,5,1852,2000,10,50,44109,"AB",geometry);
+        assertTrue(rez4.getBuildType() == 5);
+    }
       
 }

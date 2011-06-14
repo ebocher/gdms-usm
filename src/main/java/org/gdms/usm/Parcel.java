@@ -105,7 +105,24 @@ public class Parcel {
      * Changes the build type if needed.
      */
     public void updateBuildType() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        switch (buildType) {
+            case 1:
+                if (density > 0) {
+                    buildType = 2;
+                }
+            case 2:
+                if (density > 155) {
+                    buildType = 3;
+                }
+            case 3:
+                if (density > 1000) {
+                    buildType = 4;
+                }
+            case 4:
+                if (density > 1466) {
+                    buildType = 5;
+                }
+        }
     }
 
     /**

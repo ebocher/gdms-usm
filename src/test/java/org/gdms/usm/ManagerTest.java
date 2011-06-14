@@ -13,6 +13,8 @@ import org.gdms.data.DataSource;
 import org.gdms.data.DataSourceCreationException;
 import org.gdms.data.DataSourceFactory;
 import org.gdms.data.NoSuchTableException;
+import org.gdms.data.NonEditableDataSourceException;
+import org.gdms.data.SpatialDataSourceDecorator;
 import org.gdms.driver.DriverException;
 
 /**
@@ -178,5 +180,24 @@ public class ManagerTest extends TestCase {
         st.open();
         assertTrue(st.getMetadata().getFieldName(0).equals("stepNumber"));
         st.close();
+    }
+    
+    public void testInitializeOutputDatabase() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException {
+        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        m.initializeSimulation();
+        m.createOutputDatabase();
+        m.initializeOutputDatabase();
+        
+        DataSourceFactory dsf = m.getDsf();
+        DataSource householdDS = dsf.getDataSource("Household");
+        DataSource plotDS = dsf.getDataSource("Plot");
+        SpatialDataSourceDecorator plotSDS = new SpatialDataSourceDecorator(plotDS);
+        
+        householdDS.open();
+        plotSDS.open();
+        assertTrue(householdDS.getRowCount() == 263461);
+        assertTrue(plotSDS.getRowCount() == 6978);
+        householdDS.close();
+        plotSDS.close();
     }
 }

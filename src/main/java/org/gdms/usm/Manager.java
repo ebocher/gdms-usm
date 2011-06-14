@@ -12,12 +12,16 @@ import java.util.Stack;
 import org.gdms.data.DataSource;
 import org.gdms.data.DataSourceCreationException;
 import org.gdms.data.DataSourceFactory;
+import org.gdms.data.NoSuchTableException;
+import org.gdms.data.NonEditableDataSourceException;
 import org.gdms.data.SpatialDataSourceDecorator;
 import org.gdms.data.file.FileSourceCreation;
 import org.gdms.data.schema.DefaultMetadata;
 import org.gdms.data.schema.Metadata;
 import org.gdms.data.types.Type;
 import org.gdms.data.types.TypeFactory;
+import org.gdms.data.values.Value;
+import org.gdms.data.values.ValueFactory;
 import org.gdms.driver.DriverException;
 import org.orbisgis.utils.FileUtils;
 
@@ -29,6 +33,7 @@ public class Manager {
 
     private ArrayList<Parcel> parcelList;
     private Stack<Household> homelessList;
+    private Stack<Household> newbornList;
     private int lastCreatedHouseholdId;
     private String dataPath;
     private String outputPath;
@@ -40,6 +45,7 @@ public class Manager {
     public Manager(String dP, String oP) {
         this.parcelList = new ArrayList();
         this.homelessList = new Stack();
+        this.newbornList = new Stack();
         this.lastCreatedHouseholdId = 0;
         this.dataPath = dP;
         this.outputPath = oP;
@@ -68,6 +74,7 @@ public class Manager {
         Type integ = TypeFactory.createType(64);
         Type geometry = TypeFactory.createType(4096);
         Type bool = TypeFactory.createType(2);
+        Type doubl = TypeFactory.createType(16);
         
         //Household table
         File file1 = new File(outputPath+"Household.gdms");
@@ -80,7 +87,7 @@ public class Manager {
         //Plot table
         File file2 = new File(outputPath+"Plot.gdms");
         String[] fieldNames2 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex", "constructibilityIndex"};
-        Type[] fieldTypes2 = {integ, geometry, integ, integ, integ};
+        Type[] fieldTypes2 = {integ, geometry, doubl, integ, integ};
         Metadata m2 = new DefaultMetadata(fieldTypes2, fieldNames2);
         FileSourceCreation f2 = new FileSourceCreation(file2, m2);
         dsf.getSourceManager().register("Plot",f2);
@@ -111,10 +118,74 @@ public class Manager {
     }
     
     /**
+     * Initializes the output database with the initialization data.
+     * @throws NoSuchTableException
+     * @throws DataSourceCreationException
+     * @throws DriverException
+     * @throws NonEditableDataSourceException 
+     */
+    public void initializeOutputDatabase() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException {
+        DataSource householdDS = dsf.getDataSource("Household");
+        DataSource plotDS = dsf.getDataSource("Plot");
+        SpatialDataSourceDecorator plotSDS = new SpatialDataSourceDecorator(plotDS);
+        
+        householdDS.open();
+        plotSDS.open();
+        
+        for (Parcel p : parcelList) {
+            plotSDS.insertFilledRow(new Value[] {ValueFactory.createValue(p.getId()),
+                ValueFactory.createValue(p.getThe_geom()),
+                ValueFactory.createValue(p.getMaxDensity()),
+                ValueFactory.createValue(p.getAmenitiesIndex()),
+                ValueFactory.createValue(p.getConstructibilityIndex())});
+            for (Household h : p.getHouseholdList()) {
+                householdDS.insertFilledRow(new Value[] {ValueFactory.createValue(h.getId()), ValueFactory.createValue(h.getMaxWealth())});
+            }
+        }
+        householdDS.commit();
+        plotSDS.commit();
+        householdDS.close();
+        plotSDS.close();
+    }
+    
+    /**
      * Saves relevant information about plots and households into the output database.
      */
-    public void saveState() {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public void saveState() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException {
+        DataSource householdDS = dsf.getDataSource("Household");
+        DataSource householdStateDS = dsf.getDataSource("HouseholdState");
+        DataSource plotStateDS = dsf.getDataSource("PlotState");
+        DataSource stepDS = dsf.getDataSource("Step");
+        
+        householdDS.open();
+        while (!newbornList.empty()) {
+            Household h = newbornList.pop();
+            householdDS.insertFilledRow(new Value[] {ValueFactory.createValue(h.getId()), ValueFactory.createValue(h.getMaxWealth())});
+        }
+        householdDS.commit();
+        householdDS.close();
+        
+        plotStateDS.open();
+        householdStateDS.open();
+        for (Parcel p : parcelList) {
+            plotStateDS.insertFilledRow(new Value[] {ValueFactory.createValue(p.getId()),
+                ValueFactory.createValue(1),
+                ValueFactory.createValue(p.getBuildType()),
+                ValueFactory.createValue(p.getAverageWealth())
+            });
+            for (Household hh : p.getHouseholdList()) {
+                householdStateDS.insertFilledRow(new Value[] {ValueFactory.createValue(hh.getId()),
+                    ValueFactory.createValue(1),
+                    ValueFactory.createValue(p.getId()),
+                    ValueFactory.createValue(hh.getAge()),
+                    ValueFactory.createValue(true)
+                });
+            }
+        }
+        plotStateDS.commit();
+        plotStateDS.close();
+        householdStateDS.commit();
+        householdStateDS.close();
     }
 
     /**
@@ -124,6 +195,7 @@ public class Manager {
         Random generator = new Random();
         Household immigrant = new Household(lastCreatedHouseholdId, 20 + generator.nextInt(40), 25000 + generator.nextInt(75000));
         homelessList.add(immigrant);
+        newbornList.add(immigrant);
         lastCreatedHouseholdId++;
     }
 
@@ -134,6 +206,7 @@ public class Manager {
     public void createNewborn(Household parentHousehold) {
         Household newborn = new Household(lastCreatedHouseholdId, 20, parentHousehold.getMaxWealth());
         homelessList.add(newborn);
+        newbornList.add(newborn);
         lastCreatedHouseholdId++;
     }
 

@@ -45,7 +45,7 @@ public class ManagerTest extends TestCase {
     private Parcel defaultParcelBuilder() throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(7,2,30,40,10,50,44109,"AB",geometry);
+        return new Parcel(7,2,30,40,10,50,44109,"AB",geometry, bbtc);
     }
     
     private Household defaultHouseholdBuilder() {
@@ -54,9 +54,10 @@ public class ManagerTest extends TestCase {
     
     private String dataPathForTests = "src/test/resources/Basedonnesreduiterefaite4.shp";
     private String outputPathForTests = "src/test/resources/";
+    private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     
     public void testGetPopulation() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
         Parcel a = defaultParcelBuilder();
         Parcel b = defaultParcelBuilder();
         Parcel c = defaultParcelBuilder();
@@ -81,7 +82,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testKill() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
         Parcel a = defaultParcelBuilder();
         Household iWantToDie = defaultHouseholdBuilder();
         iWantToDie.moveIn(a);
@@ -91,7 +92,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateImmigrant() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
         m.createImmigrant();
         assertFalse(m.getHomelessList().empty());
         assertTrue(m.getHomelessList().peek().getAge() > 19 && m.getHomelessList().peek().getAge() < 60);
@@ -99,7 +100,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateNewborn() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
         Household hornyHousehold = new Household(1,60,58741);
         m.createNewborn(hornyHousehold);
         assertFalse(m.getHomelessList().empty());
@@ -108,7 +109,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForParcels() throws DataSourceCreationException, DriverException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
         m.initializeSimulation();
         
         assertTrue(m.getParcelList().size() == 6978);
@@ -125,7 +126,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForHouseholds() throws DataSourceCreationException, DriverException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
         m.initializeSimulation();
         
         assertTrue(m.getParcelList().get(3).getHouseholdList().size() == 22);
@@ -143,7 +144,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateOutputDatabase() throws NoSuchTableException, DataSourceCreationException, DriverException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
         m.createOutputDatabase();
         DataSourceFactory dsf = m.getDsf();
         DataSource hh = dsf.getDataSource("Household");
@@ -183,7 +184,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeOutputDatabase() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
         m.initializeSimulation();
         m.createOutputDatabase();
         m.initializeOutputDatabase();

@@ -7,6 +7,7 @@ package org.gdms.usm;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -26,6 +27,7 @@ public final class Parcel {
     private String zoning;
     private final Geometry theGeom;
     private Set<Household> householdList;
+    private NearbyBuildTypeCalculator nbtc;
 
     /**
      * Builds a new Parcel.
@@ -40,7 +42,7 @@ public final class Parcel {
      * @param z a zoning
      * @param geom a geometry
      */
-    public Parcel(int id, int bT, double d, double mD, int aI, int cI, int iC, String z, Geometry geom) {
+    public Parcel(int id, int bT, double d, double mD, int aI, int cI, int iC, String z, Geometry geom, NearbyBuildTypeCalculator c) {
 
         this.id = id;
         this.buildType = bT;
@@ -53,6 +55,7 @@ public final class Parcel {
         this.zoning = z;
         this.theGeom = geom;
         this.householdList = new HashSet();
+        this.nbtc = c;
 
     }
 
@@ -67,7 +70,7 @@ public final class Parcel {
      * @param z
      * @param geom 
      */
-    public Parcel(int id, int bT, double mD, int aI, int cI, int iC, String z, Geometry geom) {
+    public Parcel(int id, int bT, double mD, int aI, int cI, int iC, String z, Geometry geom, NearbyBuildTypeCalculator c) {
 
         this.id = id;
         this.buildType = bT;
@@ -80,6 +83,7 @@ public final class Parcel {
         this.zoning = z;
         this.theGeom = geom;
         this.householdList = new HashSet();
+        this.nbtc = c;
 
     }
 
@@ -238,5 +242,9 @@ public final class Parcel {
      */
     public double getInverseArea() {
         return inverseArea;
+    }
+
+    public Map<Integer, Double> getNearbyBuildTypes() {
+        return nbtc.calculate(this);
     }
 }

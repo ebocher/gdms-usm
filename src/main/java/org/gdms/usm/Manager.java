@@ -16,8 +16,8 @@ import org.gdms.data.NoSuchTableException;
 import org.gdms.data.NonEditableDataSourceException;
 import org.gdms.data.SpatialDataSourceDecorator;
 import org.gdms.data.file.FileSourceCreation;
-import org.gdms.data.schema.DefaultMetadata;
-import org.gdms.data.schema.Metadata;
+import org.gdms.data.metadata.DefaultMetadata;
+import org.gdms.data.metadata.Metadata;
 import org.gdms.data.types.Type;
 import org.gdms.data.types.TypeFactory;
 import org.gdms.data.values.Value;
@@ -39,11 +39,15 @@ public final class Manager {
     private String dataPath;
     private String outputPath;
     private DataSourceFactory dsf;
+    private NearbyBuildTypeCalculator nbtc;
 
     /**
      * Builds a new Manager.
+     * @param dP the initialization data source
+     * @param oP the output folder
+     * @param c the nearby build type calculator strategy
      */
-    public Manager(String dP, String oP) {
+    public Manager(String dP, String oP, NearbyBuildTypeCalculator c) {
         this.parcelList = new ArrayList();
         this.homelessList = new Stack();
         this.newbornList = new Stack();
@@ -52,6 +56,7 @@ public final class Manager {
         this.outputPath = oP;
         FileUtils.deleteDir(new File(oP, "gdms"));
         this.dsf = new DataSourceFactory(oP + "gdms");
+        this.nbtc = c;
     }
 
     /**
@@ -83,7 +88,8 @@ public final class Manager {
         Type[] fieldTypes1 = {integ, integ};
         Metadata m1 = new DefaultMetadata(fieldTypes1, fieldNames1);
         FileSourceCreation f1 = new FileSourceCreation(file1, m1);
-        dsf.getSourceManager().register("Household", f1);
+        f1.setDataSourceFactory(dsf);
+        dsf.getSourceManager().register("Household", f1.create());
 
         //Plot table
         File file2 = new File(outputPath + "Plot.gdms");
@@ -91,7 +97,8 @@ public final class Manager {
         Type[] fieldTypes2 = {integ, geometry, doubl, integ, integ};
         Metadata m2 = new DefaultMetadata(fieldTypes2, fieldNames2);
         FileSourceCreation f2 = new FileSourceCreation(file2, m2);
-        dsf.getSourceManager().register("Plot", f2);
+        f2.setDataSourceFactory(dsf);
+        dsf.getSourceManager().register("Plot", f2.create());
 
         //HouseholdState table
         File file3 = new File(outputPath + "HouseholdState.gdms");
@@ -99,7 +106,8 @@ public final class Manager {
         Type[] fieldTypes3 = {integ, integ, integ, integ, bool};
         Metadata m3 = new DefaultMetadata(fieldTypes3, fieldNames3);
         FileSourceCreation f3 = new FileSourceCreation(file3, m3);
-        dsf.getSourceManager().register("HouseholdState", f3);
+        f3.setDataSourceFactory(dsf);
+        dsf.getSourceManager().register("HouseholdState", f3.create());
 
         //PlotState table
         File file4 = new File(outputPath + "PlotState.gdms");
@@ -107,7 +115,8 @@ public final class Manager {
         Type[] fieldTypes4 = {integ, integ, integ, integ};
         Metadata m4 = new DefaultMetadata(fieldTypes4, fieldNames4);
         FileSourceCreation f4 = new FileSourceCreation(file4, m4);
-        dsf.getSourceManager().register("PlotState", f4);
+        f4.setDataSourceFactory(dsf);
+        dsf.getSourceManager().register("PlotState", f4.create());
 
         //Step table
         File file5 = new File(outputPath + "Step.gdms");
@@ -115,7 +124,8 @@ public final class Manager {
         Type[] fieldTypes5 = {integ, integ, integ};
         Metadata m5 = new DefaultMetadata(fieldTypes5, fieldNames5);
         FileSourceCreation f5 = new FileSourceCreation(file5, m5);
-        dsf.getSourceManager().register("Step", f5);
+        f5.setDataSourceFactory(dsf);
+        dsf.getSourceManager().register("Step", f5.create());
     }
 
     /**
@@ -264,7 +274,8 @@ public final class Manager {
                     sds.getFieldValue(j, 16).getAsInt(), //constructibilityIndex
                     sds.getFieldValue(j, 18).getAsInt(), //inseeCode
                     sds.getFieldValue(j, 15).getAsString(), //zoning
-                    sds.getGeometry(j));                                //the_geom
+                    sds.getGeometry(j), //geometry
+                    nbtc);                                  //nearbyBuildTypeCalculator
             this.addParcel(newParcel);
 
             //Households creation by age bracket

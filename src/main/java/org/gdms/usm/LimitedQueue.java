@@ -38,7 +38,7 @@ public class LimitedQueue<E> extends AbstractQueue<E> {
 
     @Override
     public int size() {
-        return getSize();
+        return size;
     }
 
     /**
@@ -49,7 +49,7 @@ public class LimitedQueue<E> extends AbstractQueue<E> {
      * @return a boolean
      */
     public boolean offer(E e) {
-        if (this.getSize() == this.maxSize) {
+        if (this.size == this.maxSize) {
             ll.removeFirst();
         } else {
             this.size++;
@@ -64,7 +64,7 @@ public class LimitedQueue<E> extends AbstractQueue<E> {
      * @return the first element of the limited queue, or null if it is empty.
      */
     public E poll() {
-        if (getSize() != 0) {
+        if (size != 0) {
             size--;
         }
         return ll.poll();

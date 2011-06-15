@@ -31,22 +31,24 @@ public class HouseholdTest extends TestCase {
         super.tearDown();
     }
 
+    private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
+    
     private Parcel defaultParcelBuilderByInseeCode(int codeInsee) throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(0,2,30,40,10,50,codeInsee,"AB",geometry);
+        return new Parcel(0,2,30,40,10,50,codeInsee,"AB",geometry, bbtc);
     }
     
     private Parcel defaultParcelBuilderByBuildType(int buildType) throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(0,buildType,30,40,10,50,44147,"AB",geometry);
+        return new Parcel(0,buildType,30,40,10,50,44147,"AB",geometry, bbtc);
     }
     
     private Parcel defaultParcelBuilderByAmenitiesIndex(int amenitiesIndex) throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(0,2,30,40,amenitiesIndex,50,44109,"AB",geometry);
+        return new Parcel(0,2,30,40,amenitiesIndex,50,44109,"AB",geometry, bbtc);
     }
     
     /*
@@ -118,7 +120,7 @@ public class HouseholdTest extends TestCase {
     }
     
     //Won't pass if the HOUSEHOLD_MEMORY exceeds 3
-    public void testAddDissQueue() throws ParseException {
+    public void testAddDissQueue() {
         Household annoyedHousehold = new Household(2,47,54789);
         annoyedHousehold.addToDissatisfactionQueue(1.5478);
         annoyedHousehold.addToDissatisfactionQueue(2.14752);
@@ -138,7 +140,7 @@ public class HouseholdTest extends TestCase {
         assertFalse(i.hasNext());
     }
     
-    public void testGetCumulDiss() throws ParseException {
+    public void testGetCumulDiss() {
         Household annoyedHousehold = new Household(2,47,54789);
         annoyedHousehold.addToDissatisfactionQueue(1.5478);
         annoyedHousehold.addToDissatisfactionQueue(2.14752);

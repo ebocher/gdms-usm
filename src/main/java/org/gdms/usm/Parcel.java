@@ -10,10 +10,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * 
+ * Parcel representation as an object.
  * @author Thomas Salliou
  */
-public class Parcel {
+public final class Parcel {
 
     private final int id;
     private int buildType;
@@ -24,8 +24,8 @@ public class Parcel {
     private final double inverseArea;
     private final int inseeCode;
     private String zoning;
-    private final Geometry the_geom;
-    private HashSet<Household> householdList;
+    private final Geometry theGeom;
+    private Set<Household> householdList;
 
     /**
      * Builds a new Parcel.
@@ -51,7 +51,7 @@ public class Parcel {
         this.constructibilityIndex = cI;
         this.inseeCode = iC;
         this.zoning = z;
-        this.the_geom = geom;
+        this.theGeom = geom;
         this.householdList = new HashSet();
 
     }
@@ -78,7 +78,7 @@ public class Parcel {
         this.constructibilityIndex = cI;
         this.inseeCode = iC;
         this.zoning = z;
-        this.the_geom = geom;
+        this.theGeom = geom;
         this.householdList = new HashSet();
 
     }
@@ -103,6 +103,7 @@ public class Parcel {
 
     /**
      * Changes the build type if needed.
+     * WARNING : lack of break statements is VOLUNTARY.
      */
     public void updateBuildType() {
         switch (buildType) {
@@ -122,6 +123,12 @@ public class Parcel {
                 if (density > 1466) {
                     buildType = 5;
                 }
+            case 5:
+                break;
+            case 7:
+                throw new IllegalArgumentException("Can't update build type for business parks !");
+            default:
+                throw new IllegalArgumentException("Build type is not valid.");
         }
     }
 
@@ -193,10 +200,10 @@ public class Parcel {
     }
 
     /**
-     * @return the the_geom
+     * @return the theGeom
      */
-    public Geometry getThe_geom() {
-        return the_geom;
+    public Geometry getTheGeom() {
+        return theGeom;
     }
 
     /**
@@ -213,6 +220,10 @@ public class Parcel {
         return id;
     }
 
+    /**
+     * Returns the average wealth of the parcel, based on the inhabitants' wealth.
+     * @return the average wealth
+     */
     public int getAverageWealth() {
         Iterator<Household> i = householdList.iterator();
         int total = 0;

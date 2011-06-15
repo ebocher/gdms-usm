@@ -5,6 +5,7 @@
 package org.gdms.usm;
 
 import java.util.AbstractQueue;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -16,7 +17,7 @@ import java.util.LinkedList;
  */
 public class LimitedQueue<E> extends AbstractQueue<E> {
 
-    private LinkedList<E> ll;
+    private Deque<E> ll;
     private int size;
     private int maxSize;
 
@@ -37,7 +38,7 @@ public class LimitedQueue<E> extends AbstractQueue<E> {
 
     @Override
     public int size() {
-        return size;
+        return getSize();
     }
 
     /**
@@ -48,7 +49,7 @@ public class LimitedQueue<E> extends AbstractQueue<E> {
      * @return a boolean
      */
     public boolean offer(E e) {
-        if (this.size == this.maxSize) {
+        if (this.getSize() == this.maxSize) {
             ll.removeFirst();
         } else {
             this.size++;
@@ -57,13 +58,22 @@ public class LimitedQueue<E> extends AbstractQueue<E> {
         return true;
     }
 
+    /**
+     * Retrieves and removes the head of the limited queue (the first element).
+     * Consequently decreases the size of it.
+     * @return the first element of the limited queue, or null if it is empty.
+     */
     public E poll() {
-        if (size != 0) {
+        if (getSize() != 0) {
             size--;
         }
         return ll.poll();
     }
 
+    /**
+     * Retrieves the head of the limited queue without removing it.
+     * @return the first element of the limited queue, or null if it is empty.
+     */
     public E peek() {
         return ll.peek();
     }
@@ -72,6 +82,13 @@ public class LimitedQueue<E> extends AbstractQueue<E> {
     public void clear() {
         size = 0;
         ll.clear();
+    }
+
+    /**
+     * @return the size
+     */
+    public int getSize() {
+        return size;
     }
 
     class LimitedQueueIterator implements Iterator<E> {

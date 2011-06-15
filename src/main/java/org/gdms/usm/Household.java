@@ -7,10 +7,10 @@ package org.gdms.usm;
 import java.util.Iterator;
 
 /**
- *
+ * Household representation as an object.
  * @author Thomas Salliou
  */
-public class Household {
+public final class Household {
 
     public static final int HOUSEHOLD_MEMORY = 3;
     private final int id;
@@ -159,8 +159,11 @@ public class Household {
         final int theAge = this.getAge();
 
         switch (this.housingPlot.getBuildType()) {
-
+            //Empty parcel case
             case 1:
+                throw new IllegalArgumentException("Can't get IHC for an empty parcel / the parcel should not be empty.");
+            //Build type 2 case : houses with big gardens.
+            case 2:
                 if (wealth < 18000) {
                     ihcByWealth = 62;
                 } else if (wealth < 25200) {
@@ -185,7 +188,8 @@ public class Household {
                     ihcByAge = 81;
                 }
                 break;
-            case 2:
+            //Build type 3 case : houses with little gardens.
+            case 3:
                 if (wealth < 18000) {
                     ihcByWealth = 62;
                 } else if (wealth < 25200) {
@@ -210,8 +214,9 @@ public class Household {
                     ihcByAge = 61;
                 }
                 break;
-            case 3:
+            //Build types 4 and 5 : flats.
             case 4:
+            case 5:
                 if (wealth < 18000) {
                     ihcByWealth = 77;
                 } else if (wealth < 25200) {
@@ -236,6 +241,8 @@ public class Household {
                     ihcByAge = 58;
                 }
                 break;
+            default:
+                throw new IllegalArgumentException("Build type is not valid.");
         }
 
         return (ihcByAge + ihcByWealth) / 2;

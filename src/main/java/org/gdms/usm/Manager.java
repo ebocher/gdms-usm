@@ -26,12 +26,13 @@ import org.gdms.driver.DriverException;
 import org.orbisgis.utils.FileUtils;
 
 /**
- * 
+ * The Manager keeps track of parcels and new arrivals. 
+ * It also manages all the database reading (initialization) and writing (output database) stuff.
  * @author Thomas Salliou
  */
-public class Manager {
+public final class Manager {
 
-    private ArrayList<Parcel> parcelList;
+    private List<Parcel> parcelList;
     private Stack<Household> homelessList;
     private Stack<Household> newbornList;
     private int lastCreatedHouseholdId;
@@ -50,7 +51,7 @@ public class Manager {
         this.dataPath = dP;
         this.outputPath = oP;
         FileUtils.deleteDir(new File(oP, "gdms"));
-        this.dsf = new DataSourceFactory(oP+"gdms");
+        this.dsf = new DataSourceFactory(oP + "gdms");
     }
 
     /**
@@ -75,48 +76,48 @@ public class Manager {
         Type geometry = TypeFactory.createType(4096);
         Type bool = TypeFactory.createType(2);
         Type doubl = TypeFactory.createType(16);
-        
+
         //Household table
-        File file1 = new File(outputPath+"Household.gdms");
+        File file1 = new File(outputPath + "Household.gdms");
         String[] fieldNames1 = {"householdID", "maximumWealth"};
         Type[] fieldTypes1 = {integ, integ};
         Metadata m1 = new DefaultMetadata(fieldTypes1, fieldNames1);
         FileSourceCreation f1 = new FileSourceCreation(file1, m1);
-        dsf.getSourceManager().register("Household",f1);
-        
+        dsf.getSourceManager().register("Household", f1);
+
         //Plot table
-        File file2 = new File(outputPath+"Plot.gdms");
+        File file2 = new File(outputPath + "Plot.gdms");
         String[] fieldNames2 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex", "constructibilityIndex"};
         Type[] fieldTypes2 = {integ, geometry, doubl, integ, integ};
         Metadata m2 = new DefaultMetadata(fieldTypes2, fieldNames2);
         FileSourceCreation f2 = new FileSourceCreation(file2, m2);
-        dsf.getSourceManager().register("Plot",f2);
-        
+        dsf.getSourceManager().register("Plot", f2);
+
         //HouseholdState table
-        File file3 = new File(outputPath+"HouseholdState.gdms");
+        File file3 = new File(outputPath + "HouseholdState.gdms");
         String[] fieldNames3 = {"householdID", "stepNumber", "plotID", "age", "alive"};
         Type[] fieldTypes3 = {integ, integ, integ, integ, bool};
         Metadata m3 = new DefaultMetadata(fieldTypes3, fieldNames3);
         FileSourceCreation f3 = new FileSourceCreation(file3, m3);
-        dsf.getSourceManager().register("HouseholdState",f3);
-        
+        dsf.getSourceManager().register("HouseholdState", f3);
+
         //PlotState table
-        File file4 = new File(outputPath+"PlotState.gdms");
+        File file4 = new File(outputPath + "PlotState.gdms");
         String[] fieldNames4 = {"plotID", "stepNumber", "buildType", "averageWealth"};
         Type[] fieldTypes4 = {integ, integ, integ, integ};
         Metadata m4 = new DefaultMetadata(fieldTypes4, fieldNames4);
         FileSourceCreation f4 = new FileSourceCreation(file4, m4);
-        dsf.getSourceManager().register("PlotState",f4);
-        
+        dsf.getSourceManager().register("PlotState", f4);
+
         //Step table
-        File file5 = new File(outputPath+"Step.gdms");
+        File file5 = new File(outputPath + "Step.gdms");
         String[] fieldNames5 = {"stepNumber", "year", "population"};
         Type[] fieldTypes5 = {integ, integ, integ};
         Metadata m5 = new DefaultMetadata(fieldTypes5, fieldNames5);
         FileSourceCreation f5 = new FileSourceCreation(file5, m5);
-        dsf.getSourceManager().register("Step",f5);
+        dsf.getSourceManager().register("Step", f5);
     }
-    
+
     /**
      * Initializes the output database with the initialization data.
      * @throws NoSuchTableException
@@ -128,18 +129,18 @@ public class Manager {
         DataSource householdDS = dsf.getDataSource("Household");
         DataSource plotDS = dsf.getDataSource("Plot");
         SpatialDataSourceDecorator plotSDS = new SpatialDataSourceDecorator(plotDS);
-        
+
         householdDS.open();
         plotSDS.open();
-        
+
         for (Parcel p : parcelList) {
-            plotSDS.insertFilledRow(new Value[] {ValueFactory.createValue(p.getId()),
-                ValueFactory.createValue(p.getThe_geom()),
-                ValueFactory.createValue(p.getMaxDensity()),
-                ValueFactory.createValue(p.getAmenitiesIndex()),
-                ValueFactory.createValue(p.getConstructibilityIndex())});
+            plotSDS.insertFilledRow(new Value[]{ValueFactory.createValue(p.getId()),
+                        ValueFactory.createValue(p.getTheGeom()),
+                        ValueFactory.createValue(p.getMaxDensity()),
+                        ValueFactory.createValue(p.getAmenitiesIndex()),
+                        ValueFactory.createValue(p.getConstructibilityIndex())});
             for (Household h : p.getHouseholdList()) {
-                householdDS.insertFilledRow(new Value[] {ValueFactory.createValue(h.getId()), ValueFactory.createValue(h.getMaxWealth())});
+                householdDS.insertFilledRow(new Value[]{ValueFactory.createValue(h.getId()), ValueFactory.createValue(h.getMaxWealth())});
             }
         }
         householdDS.commit();
@@ -147,7 +148,7 @@ public class Manager {
         householdDS.close();
         plotSDS.close();
     }
-    
+
     /**
      * Saves relevant information about plots and households into the output database.
      */
@@ -155,31 +156,31 @@ public class Manager {
         DataSource householdDS = dsf.getDataSource("Household");
         DataSource householdStateDS = dsf.getDataSource("HouseholdState");
         DataSource plotStateDS = dsf.getDataSource("PlotState");
-        DataSource stepDS = dsf.getDataSource("Step");
-        
+        DataSource stepDS = dsf.getDataSource("Step"); //Step table part : not implemented yet.
+
         householdDS.open();
         while (!newbornList.empty()) {
             Household h = newbornList.pop();
-            householdDS.insertFilledRow(new Value[] {ValueFactory.createValue(h.getId()), ValueFactory.createValue(h.getMaxWealth())});
+            householdDS.insertFilledRow(new Value[]{ValueFactory.createValue(h.getId()), ValueFactory.createValue(h.getMaxWealth())});
         }
         householdDS.commit();
         householdDS.close();
-        
+
         plotStateDS.open();
         householdStateDS.open();
         for (Parcel p : parcelList) {
-            plotStateDS.insertFilledRow(new Value[] {ValueFactory.createValue(p.getId()),
-                ValueFactory.createValue(1),
-                ValueFactory.createValue(p.getBuildType()),
-                ValueFactory.createValue(p.getAverageWealth())
-            });
+            plotStateDS.insertFilledRow(new Value[]{ValueFactory.createValue(p.getId()),
+                        ValueFactory.createValue(1),
+                        ValueFactory.createValue(p.getBuildType()),
+                        ValueFactory.createValue(p.getAverageWealth())
+                    });
             for (Household hh : p.getHouseholdList()) {
-                householdStateDS.insertFilledRow(new Value[] {ValueFactory.createValue(hh.getId()),
-                    ValueFactory.createValue(1),
-                    ValueFactory.createValue(p.getId()),
-                    ValueFactory.createValue(hh.getAge()),
-                    ValueFactory.createValue(true)
-                });
+                householdStateDS.insertFilledRow(new Value[]{ValueFactory.createValue(hh.getId()),
+                            ValueFactory.createValue(1),
+                            ValueFactory.createValue(p.getId()),
+                            ValueFactory.createValue(hh.getAge()),
+                            ValueFactory.createValue(true)
+                        });
             }
         }
         plotStateDS.commit();
@@ -240,6 +241,11 @@ public class Manager {
         parcelList.add(p);
     }
 
+    /**
+     * Generates all the parcels and the initial households according to initialization data.
+     * @throws DataSourceCreationException
+     * @throws DriverException 
+     */
     public void initializeSimulation() throws DataSourceCreationException, DriverException {
         Random generator = new Random();
         File initialFile = new File(dataPath);

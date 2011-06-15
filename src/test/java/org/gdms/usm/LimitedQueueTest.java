@@ -63,4 +63,46 @@ public class LimitedQueueTest extends TestCase {
         assertFalse(i.hasNext());
         assertTrue(myMagnificentQueue.size() == 0);
     }
+    
+    public void testPoll() {
+        LimitedQueue<Integer> myMagnificentQueue = new LimitedQueue<Integer>(6);
+        assertTrue(myMagnificentQueue.add(1));
+        assertTrue(myMagnificentQueue.add(2));
+        assertTrue(myMagnificentQueue.add(3));
+        assertTrue(myMagnificentQueue.add(4));
+        assertTrue(myMagnificentQueue.add(5));
+        
+        assertTrue(myMagnificentQueue.getSize() == 5);
+        assertTrue(myMagnificentQueue.poll() == 1);
+        assertTrue(myMagnificentQueue.getSize() == 4);
+    }
+    
+    public void testPeek() {
+        LimitedQueue<Integer> myMagnificentQueue = new LimitedQueue<Integer>(6);
+        assertTrue(myMagnificentQueue.add(1));
+        assertTrue(myMagnificentQueue.add(2));
+        assertTrue(myMagnificentQueue.add(3));
+        assertTrue(myMagnificentQueue.add(4));
+        assertTrue(myMagnificentQueue.add(5));
+        
+        assertTrue(myMagnificentQueue.getSize() == 5);
+        assertTrue(myMagnificentQueue.peek() == 1);
+        assertTrue(myMagnificentQueue.getSize() == 5);
+    }
+    
+    public void testLimitedQueueIteratorRemove() {
+        LimitedQueue<Integer> myMagnificentQueue = new LimitedQueue<Integer>(6);
+        assertTrue(myMagnificentQueue.add(1));
+        assertTrue(myMagnificentQueue.add(2));
+        assertTrue(myMagnificentQueue.add(3));
+        assertTrue(myMagnificentQueue.add(4));
+        assertTrue(myMagnificentQueue.add(5));
+        
+        Iterator<Integer> i = myMagnificentQueue.iterator();
+        assertTrue(i.next() == 1);
+        i.remove();
+        
+        assertTrue(myMagnificentQueue.getSize() == 4);
+        assertTrue(myMagnificentQueue.peek() == 2);
+    }
 }

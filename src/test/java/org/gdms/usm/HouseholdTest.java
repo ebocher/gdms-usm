@@ -95,10 +95,10 @@ public class HouseholdTest extends TestCase {
     }
     
     public void testGetIHC() throws ParseException {
-        Parcel bigHouses = defaultParcelBuilderByBuildType(1);
-        Parcel littleHouses = defaultParcelBuilderByBuildType(2);
-        Parcel flats = defaultParcelBuilderByBuildType(3);
-        Parcel moreFlats = defaultParcelBuilderByBuildType(4);
+        Parcel bigHouses = defaultParcelBuilderByBuildType(2);
+        Parcel littleHouses = defaultParcelBuilderByBuildType(3);
+        Parcel flats = defaultParcelBuilderByBuildType(4);
+        Parcel moreFlats = defaultParcelBuilderByBuildType(5);
         
         Household youngPoor = new Household(1,20,51000,littleHouses);
         Household youngRich = new Household(2,20,140000,moreFlats);

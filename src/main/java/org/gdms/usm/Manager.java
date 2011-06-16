@@ -5,6 +5,7 @@
 package org.gdms.usm;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -22,7 +23,9 @@ import org.gdms.data.types.Type;
 import org.gdms.data.types.TypeFactory;
 import org.gdms.data.values.Value;
 import org.gdms.data.values.ValueFactory;
+import org.gdms.driver.DiskBufferDriver;
 import org.gdms.driver.DriverException;
+import org.gdms.driver.gdms.GdmsWriter;
 import org.orbisgis.utils.FileUtils;
 
 /**
@@ -74,33 +77,59 @@ public final class Manager {
     }
 
     /**
-     * Initializes the output database by creating the different tables as gdms files.
+     * Initializes the output database with the initialization data.
+     * @throws NoSuchTableException
+     * @throws DataSourceCreationException
+     * @throws DriverException
+     * @throws NonEditableDataSourceException 
      */
-    public void createOutputDatabase() throws DriverException {
+    public void initializeOutputDatabase() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException, IOException {
         Type integ = TypeFactory.createType(64);
         Type geometry = TypeFactory.createType(4096);
         Type bool = TypeFactory.createType(2);
         Type doubl = TypeFactory.createType(16);
 
-        //Household table
-        File file1 = new File(outputPath + "Household.gdms");
-        String[] fieldNames1 = {"householdID", "maximumWealth"};
-        Type[] fieldTypes1 = {integ, integ};
+        //Plot table creation
+        File file1 = new File(outputPath + "Plot.gdms");
+        GdmsWriter plotGW = new GdmsWriter(file1);
+        String[] fieldNames1 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex", "constructibilityIndex"};
+        Type[] fieldTypes1 = {integ, geometry, doubl, integ, integ};
         Metadata m1 = new DefaultMetadata(fieldTypes1, fieldNames1);
-        FileSourceCreation f1 = new FileSourceCreation(file1, m1);
-        f1.setDataSourceFactory(dsf);
-        dsf.getSourceManager().register("Household", f1.create());
+        plotGW.writeMetadata(0, m1);
 
-        //Plot table
-        File file2 = new File(outputPath + "Plot.gdms");
-        String[] fieldNames2 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex", "constructibilityIndex"};
-        Type[] fieldTypes2 = {integ, geometry, doubl, integ, integ};
+        //Household table creation
+        File file2 = new File(outputPath + "Household.gdms");
+        GdmsWriter householdGW = new GdmsWriter(file2);
+        String[] fieldNames2 = {"householdID", "maximumWealth"};
+        Type[] fieldTypes2 = {integ, integ};
         Metadata m2 = new DefaultMetadata(fieldTypes2, fieldNames2);
-        FileSourceCreation f2 = new FileSourceCreation(file2, m2);
-        f2.setDataSourceFactory(dsf);
-        dsf.getSourceManager().register("Plot", f2.create());
+        householdGW.writeMetadata(0, m2);
 
-        //HouseholdState table
+        //Plot and Household tables filling
+        for (Parcel p : parcelList) {
+            plotGW.addValues(new Value[]{ValueFactory.createValue(p.getId()),
+                        ValueFactory.createValue(p.getTheGeom()),
+                        ValueFactory.createValue(p.getMaxDensity()),
+                        ValueFactory.createValue(p.getAmenitiesIndex()),
+                        ValueFactory.createValue(p.getConstructibilityIndex())});
+            for (Household h : p.getHouseholdList()) {
+                householdGW.addValues(new Value[]{ValueFactory.createValue(h.getId()), ValueFactory.createValue(h.getMaxWealth())});
+            }
+        }
+
+        plotGW.writeRowIndexes();
+        plotGW.writeExtent();
+        plotGW.writeWritenRowCount();
+        plotGW.close();
+        householdGW.writeRowIndexes();
+        householdGW.writeExtent();
+        householdGW.writeWritenRowCount();
+        householdGW.close();
+
+        dsf.getSourceManager().register("Plot", file1);
+        dsf.getSourceManager().register("Household", file2);
+
+        //HouseholdState table creation
         File file3 = new File(outputPath + "HouseholdState.gdms");
         String[] fieldNames3 = {"householdID", "stepNumber", "plotID", "age", "alive"};
         Type[] fieldTypes3 = {integ, integ, integ, integ, bool};
@@ -109,7 +138,7 @@ public final class Manager {
         f3.setDataSourceFactory(dsf);
         dsf.getSourceManager().register("HouseholdState", f3.create());
 
-        //PlotState table
+        //PlotState table creation
         File file4 = new File(outputPath + "PlotState.gdms");
         String[] fieldNames4 = {"plotID", "stepNumber", "buildType", "averageWealth"};
         Type[] fieldTypes4 = {integ, integ, integ, integ};
@@ -118,7 +147,7 @@ public final class Manager {
         f4.setDataSourceFactory(dsf);
         dsf.getSourceManager().register("PlotState", f4.create());
 
-        //Step table
+        //Step table creation
         File file5 = new File(outputPath + "Step.gdms");
         String[] fieldNames5 = {"stepNumber", "year", "population"};
         Type[] fieldTypes5 = {integ, integ, integ};
@@ -126,37 +155,6 @@ public final class Manager {
         FileSourceCreation f5 = new FileSourceCreation(file5, m5);
         f5.setDataSourceFactory(dsf);
         dsf.getSourceManager().register("Step", f5.create());
-    }
-
-    /**
-     * Initializes the output database with the initialization data.
-     * @throws NoSuchTableException
-     * @throws DataSourceCreationException
-     * @throws DriverException
-     * @throws NonEditableDataSourceException 
-     */
-    public void initializeOutputDatabase() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException {
-        DataSource householdDS = dsf.getDataSource("Household");
-        DataSource plotDS = dsf.getDataSource("Plot");
-        SpatialDataSourceDecorator plotSDS = new SpatialDataSourceDecorator(plotDS);
-
-        householdDS.open();
-        plotSDS.open();
-
-        for (Parcel p : parcelList) {
-            plotSDS.insertFilledRow(new Value[]{ValueFactory.createValue(p.getId()),
-                        ValueFactory.createValue(p.getTheGeom()),
-                        ValueFactory.createValue(p.getMaxDensity()),
-                        ValueFactory.createValue(p.getAmenitiesIndex()),
-                        ValueFactory.createValue(p.getConstructibilityIndex())});
-            for (Household h : p.getHouseholdList()) {
-                householdDS.insertFilledRow(new Value[]{ValueFactory.createValue(h.getId()), ValueFactory.createValue(h.getMaxWealth())});
-            }
-        }
-        householdDS.commit();
-        plotSDS.commit();
-        householdDS.close();
-        plotSDS.close();
     }
 
     /**

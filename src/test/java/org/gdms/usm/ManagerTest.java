@@ -8,6 +8,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import java.io.File;
+import java.io.IOException;
 import junit.framework.TestCase;
 import org.gdms.data.DataSource;
 import org.gdms.data.DataSourceCreationException;
@@ -143,15 +144,24 @@ public class ManagerTest extends TestCase {
         assertTrue(m.getParcelList().get(17).getHouseholdList().iterator().next().getMaxWealth() < 38767);
     }
     
-    public void testCreateOutputDatabase() throws NoSuchTableException, DataSourceCreationException, DriverException {
+    public void testInitializeOutputDatabase() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException {
         Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
-        m.createOutputDatabase();
+        m.initializeSimulation();
+        m.initializeOutputDatabase();
+        
         DataSourceFactory dsf = m.getDsf();
-        DataSource hh = dsf.getDataSource("Household");
-        DataSource hs = dsf.getDataSource("HouseholdState");
-        DataSource pl = dsf.getDataSource("Plot");
-        DataSource ps = dsf.getDataSource("PlotState");
-        DataSource st = dsf.getDataSource("Step");
+        DataSource householdDS = dsf.getDataSource("Household");
+        DataSource plotDS = dsf.getDataSource("Plot");
+        DataSource householdStateDS = dsf.getDataSource("HouseholdState");
+        DataSource plotStateDS = dsf.getDataSource("PlotState");
+        DataSource stepDS = dsf.getDataSource("Step");
+        SpatialDataSourceDecorator plotSDS = new SpatialDataSourceDecorator(plotDS);
+        
+        householdDS.open();
+        plotSDS.open();
+        householdStateDS.open();
+        plotStateDS.open();
+        stepDS.open();
         
         //Let's see if our files are created for real.
         assertTrue(new File(outputPathForTests+"Household.gdms").exists());
@@ -161,44 +171,22 @@ public class ManagerTest extends TestCase {
         assertTrue(new File(outputPathForTests+"Step.gdms").exists());
         
         //Now let's see if our tables are filled with correct metadata.
-        hh.open();
-        assertTrue(hh.getMetadata().getFieldName(1).equals("maximumWealth"));
-        hh.close();
+        assertTrue(householdDS.getMetadata().getFieldName(1).equals("maximumWealth"));
+        assertTrue(householdStateDS.getMetadata().getFieldName(3).equals("age"));
+        assertTrue(plotDS.getMetadata().getFieldName(1).equals("the_geom"));
+        assertTrue(plotDS.getMetadata().getFieldType(1).getTypeCode() == 4096);
+        assertTrue(plotStateDS.getMetadata().getFieldName(2).equals("buildType"));
+        assertTrue(stepDS.getMetadata().getFieldName(0).equals("stepNumber"));
         
-        hs.open();
-        assertTrue(hs.getMetadata().getFieldName(3).equals("age"));
-        hs.close();
-        
-        pl.open();
-        assertTrue(pl.getMetadata().getFieldName(1).equals("the_geom"));
-        assertTrue(pl.getMetadata().getFieldType(1).getTypeCode() == 4096);
-        pl.close();
-        
-        ps.open();
-        assertTrue(ps.getMetadata().getFieldName(2).equals("buildType"));
-        ps.close();
-        
-        st.open();
-        assertTrue(st.getMetadata().getFieldName(0).equals("stepNumber"));
-        st.close();
-    }
-    
-    public void testInitializeOutputDatabase() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
-        m.initializeSimulation();
-        m.createOutputDatabase();
-        m.initializeOutputDatabase();
-        
-        DataSourceFactory dsf = m.getDsf();
-        DataSource householdDS = dsf.getDataSource("Household");
-        DataSource plotDS = dsf.getDataSource("Plot");
-        SpatialDataSourceDecorator plotSDS = new SpatialDataSourceDecorator(plotDS);
-        
-        householdDS.open();
-        plotSDS.open();
+        //Now let's test the content itself.
         assertTrue(householdDS.getRowCount() == 263461);
         assertTrue(plotSDS.getRowCount() == 6978);
+        
+        //And don't forget to close your datasources, folks.
         householdDS.close();
         plotSDS.close();
+        householdStateDS.close();
+        plotStateDS.close();
+        stepDS.close();
     }
 }

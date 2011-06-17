@@ -16,6 +16,7 @@ import org.gdms.data.DataSourceFactory;
 import org.gdms.data.NoSuchTableException;
 import org.gdms.data.NonEditableDataSourceException;
 import org.gdms.data.SpatialDataSourceDecorator;
+import org.gdms.data.indexes.IndexException;
 import org.gdms.driver.DriverException;
 
 /**
@@ -53,7 +54,7 @@ public class ManagerTest extends TestCase {
         return new Household(1,25,48700);
     }
     
-    private String dataPathForTests = "src/test/resources/Basedonnesreduiterefaite4.shp";
+    private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     
@@ -144,7 +145,7 @@ public class ManagerTest extends TestCase {
         assertTrue(m.getParcelList().get(17).getHouseholdList().iterator().next().getMaxWealth() < 38767);
     }
     
-    public void testInitializeOutputDatabase() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException {
+    public void testInitializeOutputDatabase() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
         Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
         m.initializeSimulation();
         m.initializeOutputDatabase();
@@ -181,6 +182,9 @@ public class ManagerTest extends TestCase {
         //Now let's test the content itself.
         assertTrue(householdDS.getRowCount() == 263461);
         assertTrue(plotSDS.getRowCount() == 6978);
+        
+        //Did you build my spatial index, dear ?
+        assertTrue(m.getDsf().getIndexManager().isIndexed("Plot", "the_geom"));
         
         //And don't forget to close your datasources, folks.
         householdDS.close();

@@ -5,6 +5,9 @@
 package org.gdms.usm;
 
 import java.util.Map;
+import org.gdms.data.DataSourceCreationException;
+import org.gdms.data.NoSuchTableException;
+import org.gdms.driver.driverManager.DriverLoadException;
 
 /**
  *
@@ -12,7 +15,7 @@ import java.util.Map;
  */
 public abstract class NearbyBuildTypeCalculator {
 
-    private Manager myManager;
+    protected Manager myManager;
 
     /**
      * Calculates the nearby build type proportions and returns them in a map.

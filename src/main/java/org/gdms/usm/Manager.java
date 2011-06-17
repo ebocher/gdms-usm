@@ -17,15 +17,16 @@ import org.gdms.data.NoSuchTableException;
 import org.gdms.data.NonEditableDataSourceException;
 import org.gdms.data.SpatialDataSourceDecorator;
 import org.gdms.data.file.FileSourceCreation;
+import org.gdms.data.indexes.IndexException;
 import org.gdms.data.metadata.DefaultMetadata;
 import org.gdms.data.metadata.Metadata;
 import org.gdms.data.types.Type;
 import org.gdms.data.types.TypeFactory;
 import org.gdms.data.values.Value;
 import org.gdms.data.values.ValueFactory;
-import org.gdms.driver.DiskBufferDriver;
 import org.gdms.driver.DriverException;
 import org.gdms.driver.gdms.GdmsWriter;
+import org.orbisgis.progress.NullProgressMonitor;
 import org.orbisgis.utils.FileUtils;
 
 /**
@@ -83,7 +84,7 @@ public final class Manager {
      * @throws DriverException
      * @throws NonEditableDataSourceException 
      */
-    public void initializeOutputDatabase() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException, IOException {
+    public void initializeOutputDatabase() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException, IOException, IndexException {
         Type integ = TypeFactory.createType(64);
         Type geometry = TypeFactory.createType(4096);
         Type bool = TypeFactory.createType(2);
@@ -127,6 +128,10 @@ public final class Manager {
         householdGW.close();
 
         dsf.getSourceManager().register("Plot", file1);
+        if (!dsf.getIndexManager().isIndexed("Plot", "the_geom")) {
+            NullProgressMonitor npm = new NullProgressMonitor();
+            dsf.getIndexManager().buildIndex("Plot", "the_geom", npm);
+        }
         dsf.getSourceManager().register("Household", file2);
 
         //HouseholdState table creation
@@ -265,7 +270,7 @@ public final class Manager {
         long size = sds.getRowCount();
         for (int j = 0; j < size; j++) {
             //Parcel creation
-            Parcel newParcel = new Parcel(id, //id
+            Parcel newParcel = new Parcel(sds.getFieldValue(j,20).getAsInt(), //id
                     sds.getFieldValue(j, 1).getAsInt(), //buildType
                     sds.getFieldValue(j, 17).getAsDouble() / 1000000, //maxDensity (WARNING : km² input)
                     sds.getFieldValue(j, 19).getAsInt(), //amenitiesIndex

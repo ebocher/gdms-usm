@@ -5,6 +5,7 @@
 package org.gdms.usm;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -26,34 +27,57 @@ public final class BufferBuildTypeCalculator extends NearbyBuildTypeCalculator {
     }
 
     @Override
-    public Map<Integer, Double> calculate(Parcel p) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+    public Map<Integer, Double> calculate(Parcel p) throws NoSuchTableException, DataSourceCreationException, DriverException {
+        Parcel[] theNeighbours = this.getNeighbours(p);
+        HashMap<Integer, Double> buildTypeAreas = new HashMap<Integer, Double>();
+        for (int i = 0; i < theNeighbours.length; i++) {
+            if (buildTypeAreas.get(theNeighbours[i].getBuildType()) != null) {
+                buildTypeAreas.put(theNeighbours[i].getBuildType(), buildTypeAreas.get(theNeighbours[i].getBuildType()) + theNeighbours[i].getTheGeom().getArea());
+            }
+            else {
+                buildTypeAreas.put(theNeighbours[i].getBuildType(), theNeighbours[i].getTheGeom().getArea());
+            }
+        }
+        return buildTypeAreas;
     }
-    
-    public Parcel[] getNeighbors(Parcel p) throws DriverLoadException, NoSuchTableException, DataSourceCreationException, DriverException {
-        SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(myManager.getDsf().getDataSource("Plot"));
+
+    /**
+     * This method returns a Parcel array containing all the parcels neighboring a specified parcel.
+     * It uses the buffer-intersect way to determine them.
+     * @param p the considered parcel
+     * @return the neighborhood
+     * @throws DriverLoadException
+     * @throws NoSuchTableException
+     * @throws DataSourceCreationException
+     * @throws DriverException 
+     */
+    Parcel[] getNeighbours(Parcel p) throws DriverLoadException, NoSuchTableException, DataSourceCreationException, DriverException {
+        SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(getManager().getDsf().getDataSource("Plot"));
         Geometry consideredGeom = p.getTheGeom();
-        Geometry bufferedGeom = consideredGeom.buffer(10);
-        
+        Geometry bufferedGeom = consideredGeom.buffer(30);
+
+        sds.open();
         DefaultSpatialIndexQuery query = new DefaultSpatialIndexQuery(bufferedGeom.getEnvelopeInternal(), "the_geom");
         Iterator<Integer> s = sds.queryIndex(query);
         LinkedList<Integer> intersectedRowIds = new LinkedList<Integer>();
-        
+
         while (s.hasNext()) {
             int i = s.next();
             if (bufferedGeom.intersects(sds.getGeometry(i)) && i != p.getId()) {
                 intersectedRowIds.add(i);
             }
         }
-        
+
         Parcel[] intersectedParcels = new Parcel[intersectedRowIds.size()];
         Iterator<Integer> k = intersectedRowIds.iterator();
-        
+
+        int l = 0;
         while (k.hasNext()) {
             int j = k.next();
-            intersectedParcels[j] = myManager.getParcelList().get(j);
+            intersectedParcels[l] = getManager().getParcelList().get(j);
+            l++;
         }
-        
+
         return intersectedParcels;
     }
 }

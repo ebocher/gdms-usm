@@ -9,6 +9,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import org.gdms.data.DataSourceCreationException;
+import org.gdms.data.NoSuchTableException;
+import org.gdms.driver.DriverException;
 
 /**
  * Parcel representation as an object.
@@ -244,7 +247,7 @@ public final class Parcel {
         return inverseArea;
     }
 
-    public Map<Integer, Double> getNearbyBuildTypes() {
+    public Map<Integer, Double> getNearbyBuildTypeAreas() throws NoSuchTableException, DataSourceCreationException, DriverException {
         return nbtc.calculate(this);
     }
 }

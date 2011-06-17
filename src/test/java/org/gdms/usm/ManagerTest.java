@@ -54,6 +54,10 @@ public class ManagerTest extends TestCase {
         return new Household(1,25,48700);
     }
     
+    private double getMemoryUsage(Runtime r) {
+        return (r.totalMemory() - r.freeMemory())/(1024.0*1024.0);
+    }
+    
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
@@ -192,5 +196,18 @@ public class ManagerTest extends TestCase {
         householdStateDS.close();
         plotStateDS.close();
         stepDS.close();
+    }
+    
+    public void testMemoryConsumption() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
+        Runtime r = Runtime.getRuntime();
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
+        System.out.println("Initial memory consumption : "+getMemoryUsage(r));
+        m.initializeSimulation();
+        r.gc();
+        System.out.println("Memory consumption after initialization : "+getMemoryUsage(r));
+        m.initializeOutputDatabase();
+        System.out.println("Memory consumption after database initialization (without gc): "+getMemoryUsage(r));
+        r.gc();
+        System.out.println("Memory consumption after database initialization (with gc): "+getMemoryUsage(r));
     }
 }

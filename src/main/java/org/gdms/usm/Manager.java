@@ -214,6 +214,7 @@ public final class Manager {
         Household immigrant = new Household(lastCreatedHouseholdId, 20 + generator.nextInt(40), 25000 + generator.nextInt(75000));
         homelessList.add(immigrant);
         newbornList.add(immigrant);
+        householdAdded(immigrant);
         lastCreatedHouseholdId++;
     }
 
@@ -225,6 +226,7 @@ public final class Manager {
         Household newborn = new Household(lastCreatedHouseholdId, 20, parentHousehold.getMaxWealth());
         homelessList.add(newborn);
         newbornList.add(newborn);
+        householdAdded(newborn);
         lastCreatedHouseholdId++;
     }
 
@@ -234,6 +236,7 @@ public final class Manager {
      */
     public void kill(Household deceasedHousehold) {
         deceasedHousehold.moveOut();
+        householdDeleted(deceasedHousehold);
     }
 
     /**
@@ -294,6 +297,7 @@ public final class Manager {
                         1 + generator.nextInt(19),
                         (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
                 lastCreatedHouseholdId++;
+                householdAdded(newHousehold);
                 newHousehold.moveIn(newParcel);
             }
 
@@ -303,6 +307,7 @@ public final class Manager {
                         20 + generator.nextInt(20),
                         (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
                 lastCreatedHouseholdId++;
+                householdAdded(newHousehold);
                 newHousehold.moveIn(newParcel);
             }
 
@@ -312,6 +317,7 @@ public final class Manager {
                         40 + generator.nextInt(20),
                         (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
                 lastCreatedHouseholdId++;
+                householdAdded(newHousehold);
                 newHousehold.moveIn(newParcel);
             }
 
@@ -321,6 +327,7 @@ public final class Manager {
                         60 + generator.nextInt(20),
                         (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
                 lastCreatedHouseholdId++;
+                householdAdded(newHousehold);
                 newHousehold.moveIn(newParcel);
             }
             id++;
@@ -335,15 +342,49 @@ public final class Manager {
         return dsf;
     }
     
+    /**
+     * Notify method, called when a household is added.
+     * @param h the household added
+     */
     private void householdAdded(Household h) {
         for (ManagerListener ml : listeners) {
             ml.householdAdded(h);
         }
     }
     
+    /**
+     * Notify method, called when a household is deleted.
+     * @param h the deleted household 
+     */
     private void householdDeleted(Household h) {
         for (ManagerListener ml : listeners) {
             ml.householdDeleted(h);
         }
+    }
+    
+    /**
+     * Notify method, called when a household moves.
+     * @param h the moving household
+     */
+    private void householdMoved(Household h) {
+        for (ManagerListener ml : listeners) {
+            ml.householdMoved(h);
+        }
+    }
+    
+    /**
+     * Registers a ManagerListener to the listeners set.
+     * @param ml the ManagerListener to register
+     */
+    public void registerManagerListener(ManagerListener ml) {
+        listeners.add(ml);
+    }
+    
+    /**
+     * Unregisters a ManagerListener from the listeners set.
+     * @param ml 
+     */
+    public void unregisterManagerListener(ManagerListener ml) {
+        listeners.remove(ml);
     }
 }

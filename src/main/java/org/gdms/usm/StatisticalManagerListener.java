@@ -10,11 +10,33 @@ package org.gdms.usm;
  */
 public class StatisticalManagerListener {
     
-    public void householdAdded(Household h) {
-        throw new UnsupportedOperationException("Not yet implemented !");
+    private StatisticalDecisionMaker sdm;
+    
+    public StatisticalManagerListener(StatisticalDecisionMaker statdm) {
+        this.sdm = statdm;
     }
     
+    /**
+     * Tells the SDM to add the specified household to the map.
+     * @param h the added household
+     */
+    public void householdAdded(Household h) {
+        sdm.addHousehold(h);
+    }
+    
+    /**
+     * Tells the SDM to delete the specified household from the map.
+     * @param h the household to delete
+     */
     public void householdDeleted(Household h) {
-        throw new UnsupportedOperationException("Not yet implemented !");
+        sdm.deleteHousehold(h);
+    }
+    
+    /**
+     * Tells the SDM to clear the LimitedQueue of the specified household in the map.
+     * @param h the household to reset
+     */
+    public void householdMoved(Household h) {
+        sdm.getDissatisfactionMemory(h).clear();
     }
 }

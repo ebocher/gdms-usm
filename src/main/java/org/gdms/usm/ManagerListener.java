@@ -14,4 +14,5 @@ public interface ManagerListener {
     
     public void householdDeleted(Household h);
     
+    public void householdMoved(Household h);
 }

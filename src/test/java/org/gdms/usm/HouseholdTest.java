@@ -82,20 +82,6 @@ public class HouseholdTest extends TestCase {
         assertTrue(wealth == 19893);
     }
     
-    /*
-     * Tests the getWillMoveCoefficient method, in two cases :
-     * Inside and outside Nantes (codeInsee == 44109)
-     */
-    public void testGetWMC() throws ParseException {
-        Parcel nantesParcel = defaultParcelBuilderByInseeCode(44109);
-        Household nantesHousehold = new Household(2,40,50000,nantesParcel);
-        assertTrue(nantesHousehold.getWillMoveCoefficient() == 30);
-        
-        Parcel notNantesParcel = defaultParcelBuilderByInseeCode(44789);
-        Household notNantesHousehold = new Household(3,65,50000,notNantesParcel);
-        assertTrue(notNantesHousehold.getWillMoveCoefficient() == 8);
-    }
-    
     public void testGetIHC() throws ParseException {
         Parcel bigHouses = defaultParcelBuilderByBuildType(2);
         Parcel littleHouses = defaultParcelBuilderByBuildType(3);
@@ -113,42 +99,6 @@ public class HouseholdTest extends TestCase {
         assertTrue(oldRich.getIdealHousingCoefficient() == 66);
     }
     
-    public void testGetImmDiss() throws ParseException {
-        Parcel nantesParcel = defaultParcelBuilderByAmenitiesIndex(17);
-        Household nantesHousehold = new Household(2,40,50000,nantesParcel);
-        assertTrue(Math.abs(nantesHousehold.getImmediateDissatisfaction() - 1.315) < 0.000001);
-    }
-    
-    //Won't pass if the HOUSEHOLD_MEMORY exceeds 3
-    public void testAddDissQueue() {
-        Household annoyedHousehold = new Household(2,47,54789);
-        annoyedHousehold.addToDissatisfactionQueue(1.5478);
-        annoyedHousehold.addToDissatisfactionQueue(2.14752);
-        annoyedHousehold.addToDissatisfactionQueue(0.4971);
-        annoyedHousehold.addToDissatisfactionQueue(4.12765);
-        Iterator<Double> i = annoyedHousehold.getDissatisfactionMemory().iterator();
-        
-        ArrayList<Double> control = new ArrayList();
-        control.add(2.14752);
-        control.add(0.4971);
-        control.add(4.12765);
-        Iterator<Double> j = control.iterator();
-        
-        while(j.hasNext()) {
-            assertTrue(Math.abs(i.next() - j.next()) < 0.000001);
-        }
-        assertFalse(i.hasNext());
-    }
-    
-    public void testGetCumulDiss() {
-        Household annoyedHousehold = new Household(2,47,54789);
-        annoyedHousehold.addToDissatisfactionQueue(1.5478);
-        annoyedHousehold.addToDissatisfactionQueue(2.14752);
-        annoyedHousehold.addToDissatisfactionQueue(0.4971);
-        annoyedHousehold.addToDissatisfactionQueue(4.12765);
-        
-        assertTrue(Math.abs(annoyedHousehold.getCumulatedDissatisfaction() - 6.77227) < 0.000001);
-    }
     
     public void testMoveInAndOut() throws ParseException {
         Household movingHousehold = new Household(3,41,58719);

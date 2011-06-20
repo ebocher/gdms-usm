@@ -4,19 +4,15 @@
  */
 package org.gdms.usm;
 
-import java.util.Iterator;
-
 /**
  * Household representation as an object.
  * @author Thomas Salliou
  */
 public final class Household {
 
-    public static final int HOUSEHOLD_MEMORY = 3;
     private final int id;
     private int age;
     private final int maxWealth;
-    private LimitedQueue<Double> dissatisfactionMemory;
     private Parcel housingPlot;
 
     /**
@@ -28,7 +24,6 @@ public final class Household {
         this.id = id;
         this.age = a;
         this.maxWealth = mW;
-        this.dissatisfactionMemory = new LimitedQueue<Double>(HOUSEHOLD_MEMORY);
     }
 
     /**
@@ -42,7 +37,6 @@ public final class Household {
         this.age = a;
         this.maxWealth = mW;
         this.housingPlot = hP;
-        this.dissatisfactionMemory = new LimitedQueue<Double>(HOUSEHOLD_MEMORY);
     }
 
     /**
@@ -83,68 +77,6 @@ public final class Household {
         } else {
             return maxWealth;
         }
-    }
-
-    /**
-     * Gets the immediate dissatisfaction index.
-     * @return the immediate dissatisfaction index
-     */
-    public double getImmediateDissatisfaction() {
-        double amenitiesPart = (20.0 - housingPlot.getAmenitiesIndex()) / 20.0;
-        double willMoveCoeffPart = getWillMoveCoefficient() / 48.0;
-        double idealHousingCoeffPart = getIdealHousingCoefficient() / 100.0;
-
-        return amenitiesPart + willMoveCoeffPart + idealHousingCoeffPart;
-    }
-
-    /**
-     * Adds a double to the dissatisfaction limited queue.
-     */
-    public void addToDissatisfactionQueue(double immdis) {
-        dissatisfactionMemory.add(immdis);
-    }
-
-    /**
-     * Gets the cumulated dissatisfaction index, based on the dissatisfaction memory.
-     * @return the cumulated dissatisfaction index.
-     */
-    public double getCumulatedDissatisfaction() {
-        Iterator<Double> i = dissatisfactionMemory.iterator();
-        double cumulatedDissatisfaction = 0;
-        while (i.hasNext()) {
-            cumulatedDissatisfaction += i.next();
-        }
-        return cumulatedDissatisfaction;
-    }
-
-    /**
-     * Gets the willingness-to-move coefficient.
-     * @return the willingness to move coefficient
-     */
-    public int getWillMoveCoefficient() {
-        int wmc;
-
-        //is it Nantes or not
-        if (this.housingPlot.getInseeCode() == 44109) {
-            wmc = 12;
-        } else {
-            wmc = 6;
-        }
-
-        //how about the age bracket
-        if (this.age < 25) {
-            wmc += 36;
-        } else if (this.age < 35) {
-            wmc += 30;
-        } else if (this.age < 50) {
-            wmc += 18;
-        } else if (this.age < 65) {
-            wmc += 8;
-        } else {
-            wmc += 2;
-        }
-
-        return wmc;
     }
 
     /**
@@ -263,13 +195,6 @@ public final class Household {
     public void moveIn(Parcel p) {
         p.addHousehold(this);
         housingPlot = p;
-    }
-
-    /**
-     * @return the dissatisfactionMemory 
-     */
-    public LimitedQueue<Double> getDissatisfactionMemory() {
-        return dissatisfactionMemory;
     }
 
     /**

@@ -7,8 +7,10 @@ package org.gdms.usm;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.Stack;
 import org.gdms.data.DataSource;
 import org.gdms.data.DataSourceCreationException;
@@ -44,6 +46,7 @@ public final class Manager {
     private String outputPath;
     private DataSourceFactory dsf;
     private NearbyBuildTypeCalculator nbtc;
+    private Set<ManagerListener> listeners;
 
     /**
      * Builds a new Manager.
@@ -61,6 +64,7 @@ public final class Manager {
         FileUtils.deleteDir(new File(oP, "gdms"));
         this.dsf = new DataSourceFactory(oP + "gdms");
         this.nbtc = c;
+        this.listeners = new HashSet<ManagerListener>();
     }
 
     /**
@@ -329,5 +333,17 @@ public final class Manager {
      */
     public DataSourceFactory getDsf() {
         return dsf;
+    }
+    
+    private void householdAdded(Household h) {
+        for (ManagerListener ml : listeners) {
+            ml.householdAdded(h);
+        }
+    }
+    
+    private void householdDeleted(Household h) {
+        for (ManagerListener ml : listeners) {
+            ml.householdDeleted(h);
+        }
     }
 }

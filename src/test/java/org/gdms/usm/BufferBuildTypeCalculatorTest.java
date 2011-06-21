@@ -42,9 +42,11 @@ public class BufferBuildTypeCalculatorTest extends TestCase {
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
+    private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
+    private GaussParcelSelector gps = new GaussParcelSelector();
     
     public void testGetNeighbours() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Manager m = new Manager(dataPathForTests, outputPathForTests, bbtc);
+        Manager m = new Manager(dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         bbtc.setManager(m);
         m.initializeSimulation();
         m.initializeOutputDatabase();
@@ -61,7 +63,7 @@ public class BufferBuildTypeCalculatorTest extends TestCase {
     }
     
     public void testCalculate() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Manager m = new Manager(dataPathForTests, outputPathForTests, bbtc);
+        Manager m = new Manager(dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         bbtc.setManager(m);
         m.initializeSimulation();
         m.initializeOutputDatabase();

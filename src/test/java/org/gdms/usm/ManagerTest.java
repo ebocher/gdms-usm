@@ -61,9 +61,11 @@ public class ManagerTest extends TestCase {
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
+    private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
+    private GaussParcelSelector gps = new GaussParcelSelector();
     
     public void testGetPopulation() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         Parcel a = defaultParcelBuilder();
         Parcel b = defaultParcelBuilder();
         Parcel c = defaultParcelBuilder();
@@ -88,7 +90,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testKill() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         Parcel a = defaultParcelBuilder();
         Household iWantToDie = defaultHouseholdBuilder();
         iWantToDie.moveIn(a);
@@ -98,7 +100,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateImmigrant() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.createImmigrant();
         assertFalse(m.getHomelessList().empty());
         assertTrue(m.getHomelessList().peek().getAge() > 19 && m.getHomelessList().peek().getAge() < 60);
@@ -106,7 +108,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateNewborn() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         Household hornyHousehold = new Household(1,60,58741);
         m.createNewborn(hornyHousehold);
         assertFalse(m.getHomelessList().empty());
@@ -115,7 +117,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForParcels() throws DataSourceCreationException, DriverException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         
         assertTrue(m.getParcelList().size() == 6978);
@@ -132,7 +134,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForHouseholds() throws DataSourceCreationException, DriverException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         
         assertTrue(m.getParcelList().get(3).getHouseholdList().size() == 22);
@@ -150,7 +152,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeOutputDatabase() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         m.initializeOutputDatabase();
         
@@ -200,7 +202,7 @@ public class ManagerTest extends TestCase {
     
     public void testMemoryConsumption() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
         Runtime r = Runtime.getRuntime();
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc);
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         System.out.println("Initial memory consumption : "+getMemoryUsage(r));
         m.initializeSimulation();
         r.gc();

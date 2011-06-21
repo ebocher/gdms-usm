@@ -26,11 +26,7 @@ public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
     public boolean isMoving(Household h) {
         addToDissatisfactionQueue(h, getImmediateDissatisfaction(h));
         double cumulatedDissatisfaction = getCumulatedDissatisfaction(h);
-        if (cumulatedDissatisfaction > MOVING_THRESHOLD) {
-            return true;
-        } else {
-            return false;
-        }
+        return cumulatedDissatisfaction > MOVING_THRESHOLD;
     }
 
     /**
@@ -70,7 +66,7 @@ public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
     public double getImmediateDissatisfaction(Household h) {
         double amenitiesPart = (20.0 - h.getHousingPlot().getAmenitiesIndex()) / 20.0;
         double willMoveCoeffPart = getWillMoveCoefficient(h) / 48.0;
-        double idealHousingCoeffPart = h.getIdealHousingCoefficient() / 100.0;
+        double idealHousingCoeffPart = h.getMovingIHC() / 100.0;
 
         return amenitiesPart + willMoveCoeffPart + idealHousingCoeffPart;
     }
@@ -100,7 +96,7 @@ public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
      * @return the ideal housing coefficient
      */
     public int getIdealHousingCoefficient(Household h) {
-        return h.getIdealHousingCoefficient();
+        return h.getMovingIHC();
     }
 
     /**
@@ -111,10 +107,18 @@ public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
         return dissatisfactionMemories.get(h);
     }
 
+    /**
+     * Creates a new and clean dissatisfactionMemory for the specified Household.
+     * @param h the household to be added
+     */
     public void addHousehold(Household h) {
         dissatisfactionMemories.put(h, new LimitedQueue<Double>(HOUSEHOLD_MEMORY));
     }
 
+    /**
+     * Removes the specified household and its dissatisfactionMemory from the map.
+     * @param h the household to be deleted
+     */
     public void deleteHousehold(Household h) {
         dissatisfactionMemories.remove(h);
     }

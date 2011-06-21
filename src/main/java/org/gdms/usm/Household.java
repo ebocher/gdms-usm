@@ -83,14 +83,14 @@ public final class Household {
      * Gets the ideal housing coefficient.
      * @return the ideal housing coefficient
      */
-    public int getIdealHousingCoefficient() {
+    public int getIdealHousingCoefficient(Parcel p) {
 
         int ihcByWealth = 66;
         int ihcByAge = 66;
         final int wealth = this.getWealth();
         final int theAge = this.getAge();
 
-        switch (this.housingPlot.getBuildType()) {
+        switch (p.getBuildType()) {
             //Empty parcel case
             case 1:
                 throw new IllegalArgumentException("Can't get IHC for an empty parcel / the parcel should not be empty.");
@@ -176,9 +176,11 @@ public final class Household {
             default:
                 throw new IllegalArgumentException("Build type is not valid.");
         }
-
         return (ihcByAge + ihcByWealth) / 2;
-
+    }
+    
+    public int getMovingIHC() {
+        return getIdealHousingCoefficient(housingPlot);
     }
 
     /**

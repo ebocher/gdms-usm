@@ -247,7 +247,30 @@ public final class Parcel {
         return inverseArea;
     }
 
+    /**
+     * Returns a map with the total areas of each neighboring buildtype.
+     * @return 
+     * @throws NoSuchTableException
+     * @throws DataSourceCreationException
+     * @throws DriverException 
+     */
     public Map<Integer, Double> getNearbyBuildTypeAreas() throws NoSuchTableException, DataSourceCreationException, DriverException {
         return nbtc.calculate(this);
+    }
+
+    /**
+     * Returns the total proportion of superior neighboring buildtype.
+     * @return 
+     */
+    public double getUpgradePotential() throws NoSuchTableException, DataSourceCreationException, DriverException {
+        double totalArea = 0;
+        double superiorArea = 0;
+        for (int i : getNearbyBuildTypeAreas().keySet()) {
+            totalArea += getNearbyBuildTypeAreas().get(i);
+            if (i > buildType) {
+                superiorArea += getNearbyBuildTypeAreas().get(i);
+            }
+        }
+        return superiorArea / totalArea;
     }
 }

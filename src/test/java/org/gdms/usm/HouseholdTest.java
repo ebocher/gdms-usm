@@ -93,10 +93,10 @@ public class HouseholdTest extends TestCase {
         Household oldPoor = new Household(3,67,24000,flats);
         Household oldRich = new Household(4,68,148700,bigHouses);
         
-        assertTrue(youngPoor.getIdealHousingCoefficient() == 71);
-        assertTrue(youngRich.getIdealHousingCoefficient() == 77);
-        assertTrue(oldPoor.getIdealHousingCoefficient() == 65);
-        assertTrue(oldRich.getIdealHousingCoefficient() == 66);
+        assertTrue(youngPoor.getMovingIHC() == 71);
+        assertTrue(youngRich.getMovingIHC() == 77);
+        assertTrue(oldPoor.getMovingIHC() == 65);
+        assertTrue(oldRich.getMovingIHC() == 66);
     }
     
     

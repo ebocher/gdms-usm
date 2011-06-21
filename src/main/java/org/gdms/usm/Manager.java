@@ -47,6 +47,8 @@ public final class Manager {
     private DataSourceFactory dsf;
     private NearbyBuildTypeCalculator nbtc;
     private Set<ManagerListener> listeners;
+    private IsMovingDecisionMaker isMovingDM;
+    private MovingInParcelSelector movingInPS;
 
     /**
      * Builds a new Manager.
@@ -54,7 +56,7 @@ public final class Manager {
      * @param oP the output folder
      * @param c the nearby build type calculator strategy
      */
-    public Manager(String dP, String oP, NearbyBuildTypeCalculator c) {
+    public Manager(String dP, String oP, NearbyBuildTypeCalculator c, IsMovingDecisionMaker isdm, MovingInParcelSelector mips) {
         this.parcelList = new ArrayList();
         this.homelessList = new Stack();
         this.newbornList = new Stack();
@@ -65,6 +67,8 @@ public final class Manager {
         this.dsf = new DataSourceFactory(oP + "gdms");
         this.nbtc = c;
         this.listeners = new HashSet<ManagerListener>();
+        this.isMovingDM = isdm;
+        this.movingInPS = mips;
     }
 
     /**
@@ -273,11 +277,10 @@ public final class Manager {
         SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(initialBase);
         sds.open();
 
-        int id = 0;
         long size = sds.getRowCount();
         for (int j = 0; j < size; j++) {
             //Parcel creation
-            Parcel newParcel = new Parcel(sds.getFieldValue(j,20).getAsInt(), //id
+            Parcel newParcel = new Parcel(sds.getFieldValue(j, 20).getAsInt(), //id
                     sds.getFieldValue(j, 1).getAsInt(), //buildType
                     sds.getFieldValue(j, 17).getAsDouble() / 1000000, //maxDensity (WARNING : km² input)
                     sds.getFieldValue(j, 19).getAsInt(), //amenitiesIndex
@@ -330,7 +333,6 @@ public final class Manager {
                 householdAdded(newHousehold);
                 newHousehold.moveIn(newParcel);
             }
-            id++;
         }
 
     }
@@ -341,7 +343,7 @@ public final class Manager {
     public DataSourceFactory getDsf() {
         return dsf;
     }
-    
+
     /**
      * Notify method, called when a household is added.
      * @param h the household added
@@ -351,7 +353,7 @@ public final class Manager {
             ml.householdAdded(h);
         }
     }
-    
+
     /**
      * Notify method, called when a household is deleted.
      * @param h the deleted household 
@@ -361,7 +363,7 @@ public final class Manager {
             ml.householdDeleted(h);
         }
     }
-    
+
     /**
      * Notify method, called when a household moves.
      * @param h the moving household
@@ -371,7 +373,7 @@ public final class Manager {
             ml.householdMoved(h);
         }
     }
-    
+
     /**
      * Registers a ManagerListener to the listeners set.
      * @param ml the ManagerListener to register
@@ -379,12 +381,42 @@ public final class Manager {
     public void registerManagerListener(ManagerListener ml) {
         listeners.add(ml);
     }
-    
+
     /**
      * Unregisters a ManagerListener from the listeners set.
      * @param ml 
      */
     public void unregisterManagerListener(ManagerListener ml) {
         listeners.remove(ml);
+    }
+
+    /**
+     * Checks which households wants to move and moves them out. Warns the listeners when a household moves.
+     * Returns the moving households count, for statistical purposes.
+     * @return moversCount
+     */
+    public int whoIsMoving() {
+        int moversCount = 0;
+        for (Parcel p : parcelList) {
+            for (Household h : p.getHouseholdList()) {
+                if (isMovingDM.isMoving(h)) {
+                    h.moveOut();
+                    homelessList.add(h);
+                    householdMoved(h);
+                    moversCount++;
+                }
+            }
+        }
+        return moversCount;
+    }
+
+    /**
+     * Moves in every homeless household.
+     */
+    public void everybodyMovesIn() throws NoSuchTableException, DataSourceCreationException, DriverException {
+        while (!homelessList.isEmpty()) {
+            Household h = homelessList.pop();
+            h.moveIn(movingInPS.selectedParcel(h));
+        }
     }
 }

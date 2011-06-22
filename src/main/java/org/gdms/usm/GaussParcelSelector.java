@@ -18,8 +18,7 @@ import org.gdms.driver.DriverException;
  */
 public final class GaussParcelSelector extends MovingInParcelSelector {
     
-    private Manager myManager;
-    private double DEVIATION = 0.1;
+    private static final double DEVIATION = 0.1;
     
     public GaussParcelSelector() {
         //TGV
@@ -29,13 +28,12 @@ public final class GaussParcelSelector extends MovingInParcelSelector {
     public Parcel selectedParcel(Household h) throws NoSuchTableException, DataSourceCreationException, DriverException {
         List<Parcel> sortedList = getSortedList(h);
         Random generator = new Random();
-        Parcel selectedParcel = sortedList.get(- (int) (Math.abs(generator.nextGaussian())*DEVIATION*sortedList.size()) + sortedList.size());
-        return selectedParcel;
+        return sortedList.get(- (int) (Math.abs(generator.nextGaussian())*DEVIATION*sortedList.size()) + sortedList.size());
     }
     
     public List<Parcel> getSortedList(Household h) throws NoSuchTableException, DataSourceCreationException, DriverException {
         List<Parcel> sortedList = new ArrayList<Parcel>();
-        for (Parcel p : myManager.getParcelList()) {
+        for (Parcel p : this.getManager().getParcelList()) {
             if (!p.isFull() && (h.getWealth() > 0.66*p.getAverageWealth()) && !(p.getBuildType() == 1 && p.getUpgradePotential() < 0.1)) {
                 sortedList.add(p);
             }

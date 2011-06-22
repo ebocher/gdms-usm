@@ -4,13 +4,14 @@
  */
 package org.gdms.usm;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  *
  * @author Thomas Salliou
  */
-public final class GaussParcelComparator implements Comparator<Parcel> {
+public final class GaussParcelComparator implements Comparator<Parcel>, Serializable {
 
     public static final double AMENITIES_WEIGHTING = 1.0;
     public static final double CONSTRUCTIBILITY_WEIGHTING = 1.0;

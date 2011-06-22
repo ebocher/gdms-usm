@@ -8,7 +8,7 @@ package org.gdms.usm;
  *
  * @author Thomas Salliou
  */
-public final class StatisticalManagerListener {
+public final class StatisticalManagerListener implements ManagerListener {
     
     private StatisticalDecisionMaker sdm;
     

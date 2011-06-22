@@ -122,4 +122,11 @@ public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
     public void deleteHousehold(Household h) {
         dissatisfactionMemories.remove(h);
     }
+
+    /**
+     * @return the dissatisfactionMemories
+     */
+    public Map<Household, LimitedQueue<Double>> getDissatisfactionMemories() {
+        return dissatisfactionMemories;
+    }
 }

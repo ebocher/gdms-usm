@@ -7,7 +7,14 @@ package org.gdms.usm;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import java.io.File;
+import java.io.IOException;
 import junit.framework.TestCase;
+import org.gdms.data.DataSourceCreationException;
+import org.gdms.data.NoSuchTableException;
+import org.gdms.data.NonEditableDataSourceException;
+import org.gdms.data.indexes.IndexException;
+import org.gdms.driver.DriverException;
 
 /**
  *
@@ -27,9 +34,19 @@ public class ParcelTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
+        new File(outputPathForTests+"Household.gdms").delete();
+        new File(outputPathForTests+"HouseholdState.gdms").delete();
+        new File(outputPathForTests+"Plot.gdms").delete();
+        new File(outputPathForTests+"PlotState.gdms").delete();
+        new File(outputPathForTests+"Step.gdms").delete();
     }
 
+    private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
+    private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
+    private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
+    private GaussParcelSelector gps = new GaussParcelSelector();
+    
     /**
      * Builds a Parcel with given density and maxDensity, and default values for the rest, for test purposes.
      * @param density
@@ -132,6 +149,15 @@ public class ParcelTest extends TestCase {
         
         Parcel rez4 = new Parcel(8,5,1852,2000,10,50,44109,"AB",geometry, bbtc);
         assertTrue(rez4.getBuildType() == 5);
+    }
+    
+    public void testGetUpgradePotential() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
+        Manager m = new Manager(dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        bbtc.setManager(m);
+        m.initializeSimulation();
+        m.initializeOutputDatabase();
+        
+        assertTrue(Math.abs(m.getParcelList().get(412).getUpgradePotential() - 0.9658773693035715) < 0.000001);
     }
       
 }

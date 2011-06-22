@@ -15,7 +15,7 @@ import java.util.LinkedList;
  * In that case, it will automatically remove the oldest element and then add the new one.
  * @author Thomas Salliou
  */
-public class LimitedQueue<E> extends AbstractQueue<E> {
+public final class LimitedQueue<E> extends AbstractQueue<E> {
 
     private Deque<E> ll;
     private int size;

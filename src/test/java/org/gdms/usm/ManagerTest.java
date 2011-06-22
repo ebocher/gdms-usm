@@ -58,6 +58,27 @@ public class ManagerTest extends TestCase {
         return (r.totalMemory() - r.freeMemory())/(1024.0*1024.0);
     }
     
+//    private Manager instanciateDummyData() throws ParseException {
+//        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+//        WKTReader wktr = new WKTReader();
+//        Geometry g1 = wktr.read("POLYGON (0 0, 4 0, 4 4, 0 4, 0 0)");
+//        Parcel p1 = new Parcel(1,1,100,5,80,44578,"AUY",g1,bbtc);
+//        m.addParcel(p1);
+//        Geometry g2 = wktr.read("POLYGON (4 0, 10 0, 10 4, 4 4, 4 0)");
+//        Parcel p2 = new Parcel(3,3,300,14,70,44109,"OPH",g2,bbtc);
+//        m.addParcel(p2);
+//        Geometry g3 = wktr.read("POLYGON (0 4, 4 4, 4 7, 0 7, 0 4)");
+//        Parcel p3 = new Parcel(4,4,400,15,90,44710,"AHA",g3,bbtc);
+//        m.addParcel(p3);
+//        Geometry g4 = wktr.read("POLYGON (4 4, 10 4, 10 7, 4 7, 4 4)");
+//        Parcel p4 = new Parcel(2,2,200,12,80,44109,"PLU",g4,bbtc);
+//        m.addParcel(p4);
+//        Geometry g5 = wktr.read("POLYGON (10 0, 13 0, 13 7, 10 7, 10 0)");
+//        Parcel p5 = new Parcel(5,5,500,18,100,44109,"POT",g5,bbtc);
+//        m.addParcel(p5);
+//        return m;
+//    }
+    
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
@@ -212,4 +233,21 @@ public class ManagerTest extends TestCase {
         r.gc();
         System.out.println("Memory consumption after database initialization (with gc): "+getMemoryUsage(r));
     }
+    
+    public void testRegisterManagerListener() {
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        StatisticalManagerListener ml = new StatisticalManagerListener(sdm);
+        m.registerManagerListener(ml);
+        assertTrue(m.getListeners().contains(ml));
+    }
+    
+    public void testUnregisterManagerListener() {
+        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        StatisticalManagerListener ml = new StatisticalManagerListener(sdm);
+        m.registerManagerListener(ml);
+        assertTrue(m.getListeners().contains(ml));
+        m.unregisterManagerListener(ml);
+        assertTrue(m.getListeners().isEmpty());
+    }
+    
 }

@@ -419,4 +419,11 @@ public final class Manager {
             h.moveIn(movingInPS.selectedParcel(h));
         }
     }
+
+    /**
+     * @return the listeners
+     */
+    public Set<ManagerListener> getListeners() {
+        return listeners;
+    }
 }

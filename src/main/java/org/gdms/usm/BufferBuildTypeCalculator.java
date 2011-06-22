@@ -51,7 +51,7 @@ public final class BufferBuildTypeCalculator extends NearbyBuildTypeCalculator {
      * @throws DataSourceCreationException
      * @throws DriverException 
      */
-    Parcel[] getNeighbours(Parcel p) throws DriverLoadException, NoSuchTableException, DataSourceCreationException, DriverException {
+    Parcel[] getNeighbours(Parcel p) throws NoSuchTableException, DataSourceCreationException, DriverException {
         SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(getManager().getDsf().getDataSource("Plot"));
         Geometry consideredGeom = p.getTheGeom();
         Geometry bufferedGeom = consideredGeom.buffer(30);

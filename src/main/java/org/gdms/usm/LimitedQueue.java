@@ -99,15 +99,18 @@ public final class LimitedQueue<E> extends AbstractQueue<E> {
             this.i = ll.iterator();
         }
 
+        @Override
         public void remove() {
             size--;
             i.remove();
         }
 
+        @Override
         public boolean hasNext() {
             return i.hasNext();
         }
 
+        @Override
         public E next() {
             return i.next();
         }

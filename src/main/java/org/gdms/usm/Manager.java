@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -38,6 +39,7 @@ import org.orbisgis.utils.FileUtils;
  */
 public final class Manager {
 
+    private Step step;
     private List<Parcel> parcelList;
     private Stack<Household> homelessList;
     private Stack<Household> newbornList;
@@ -56,7 +58,8 @@ public final class Manager {
      * @param oP the output folder
      * @param c the nearby build type calculator strategy
      */
-    public Manager(String dP, String oP, NearbyBuildTypeCalculator c, IsMovingDecisionMaker isdm, MovingInParcelSelector mips) {
+    public Manager(Step s, String dP, String oP, NearbyBuildTypeCalculator c, IsMovingDecisionMaker isdm, MovingInParcelSelector mips) {
+        this.step = s;
         this.parcelList = new ArrayList();
         this.homelessList = new Stack();
         this.newbornList = new Stack();
@@ -179,6 +182,7 @@ public final class Manager {
         DataSource plotStateDS = dsf.getDataSource("PlotState");
         DataSource stepDS = dsf.getDataSource("Step"); //Step table part : not implemented yet.
 
+        //Inserts new household rows corresponding to the newborn
         householdDS.open();
         while (!newbornList.empty()) {
             Household h = newbornList.pop();
@@ -187,17 +191,18 @@ public final class Manager {
         householdDS.commit();
         householdDS.close();
 
+        //Saves plots and households states
         plotStateDS.open();
         householdStateDS.open();
         for (Parcel p : parcelList) {
             plotStateDS.insertFilledRow(new Value[]{ValueFactory.createValue(p.getId()),
-                        ValueFactory.createValue(1),
+                        ValueFactory.createValue(step.getStepNumber()),
                         ValueFactory.createValue(p.getBuildType()),
                         ValueFactory.createValue(p.getAverageWealth())
                     });
             for (Household hh : p.getHouseholdList()) {
                 householdStateDS.insertFilledRow(new Value[]{ValueFactory.createValue(hh.getId()),
-                            ValueFactory.createValue(1),
+                            ValueFactory.createValue(step.getStepNumber()),
                             ValueFactory.createValue(p.getId()),
                             ValueFactory.createValue(hh.getAge()),
                             ValueFactory.createValue(true)
@@ -208,6 +213,14 @@ public final class Manager {
         plotStateDS.close();
         householdStateDS.commit();
         householdStateDS.close();
+        
+        //Saves step state
+        stepDS.open();
+        stepDS.insertFilledRow(new Value[]{ValueFactory.createValue(step.getStepNumber()),
+            ValueFactory.createValue(step.getYear()),
+            ValueFactory.createValue(getPopulation())});
+        stepDS.commit();
+        stepDS.close();
     }
 
     /**
@@ -291,47 +304,50 @@ public final class Manager {
                     nbtc);                                  //nearbyBuildTypeCalculator
             this.addParcel(newParcel);
 
-            //Households creation by age bracket
-            int maxWealth = sds.getFieldValue(j, 9).getAsInt();
+            if (newParcel.getBuildType() != 7) {
 
-            //1-19 years old
-            for (int k = 0; k < sds.getFieldValue(j, 10).getAsInt(); k++) {
-                Household newHousehold = new Household(lastCreatedHouseholdId,
-                        1 + generator.nextInt(19),
-                        (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
-                lastCreatedHouseholdId++;
-                householdAdded(newHousehold);
-                newHousehold.moveIn(newParcel);
-            }
+                //Households creation by age bracket
+                int maxWealth = sds.getFieldValue(j, 9).getAsInt();
 
-            //20-39 years old
-            for (int k = 0; k < sds.getFieldValue(j, 11).getAsInt(); k++) {
-                Household newHousehold = new Household(lastCreatedHouseholdId,
-                        20 + generator.nextInt(20),
-                        (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
-                lastCreatedHouseholdId++;
-                householdAdded(newHousehold);
-                newHousehold.moveIn(newParcel);
-            }
+                //1-19 years old
+                for (int k = 0; k < sds.getFieldValue(j, 10).getAsInt(); k++) {
+                    Household newHousehold = new Household(lastCreatedHouseholdId,
+                            1 + generator.nextInt(19),
+                            (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
+                    lastCreatedHouseholdId++;
+                    householdAdded(newHousehold);
+                    newHousehold.moveIn(newParcel);
+                }
 
-            //40-59 years old
-            for (int k = 0; k < sds.getFieldValue(j, 12).getAsInt(); k++) {
-                Household newHousehold = new Household(lastCreatedHouseholdId,
-                        40 + generator.nextInt(20),
-                        (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
-                lastCreatedHouseholdId++;
-                householdAdded(newHousehold);
-                newHousehold.moveIn(newParcel);
-            }
+                //20-39 years old
+                for (int k = 0; k < sds.getFieldValue(j, 11).getAsInt(); k++) {
+                    Household newHousehold = new Household(lastCreatedHouseholdId,
+                            20 + generator.nextInt(20),
+                            (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
+                    lastCreatedHouseholdId++;
+                    householdAdded(newHousehold);
+                    newHousehold.moveIn(newParcel);
+                }
 
-            //60-79 years old
-            for (int k = 0; k < sds.getFieldValue(j, 13).getAsInt(); k++) {
-                Household newHousehold = new Household(lastCreatedHouseholdId,
-                        60 + generator.nextInt(20),
-                        (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
-                lastCreatedHouseholdId++;
-                householdAdded(newHousehold);
-                newHousehold.moveIn(newParcel);
+                //40-59 years old
+                for (int k = 0; k < sds.getFieldValue(j, 12).getAsInt(); k++) {
+                    Household newHousehold = new Household(lastCreatedHouseholdId,
+                            40 + generator.nextInt(20),
+                            (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
+                    lastCreatedHouseholdId++;
+                    householdAdded(newHousehold);
+                    newHousehold.moveIn(newParcel);
+                }
+
+                //60-79 years old
+                for (int k = 0; k < sds.getFieldValue(j, 13).getAsInt(); k++) {
+                    Household newHousehold = new Household(lastCreatedHouseholdId,
+                            60 + generator.nextInt(20),
+                            (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
+                    lastCreatedHouseholdId++;
+                    householdAdded(newHousehold);
+                    newHousehold.moveIn(newParcel);
+                }
             }
         }
 
@@ -425,5 +441,32 @@ public final class Manager {
      */
     public Set<ManagerListener> getListeners() {
         return listeners;
+    }
+
+    /**
+     * Calls grow method for every household and checks if it needs to be killed or if it needs to procreate.
+     */
+    public void everybodyGrows() {
+        LinkedList<Household> deadPeople = new LinkedList<Household>();
+        for (Parcel p : parcelList) {
+            for (Household h : p.getHouseholdList()) {
+                h.grow();
+                if (h.getAge() > 80) {
+                    deadPeople.add(h);
+                } else if (h.getAge() == 60) {
+                    createNewborn(h);
+                }
+            }
+        }
+        for (Household h : deadPeople) {
+            kill(h);
+        }
+    }
+
+    /**
+     * @return the nbtc
+     */
+    public NearbyBuildTypeCalculator getNbtc() {
+        return nbtc;
     }
 }

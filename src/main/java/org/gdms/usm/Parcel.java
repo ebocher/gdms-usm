@@ -6,7 +6,6 @@ package org.gdms.usm;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.gdms.data.DataSourceCreationException;
@@ -232,12 +231,15 @@ public final class Parcel {
      * @return the average wealth
      */
     public int getAverageWealth() {
-        Iterator<Household> i = householdList.iterator();
-        int total = 0;
-        while (i.hasNext()) {
-            total += i.next().getWealth();
+        if (this.getLocalPopulation() == 0) {
+            return 0;
+        } else {
+            int total = 0;
+            for (Household h : householdList) {
+                total += h.getWealth();
+            }
+            return total / this.getLocalPopulation();
         }
-        return total / this.getLocalPopulation();
     }
 
     /**
@@ -265,10 +267,11 @@ public final class Parcel {
     public double getUpgradePotential() throws NoSuchTableException, DataSourceCreationException, DriverException {
         double totalArea = 0;
         double superiorArea = 0;
-        for (int i : getNearbyBuildTypeAreas().keySet()) {
-            totalArea += getNearbyBuildTypeAreas().get(i);
+        Map<Integer, Double> nbta = getNearbyBuildTypeAreas();
+        for (int i : nbta.keySet()) {
+            totalArea += nbta.get(i);
             if (i > buildType) {
-                superiorArea += getNearbyBuildTypeAreas().get(i);
+                superiorArea += nbta.get(i);
             }
         }
         return superiorArea / totalArea;

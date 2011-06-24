@@ -86,7 +86,8 @@ public class ManagerTest extends TestCase {
     private GaussParcelSelector gps = new GaussParcelSelector();
     
     public void testGetPopulation() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         Parcel a = defaultParcelBuilder();
         Parcel b = defaultParcelBuilder();
         Parcel c = defaultParcelBuilder();
@@ -111,7 +112,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testKill() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         Parcel a = defaultParcelBuilder();
         Household iWantToDie = defaultHouseholdBuilder();
         iWantToDie.moveIn(a);
@@ -121,7 +123,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateImmigrant() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.createImmigrant();
         assertFalse(m.getHomelessList().empty());
         assertTrue(m.getHomelessList().peek().getAge() > 19 && m.getHomelessList().peek().getAge() < 60);
@@ -129,7 +132,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateNewborn() throws ParseException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         Household hornyHousehold = new Household(1,60,58741);
         m.createNewborn(hornyHousehold);
         assertFalse(m.getHomelessList().empty());
@@ -138,7 +142,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForParcels() throws DataSourceCreationException, DriverException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         
         assertTrue(m.getParcelList().size() == 6978);
@@ -155,14 +160,15 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForHouseholds() throws DataSourceCreationException, DriverException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         
         assertTrue(m.getParcelList().get(3).getHouseholdList().size() == 22);
         assertTrue(m.getParcelList().contains(m.getParcelList().get(3).getHouseholdList().iterator().next().getHousingPlot()));
         assertTrue(m.getParcelList().get(3).getHouseholdList().iterator().next().getMaxWealth() > 34132);
         assertTrue(m.getParcelList().get(3).getHouseholdList().iterator().next().getMaxWealth() < 41717);
-        assertTrue(m.getPopulation() == 263461);
+        assertTrue(m.getPopulation() == 262650);
         
         assertTrue(m.getParcelList().get(6977).getHouseholdList().isEmpty());
         
@@ -173,7 +179,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeOutputDatabase() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         m.initializeOutputDatabase();
         
@@ -207,7 +214,7 @@ public class ManagerTest extends TestCase {
         assertTrue(stepDS.getMetadata().getFieldName(0).equals("stepNumber"));
         
         //Now let's test the content itself.
-        assertTrue(householdDS.getRowCount() == 263461);
+        assertTrue(householdDS.getRowCount() == 262650);
         assertTrue(plotSDS.getRowCount() == 6978);
         
         //Did you build my spatial index, dear ?
@@ -223,7 +230,8 @@ public class ManagerTest extends TestCase {
     
     public void testMemoryConsumption() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
         Runtime r = Runtime.getRuntime();
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         System.out.println("Initial memory consumption : "+getMemoryUsage(r));
         m.initializeSimulation();
         r.gc();
@@ -235,14 +243,16 @@ public class ManagerTest extends TestCase {
     }
     
     public void testRegisterManagerListener() {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         StatisticalManagerListener ml = new StatisticalManagerListener(sdm);
         m.registerManagerListener(ml);
         assertTrue(m.getListeners().contains(ml));
     }
     
     public void testUnregisterManagerListener() {
-        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         StatisticalManagerListener ml = new StatisticalManagerListener(sdm);
         m.registerManagerListener(ml);
         assertTrue(m.getListeners().contains(ml));

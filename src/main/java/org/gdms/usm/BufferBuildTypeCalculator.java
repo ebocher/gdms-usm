@@ -22,8 +22,45 @@ import org.gdms.driver.driverManager.DriverLoadException;
  */
 public final class BufferBuildTypeCalculator extends NearbyBuildTypeCalculator {
 
+    private Map<Parcel,Parcel[]> neighbours;
+    
     public BufferBuildTypeCalculator() {
-        //TGV : The Great Vacuum
+        neighbours = new HashMap<Parcel,Parcel[]>();
+    }
+    
+    @Override
+    public void setNeighbours() throws DriverLoadException, NoSuchTableException, DataSourceCreationException, DriverException {
+        SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(getManager().getDsf().getDataSource("Plot"));
+        sds.open();
+        
+        for (Parcel p : getManager().getParcelList()) {
+
+            Geometry consideredGeom = p.getTheGeom();
+            Geometry bufferedGeom = consideredGeom.buffer(30);
+
+            DefaultSpatialIndexQuery query = new DefaultSpatialIndexQuery(bufferedGeom.getEnvelopeInternal(), "the_geom");
+            Iterator<Integer> s = sds.queryIndex(query);
+            LinkedList<Integer> intersectedRowIds = new LinkedList<Integer>();
+
+            while (s.hasNext()) {
+                int i = s.next();
+                if (bufferedGeom.intersects(sds.getGeometry(i)) && i != p.getId()) {
+                    intersectedRowIds.add(i);
+                }
+            }
+
+            Parcel[] intersectedParcels = new Parcel[intersectedRowIds.size()];
+            Iterator<Integer> k = intersectedRowIds.iterator();
+
+            int l = 0;
+            while (k.hasNext()) {
+                int j = k.next();
+                intersectedParcels[l] = getManager().getParcelList().get(j);
+                l++;
+            }
+
+            neighbours.put(p, intersectedParcels);
+        }
     }
 
     @Override
@@ -40,44 +77,8 @@ public final class BufferBuildTypeCalculator extends NearbyBuildTypeCalculator {
         }
         return buildTypeAreas;
     }
-
-    /**
-     * This method returns a Parcel array containing all the parcels neighboring a specified parcel.
-     * It uses the buffer-intersect way to determine them.
-     * @param p the considered parcel
-     * @return the neighborhood
-     * @throws DriverLoadException
-     * @throws NoSuchTableException
-     * @throws DataSourceCreationException
-     * @throws DriverException 
-     */
-    Parcel[] getNeighbours(Parcel p) throws NoSuchTableException, DataSourceCreationException, DriverException {
-        SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(getManager().getDsf().getDataSource("Plot"));
-        Geometry consideredGeom = p.getTheGeom();
-        Geometry bufferedGeom = consideredGeom.buffer(30);
-
-        sds.open();
-        DefaultSpatialIndexQuery query = new DefaultSpatialIndexQuery(bufferedGeom.getEnvelopeInternal(), "the_geom");
-        Iterator<Integer> s = sds.queryIndex(query);
-        LinkedList<Integer> intersectedRowIds = new LinkedList<Integer>();
-
-        while (s.hasNext()) {
-            int i = s.next();
-            if (bufferedGeom.intersects(sds.getGeometry(i)) && i != p.getId()) {
-                intersectedRowIds.add(i);
-            }
-        }
-
-        Parcel[] intersectedParcels = new Parcel[intersectedRowIds.size()];
-        Iterator<Integer> k = intersectedRowIds.iterator();
-
-        int l = 0;
-        while (k.hasNext()) {
-            int j = k.next();
-            intersectedParcels[l] = getManager().getParcelList().get(j);
-            l++;
-        }
-
-        return intersectedParcels;
+    
+    Parcel[] getNeighbours(Parcel p) {
+        return neighbours.get(p);
     }
 }

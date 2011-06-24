@@ -8,6 +8,7 @@ import java.util.Map;
 import org.gdms.data.DataSourceCreationException;
 import org.gdms.data.NoSuchTableException;
 import org.gdms.driver.DriverException;
+import org.gdms.driver.driverManager.DriverLoadException;
 
 /**
  *
@@ -23,6 +24,15 @@ public abstract class NearbyBuildTypeCalculator {
      * @return the map with proportions associated to a build type
      */
     public abstract Map<Integer, Double> calculate(Parcel p) throws NoSuchTableException, DataSourceCreationException, DriverException;
+    
+    /**
+     * Calculates the neighbours of each parcel and stores them in a map.
+     * @throws DriverLoadException
+     * @throws NoSuchTableException
+     * @throws DataSourceCreationException
+     * @throws DriverException 
+     */
+    public abstract void setNeighbours() throws DriverLoadException, NoSuchTableException, DataSourceCreationException, DriverException;
     
     /**
      * @param m the simulation manager

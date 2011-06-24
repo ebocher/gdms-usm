@@ -46,10 +46,12 @@ public class BufferBuildTypeCalculatorTest extends TestCase {
     private GaussParcelSelector gps = new GaussParcelSelector();
     
     public void testGetNeighbours() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Manager m = new Manager(dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         bbtc.setManager(m);
         m.initializeSimulation();
         m.initializeOutputDatabase();
+        m.getNbtc().setNeighbours();
         
         Parcel[] myNeighbours = bbtc.getNeighbours(m.getParcelList().get(3425));
         assertTrue(myNeighbours.length == 7);
@@ -63,10 +65,12 @@ public class BufferBuildTypeCalculatorTest extends TestCase {
     }
     
     public void testCalculate() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Manager m = new Manager(dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         bbtc.setManager(m);
         m.initializeSimulation();
         m.initializeOutputDatabase();
+        m.getNbtc().setNeighbours();
         
         Map<Integer,Double> nbta = m.getParcelList().get(3425).getNearbyBuildTypeAreas();
         assertTrue(nbta.containsKey(5));

@@ -91,10 +91,8 @@ public final class Household {
         final int theAge = this.getAge();
 
         switch (p.getBuildType()) {
-            //Empty parcel case
+            //Build type 1 and 2 case : become or is "houses with big gardens".
             case 1:
-                throw new IllegalArgumentException("Can't get IHC for an empty parcel / the parcel should not be empty.");
-            //Build type 2 case : houses with big gardens.
             case 2:
                 if (wealth < 18000) {
                     ihcByWealth = 62;
@@ -173,6 +171,8 @@ public final class Household {
                     ihcByAge = 58;
                 }
                 break;
+            case 7:
+                throw new IllegalArgumentException("Can't determine an IHC for a business park.");
             default:
                 throw new IllegalArgumentException("Build type is not valid.");
         }

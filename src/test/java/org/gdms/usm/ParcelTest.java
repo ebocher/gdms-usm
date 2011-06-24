@@ -152,10 +152,12 @@ public class ParcelTest extends TestCase {
     }
     
     public void testGetUpgradePotential() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Manager m = new Manager(dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         bbtc.setManager(m);
         m.initializeSimulation();
         m.initializeOutputDatabase();
+        m.getNbtc().setNeighbours();
         
         assertTrue(Math.abs(m.getParcelList().get(412).getUpgradePotential() - 0.9658773693035715) < 0.000001);
     }

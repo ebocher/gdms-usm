@@ -31,6 +31,15 @@ public final class GaussParcelSelector extends MovingInParcelSelector {
         return sortedList.get(- (int) (Math.abs(generator.nextGaussian())*DEVIATION*sortedList.size()) + sortedList.size() - 1);
     }
     
+    /**
+     * Filters the global parcel list according to physical considerations (parcel full or not)
+     * and household expectations. Then sorts this list (the less attractive to the most) and returns it.
+     * @param h the household who wants to move in
+     * @return the parcel list sorted
+     * @throws NoSuchTableException
+     * @throws DataSourceCreationException
+     * @throws DriverException 
+     */
     public List<Parcel> getSortedList(Household h) throws NoSuchTableException, DataSourceCreationException, DriverException {
         List<Parcel> sortedList = new ArrayList<Parcel>();
         for (Parcel p : this.getManager().getParcelList()) {

@@ -18,6 +18,9 @@ public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
     public static final int HOUSEHOLD_MEMORY = 3;
     public static final double MOVING_THRESHOLD = 30;
 
+    /**
+     * Builds a StatisticalDecisionMaker and initializes the dissatisfactionMemories in a HashMap.
+     */
     public StatisticalDecisionMaker() {
         dissatisfactionMemories = new HashMap<Household, LimitedQueue<Double>>();
     }

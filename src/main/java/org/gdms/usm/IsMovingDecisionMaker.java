@@ -12,6 +12,11 @@ public abstract class IsMovingDecisionMaker {
     
     private Manager myManager;
 
+    /**
+     * Checks if the given household wants to move or not and return true if it's the case.
+     * @param h the household who may move
+     * @return true if the household is moving out
+     */
     public abstract boolean isMoving(Household h);
     
     /**

@@ -117,6 +117,8 @@ public class ParcelTest extends TestCase {
         Household fifthHousehold = new Household(5,25,69703); //29042
         Household sixthHousehold = new Household(6,64,87012); //87012
         
+        assertTrue(parisSeizieme.getAverageWealth() == 0);
+        
         parisSeizieme.addHousehold(firstHousehold);
         parisSeizieme.addHousehold(secondHousehold);
         parisSeizieme.addHousehold(thirdHousehold);

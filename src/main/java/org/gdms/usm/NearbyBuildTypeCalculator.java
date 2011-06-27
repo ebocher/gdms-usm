@@ -32,7 +32,7 @@ public abstract class NearbyBuildTypeCalculator {
      * @throws DataSourceCreationException
      * @throws DriverException 
      */
-    public abstract void setNeighbours() throws DriverLoadException, NoSuchTableException, DataSourceCreationException, DriverException;
+    public abstract void setNeighbours() throws NoSuchTableException, DataSourceCreationException, DriverException;
     
     /**
      * @param m the simulation manager

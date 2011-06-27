@@ -18,6 +18,11 @@ public final class GaussParcelComparator implements Comparator<Parcel>, Serializ
     public static final double IDEALHOUSING_WEIGHTING = 1.0;
     private Household concernedHousehold;
     
+    /**
+     * Builds a gauss parcel comparator with the given household (every sorting 
+     * depends on the household).
+     * @param h the concerned household
+     */
     public GaussParcelComparator(Household h) {
         this.concernedHousehold = h;
     }
@@ -36,6 +41,11 @@ public final class GaussParcelComparator implements Comparator<Parcel>, Serializ
         }
     }
     
+    /**
+     * Calculates the score of a parcel according to its attraction and the household wishes.
+     * @param p the parcel to be evaluated
+     * @return the specified parcel score
+     */
     public double getParcelScore(Parcel p) {
         double amenitiesPart = AMENITIES_WEIGHTING*((double) p.getAmenitiesIndex());
         double constructibilityPart = CONSTRUCTIBILITY_WEIGHTING*((double) p.getConstructibilityIndex());
@@ -44,7 +54,13 @@ public final class GaussParcelComparator implements Comparator<Parcel>, Serializ
         return amenitiesPart+constructibilityPart+idealHousingPart;
     }
     
+    /**
+     * Tests if the two given parcels have the same score.
+     * @param p1 the first parcel
+     * @param p2 the second parcel
+     * @return true if the two parcels are as attractive as each other, false if they're not
+     */
     public boolean equals(Parcel p1, Parcel p2) {
         return (compare(p1,p2) == 0);
-    }    
+    }
 }

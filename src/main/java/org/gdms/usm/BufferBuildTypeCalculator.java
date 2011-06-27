@@ -14,7 +14,6 @@ import org.gdms.data.NoSuchTableException;
 import org.gdms.data.SpatialDataSourceDecorator;
 import org.gdms.data.indexes.DefaultSpatialIndexQuery;
 import org.gdms.driver.DriverException;
-import org.gdms.driver.driverManager.DriverLoadException;
 
 /**
  *
@@ -29,7 +28,7 @@ public final class BufferBuildTypeCalculator extends NearbyBuildTypeCalculator {
     }
     
     @Override
-    public void setNeighbours() throws DriverLoadException, NoSuchTableException, DataSourceCreationException, DriverException {
+    public void setNeighbours() throws NoSuchTableException, DataSourceCreationException, DriverException {
         SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(getManager().getDsf().getDataSource("Plot"));
         sds.open();
         
@@ -78,6 +77,11 @@ public final class BufferBuildTypeCalculator extends NearbyBuildTypeCalculator {
         return buildTypeAreas;
     }
     
+    /**
+     * Gets the list of neighbours of the specified parcel in an array.
+     * @param p the parcel
+     * @return the list of parcel's neighbours (in an array)
+     */
     Parcel[] getNeighbours(Parcel p) {
         return neighbours.get(p);
     }

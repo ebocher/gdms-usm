@@ -179,6 +179,9 @@ public final class Household {
         return (ihcByAge + ihcByWealth) / 2;
     }
     
+    /**
+     * @return the result of getIdealHousingCoefficient called for the housingPlot 
+     */
     public int getMovingIHC() {
         return getIdealHousingCoefficient(housingPlot);
     }

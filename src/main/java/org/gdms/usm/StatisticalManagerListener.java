@@ -12,6 +12,10 @@ public final class StatisticalManagerListener implements ManagerListener {
     
     private StatisticalDecisionMaker sdm;
     
+    /**
+     * Builds a StatisticalManagerListener.
+     * @param statdm 
+     */
     public StatisticalManagerListener(StatisticalDecisionMaker statdm) {
         this.sdm = statdm;
     }

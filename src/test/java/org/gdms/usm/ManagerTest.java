@@ -58,27 +58,6 @@ public class ManagerTest extends TestCase {
         return (r.totalMemory() - r.freeMemory())/(1024.0*1024.0);
     }
     
-//    private Manager instanciateDummyData() throws ParseException {
-//        Manager m = new Manager(dataPathForTests,outputPathForTests, bbtc, sdm, gps);
-//        WKTReader wktr = new WKTReader();
-//        Geometry g1 = wktr.read("POLYGON (0 0, 4 0, 4 4, 0 4, 0 0)");
-//        Parcel p1 = new Parcel(1,1,100,5,80,44578,"AUY",g1,bbtc);
-//        m.addParcel(p1);
-//        Geometry g2 = wktr.read("POLYGON (4 0, 10 0, 10 4, 4 4, 4 0)");
-//        Parcel p2 = new Parcel(3,3,300,14,70,44109,"OPH",g2,bbtc);
-//        m.addParcel(p2);
-//        Geometry g3 = wktr.read("POLYGON (0 4, 4 4, 4 7, 0 7, 0 4)");
-//        Parcel p3 = new Parcel(4,4,400,15,90,44710,"AHA",g3,bbtc);
-//        m.addParcel(p3);
-//        Geometry g4 = wktr.read("POLYGON (4 4, 10 4, 10 7, 4 7, 4 4)");
-//        Parcel p4 = new Parcel(2,2,200,12,80,44109,"PLU",g4,bbtc);
-//        m.addParcel(p4);
-//        Geometry g5 = wktr.read("POLYGON (10 0, 13 0, 13 7, 10 7, 10 0)");
-//        Parcel p5 = new Parcel(5,5,500,18,100,44109,"POT",g5,bbtc);
-//        m.addParcel(p5);
-//        return m;
-//    }
-    
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
@@ -86,7 +65,7 @@ public class ManagerTest extends TestCase {
     private GaussParcelSelector gps = new GaussParcelSelector();
     
     public void testGetPopulation() throws ParseException {
-        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         Parcel a = defaultParcelBuilder();
         Parcel b = defaultParcelBuilder();
@@ -112,7 +91,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testKill() throws ParseException {
-        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         Parcel a = defaultParcelBuilder();
         Household iWantToDie = defaultHouseholdBuilder();
@@ -123,7 +102,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateImmigrant() throws ParseException {
-        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.createImmigrant();
         assertFalse(m.getHomelessList().empty());
@@ -132,7 +111,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateNewborn() throws ParseException {
-        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         Household hornyHousehold = new Household(1,60,58741);
         m.createNewborn(hornyHousehold);
@@ -142,7 +121,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForParcels() throws DataSourceCreationException, DriverException {
-        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         
@@ -160,7 +139,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForHouseholds() throws DataSourceCreationException, DriverException {
-        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         
@@ -179,7 +158,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeOutputDatabase() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         m.initializeOutputDatabase();
@@ -230,7 +209,7 @@ public class ManagerTest extends TestCase {
     
     public void testMemoryConsumption() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
         Runtime r = Runtime.getRuntime();
-        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         System.out.println("Initial memory consumption : "+getMemoryUsage(r));
         m.initializeSimulation();
@@ -243,7 +222,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testRegisterManagerListener() {
-        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         StatisticalManagerListener ml = new StatisticalManagerListener(sdm);
         m.registerManagerListener(ml);
@@ -251,7 +230,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testUnregisterManagerListener() {
-        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         StatisticalManagerListener ml = new StatisticalManagerListener(sdm);
         m.registerManagerListener(ml);
@@ -260,4 +239,43 @@ public class ManagerTest extends TestCase {
         assertTrue(m.getListeners().isEmpty());
     }
     
+    public void testSaveState() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        m.initializeSimulation();
+        m.initializeOutputDatabase();
+        m.createNewborn(new Household(m.getPopulation(), 60, 47478));
+        m.saveState();
+        
+        DataSourceFactory dsf = new DataSourceFactory();
+        DataSource householdDS = dsf.getDataSource(new File(outputPathForTests+"Household.gdms"));
+        householdDS.open();
+        assertTrue(householdDS.getFieldValue(m.getPopulation(), 0).getAsInt() == m.getPopulation());
+        assertTrue(householdDS.getFieldValue(m.getPopulation(), 1).getAsInt() == 47478);
+        householdDS.close();
+        
+        DataSource plotStateDS = dsf.getDataSource(new File(outputPathForTests+"PlotState.gdms"));
+        plotStateDS.open();
+        assertTrue(plotStateDS.getFieldValue(4157, 0).getAsInt() == 4157);
+        assertTrue(plotStateDS.getFieldValue(4157, 1).getAsInt() == 0);
+        assertTrue(plotStateDS.getFieldValue(4157, 2).getAsInt() == 1);
+        assertTrue(plotStateDS.getFieldValue(4157, 3).getAsInt() == 0);
+        plotStateDS.close();
+        
+        DataSource householdStateDS = dsf.getDataSource(new File(outputPathForTests+"HouseholdState.gdms"));
+        householdStateDS.open();
+        assertTrue(householdStateDS.getFieldValue(84125, 1).getAsInt() == 0);
+        assertTrue(householdStateDS.getFieldValue(84125, 2).getAsInt() == 2518);
+        assertTrue(householdStateDS.getFieldValue(84125, 3).getAsInt() < 81);
+        assertTrue(householdStateDS.getFieldValue(84125, 3).getAsInt() > 0);
+        assertTrue(householdStateDS.getFieldValue(84125, 4).getAsBoolean());
+        householdStateDS.close();
+        
+        DataSource stepDS = dsf.getDataSource(new File(outputPathForTests+"Step.gdms"));
+        stepDS.open();
+        assertTrue(stepDS.getFieldValue(0,0).getAsInt() == 0);
+        assertTrue(stepDS.getFieldValue(0,1).getAsInt() == 2000);
+        assertTrue(stepDS.getFieldValue(0,2).getAsInt() == 262650);
+        stepDS.close();
+    }    
 }

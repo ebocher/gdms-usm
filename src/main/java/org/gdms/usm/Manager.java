@@ -469,4 +469,18 @@ public final class Manager {
     public NearbyBuildTypeCalculator getNbtc() {
         return nbtc;
     }
+
+    /**
+     * @return the isMovingDM
+     */
+    public IsMovingDecisionMaker getIsMovingDM() {
+        return isMovingDM;
+    }
+
+    /**
+     * @return the movingInPS
+     */
+    public MovingInParcelSelector getMovingInPS() {
+        return movingInPS;
+    }
 }

@@ -108,4 +108,11 @@ public final class Step {
     public int getYear() {
         return year;
     }
+
+    /**
+     * @return the theManager
+     */
+    public Manager getManager() {
+        return theManager;
+    }
 }

@@ -414,13 +414,17 @@ public final class Manager {
     public int whoIsMoving() {
         int moversCount = 0;
         for (Parcel p : parcelList) {
+            Stack<Household> areGoingToMove = new Stack<Household>();
             for (Household h : p.getHouseholdList()) {
                 if (isMovingDM.isMoving(h)) {
-                    h.moveOut();
-                    homelessList.add(h);
-                    householdMoved(h);
-                    moversCount++;
+                    areGoingToMove.add(h);
                 }
+            }
+            for (Household h : areGoingToMove) {
+                h.moveOut();
+                homelessList.add(h);
+                householdMoved(h);
+                moversCount++;
             }
         }
         return moversCount;
@@ -482,5 +486,12 @@ public final class Manager {
      */
     public MovingInParcelSelector getMovingInPS() {
         return movingInPS;
+    }
+
+    /**
+     * @return the newbornList
+     */
+    public Stack<Household> getNewbornList() {
+        return newbornList;
     }
 }

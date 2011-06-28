@@ -9,14 +9,10 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
-import org.gdms.data.DataSource;
 import org.gdms.data.DataSourceCreationException;
-import org.gdms.data.DataSourceFactory;
 import org.gdms.data.NoSuchTableException;
-import org.gdms.data.SpatialDataSourceDecorator;
 import org.gdms.data.metadata.DefaultMetadata;
 import org.gdms.data.metadata.Metadata;
 import org.gdms.data.types.Type;
@@ -103,5 +99,16 @@ public class GaussParcelSelectorTest extends TestCase {
         assertTrue(sortedList.get(2).getId() == 5);
         assertTrue(sortedList.get(3).getId() == 1);
         assertTrue(sortedList.get(4).getId() == 2);
+    }
+    
+    public void testSelectedParcel() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException, IOException, NoSuchTableException {
+        Step s = instanciateDummyParcels();
+        Household h = new Household(1, 45, 62000);
+        Manager m = s.getManager();
+        m.getNbtc().setNeighbours();
+        GaussParcelSelector gp = (GaussParcelSelector) m.getMovingInPS();
+        Parcel p = gp.selectedParcel(h);
+        
+        assertTrue(p.getId() == 2 || p.getId() == 1 || p.getId() == 5 || p.getId() == 3 || p.getId() == 4);
     }
 }

@@ -17,7 +17,13 @@ import org.gdms.data.NoSuchTableException;
 import org.gdms.data.NonEditableDataSourceException;
 import org.gdms.data.SpatialDataSourceDecorator;
 import org.gdms.data.indexes.IndexException;
+import org.gdms.data.metadata.DefaultMetadata;
+import org.gdms.data.metadata.Metadata;
+import org.gdms.data.types.Type;
+import org.gdms.data.types.TypeFactory;
 import org.gdms.driver.DriverException;
+import org.gdms.driver.driverManager.DriverLoadException;
+import org.gdms.driver.gdms.GdmsWriter;
 
 /**
  *
@@ -44,6 +50,44 @@ public class ManagerTest extends TestCase {
         new File(outputPathForTests+"Step.gdms").delete();
     }
 
+    private Step instanciateDummyParcels() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException, IOException {
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        WKTReader wktr = new WKTReader();
+        Geometry g1 = wktr.read("POLYGON ((0 0, 4 0, 4 4, 0 4, 0 0))");
+        Parcel p1 = new Parcel(1,1,100,5,80,44578,"AUY",g1,bbtc);
+        m.addParcel(p1);
+        Geometry g2 = wktr.read("POLYGON ((4 0, 10 0, 10 4, 4 4, 4 0))");
+        Parcel p2 = new Parcel(3,3,300,14,70,44109,"OPH",g2,bbtc);
+        m.addParcel(p2);
+        Geometry g3 = wktr.read("POLYGON ((0 4, 4 4, 4 7, 0 7, 0 4))");
+        Parcel p3 = new Parcel(4,4,400,15,90,44710,"AHA",g3,bbtc);
+        m.addParcel(p3);
+        Geometry g4 = wktr.read("POLYGON ((4 4, 10 4, 10 7, 4 7, 4 4))");
+        Parcel p4 = new Parcel(2,2,200,12,80,44109,"PLU",g4,bbtc);
+        m.addParcel(p4);
+        Geometry g5 = wktr.read("POLYGON ((10 0, 13 0, 13 7, 10 7, 10 0))");
+        Parcel p5 = new Parcel(5,5,500,18,100,44109,"POT",g5,bbtc);
+        m.addParcel(p5);
+        Geometry g7 = wktr.read("POLYGON ((13 0, 16 0, 16 7, 13 7, 13 0))");
+        Parcel p7 = new Parcel(7,7,0,10,47,44780,"PCT",g7,bbtc);
+        m.addParcel(p7);
+        
+        File file1 = new File(outputPathForTests + "MiniPlot.gdms");
+        GdmsWriter plotGW = new GdmsWriter(file1);
+        String[] fieldNames1 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex", "constructibilityIndex"};
+        Type[] fieldTypes1 = {TypeFactory.createType(Type.INT), TypeFactory.createType(Type.GEOMETRY), TypeFactory.createType(Type.DOUBLE), TypeFactory.createType(Type.INT), TypeFactory.createType(Type.INT)};
+        Metadata m1 = new DefaultMetadata(fieldTypes1, fieldNames1);
+        plotGW.writeMetadata(0, m1);
+        plotGW.writeRowIndexes();
+        plotGW.writeExtent();
+        plotGW.writeWritenRowCount();
+        plotGW.close();
+        m.getDsf().getSourceManager().register("Plot", file1);
+        
+        return s;
+    }
+    
     private Parcel defaultParcelBuilder() throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
@@ -278,4 +322,78 @@ public class ManagerTest extends TestCase {
         assertTrue(stepDS.getFieldValue(0,2).getAsInt() == 262650);
         stepDS.close();
     }    
+    
+    public void testEverybodyGrows() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException, IOException {
+        Step s = instanciateDummyParcels();
+        Manager m = s.getManager();
+        
+        Household adult = new Household(1,40,48000);
+        adult.moveIn(m.getParcelList().get(2));
+        Household pregnant = new Household(2,59,48000);
+        pregnant.moveIn(m.getParcelList().get(3));
+        Household terminalPhaseCancer = new Household(3,80,48000);
+        terminalPhaseCancer.moveIn(m.getParcelList().get(4));
+        
+        m.everybodyGrows();
+        
+        //Age incrementation, terminalPhaseCancer should not exist anymore
+        //but there it has a reference here in the test, so...
+        assertTrue(adult.getAge() == 41);
+        assertTrue(pregnant.getAge() == 60);
+        assertTrue(terminalPhaseCancer.getAge() == 81);
+        
+        //Hip hip hurray for the newborn !
+        assertFalse(m.getNewbornList().empty());
+        assertTrue(m.getNewbornList().peek().getAge() == 20);
+        assertTrue(m.getNewbornList().peek().getMaxWealth() == 48000);
+        
+        //And now for something completely different... and gloomy. Die !
+        assertTrue(m.getHomelessList().peek().getAge() == 20);
+        assertTrue(m.getParcelList().get(4).getHouseholdList().isEmpty());
+    }
+    
+    public void testWhoIsMoving() throws ParseException {
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        Parcel householdHub = defaultParcelBuilder();
+        m.addParcel(householdHub);
+        Household iWannaMove = new Household(5,27,87000);
+        Household iWannaMove2 = new Household(12,47,98000);
+        Household iWannaStay = new Household(6,59,48701);
+        iWannaMove.moveIn(householdHub);
+        iWannaMove2.moveIn(householdHub);
+        iWannaStay.moveIn(householdHub);
+        sdm.addHousehold(iWannaMove);
+        sdm.addHousehold(iWannaMove2);
+        sdm.addHousehold(iWannaStay);
+        sdm.addToDissatisfactionQueue(iWannaMove, 29.9);
+        sdm.addToDissatisfactionQueue(iWannaMove2, 29.9);
+        
+        int moversCount = m.whoIsMoving();
+        assertTrue(moversCount == 2);
+        assertTrue(householdHub.getHouseholdList().size() == 1);
+        assertTrue(m.getHomelessList().size() == 2);
+    }
+    
+    public void testEverybodyMovesIn() throws ParseException, NoSuchTableException, DataSourceCreationException, DriverException {
+        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        Parcel householdHub = defaultParcelBuilder();
+        m.addParcel(householdHub);
+        Household homeless1 = new Household(5,27,60000);
+        Household homeless2 = new Household(12,47,40000);
+        Household homeless3 = new Household(6,59,30000);
+        Household homeless4 = new Household(4,47,40000);
+        m.getHomelessList().add(homeless1);
+        m.getHomelessList().add(homeless2);
+        m.getHomelessList().add(homeless3);
+        m.getHomelessList().add(homeless4);
+        m.everybodyMovesIn();
+        assertTrue(m.getHomelessList().empty());
+        assertTrue(householdHub.getHouseholdList().size() == 4);
+        assertTrue(householdHub.getHouseholdList().contains(homeless1));
+        assertTrue(householdHub.getHouseholdList().contains(homeless2));
+        assertTrue(householdHub.getHouseholdList().contains(homeless3));
+        assertTrue(householdHub.getHouseholdList().contains(homeless4));
+    }
 }

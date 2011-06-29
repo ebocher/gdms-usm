@@ -24,7 +24,7 @@ public final class Step {
     private Manager theManager;
 
     /**
-     * Builds the Step object.
+     * Builds the Step object for a StatisticalDecisionMaker strategy.
      * @param y the initial year
      * @param dP the initial data path
      * @param oP the output data path
@@ -38,6 +38,25 @@ public final class Step {
         year = y;
         StatisticalManagerListener sml = new StatisticalManagerListener(sdm);
         theManager.registerManagerListener(sml);
+        sdm.setManager(theManager);
+        mips.setManager(theManager);
+        c.setManager(theManager);
+    }
+    
+    /**
+     * Builds the Step object for a SchellingDecisionMaker strategy.
+     * @param y the initial year
+     * @param dP the initial data path
+     * @param oP the output data path
+     * @param c the nearby build type calculator
+     * @param sdm the schelling decision maker
+     * @param mips the moving in parcel selector
+     */
+    public Step(int y, String dP, String oP, NearbyBuildTypeCalculator c, SchellingDecisionMaker sdm, MovingInParcelSelector mips) {
+        theManager = new Manager(this, dP, oP, c, sdm, mips);
+        stepNumber = 0;
+        year = y;
+        sdm.setManager(theManager);
         mips.setManager(theManager);
         c.setManager(theManager);
     }

@@ -77,11 +77,7 @@ public final class BufferBuildTypeCalculator extends NearbyBuildTypeCalculator {
         return buildTypeAreas;
     }
     
-    /**
-     * Gets the list of neighbours of the specified parcel in an array.
-     * @param p the parcel
-     * @return the list of parcel's neighbours (in an array)
-     */
+    @Override
     Parcel[] getNeighbours(Parcel p) {
         return neighbours.get(p);
     }

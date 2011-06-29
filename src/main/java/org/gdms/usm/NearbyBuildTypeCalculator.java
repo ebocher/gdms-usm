@@ -35,6 +35,13 @@ public abstract class NearbyBuildTypeCalculator {
     public abstract void setNeighbours() throws NoSuchTableException, DataSourceCreationException, DriverException;
     
     /**
+     * Gets the list of neighbours of the specified parcel in an array.
+     * @param p the parcel
+     * @return the list of parcel's neighbours (in an array)
+     */
+    abstract Parcel[] getNeighbours(Parcel p);
+    
+    /**
      * @param m the simulation manager
      */
     public final void setManager(Manager m) {

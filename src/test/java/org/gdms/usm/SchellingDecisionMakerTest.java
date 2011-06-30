@@ -22,7 +22,6 @@ import org.gdms.data.values.ValueFactory;
 import org.gdms.driver.DriverException;
 import org.gdms.driver.driverManager.DriverLoadException;
 import org.gdms.driver.gdms.GdmsWriter;
-import org.orbisgis.progress.NullProgressMonitor;
 
 /**
  *
@@ -162,6 +161,6 @@ public class SchellingDecisionMakerTest extends TestCase {
         Household helloThere = new Household(11,60,50000);
         helloThere.moveIn(m.getParcelList().get(4));
         
-        assertTrue(sdm.isMoving(helloThere));
+        assertFalse(sdm.isMoving(helloThere));
     }
 }

@@ -431,12 +431,15 @@ public final class Manager {
     }
 
     /**
-     * Moves in every homeless household.
+     * Moves in every homeless household and updates build type if necessary.
      */
     public void everybodyMovesIn() throws NoSuchTableException, DataSourceCreationException, DriverException {
         while (!homelessList.isEmpty()) {
             Household h = homelessList.pop();
             h.moveIn(movingInPS.selectedParcel(h));
+        }
+        for (Parcel p : parcelList) {
+            p.updateBuildType();
         }
     }
 

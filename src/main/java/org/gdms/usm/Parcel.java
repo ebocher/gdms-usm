@@ -118,15 +118,15 @@ public final class Parcel {
                     buildType = 2;
                 }
             case 2:
-                if (density > 155) {
+                if (density > 0.000155) {
                     buildType = 3;
                 }
             case 3:
-                if (density > 1000) {
+                if (density > 0.001000) {
                     buildType = 4;
                 }
             case 4:
-                if (density > 1466) {
+                if (density > 0.001466) {
                     buildType = 5;
                 }
             case 5:

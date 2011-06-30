@@ -10,7 +10,7 @@ package org.gdms.usm;
  */
 public class SchellingDecisionMaker extends IsMovingDecisionMaker {
     
-    public static final double SEGREGATION_THRESHOLD = 0.5;
+    public static final double SEGREGATION_THRESHOLD = 0.8;
     public static final double SEGREGATION_TOLERANCE = 0.2;
     
     public SchellingDecisionMaker() {
@@ -19,12 +19,7 @@ public class SchellingDecisionMaker extends IsMovingDecisionMaker {
 
     @Override
     public boolean isMoving(Household h) {
-        if (getSegregationPart(h) > SEGREGATION_THRESHOLD) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return getSegregationPart(h) > SEGREGATION_THRESHOLD;
     }
     
     /**

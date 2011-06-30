@@ -20,7 +20,7 @@ public final class Step {
     private int stepNumber;
     private int year;
     public static final int IMMIGRANT_NUMBER = 7000;
-    public static final int NUMBER_OF_TURNS = 3;
+    public static final int NUMBER_OF_TURNS = 1;
     private Manager theManager;
 
     /**

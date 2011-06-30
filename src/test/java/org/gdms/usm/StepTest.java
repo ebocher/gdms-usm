@@ -45,6 +45,7 @@ public class StepTest extends TestCase {
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
+    private SchellingDecisionMaker schdm = new SchellingDecisionMaker();
     private GaussParcelSelector gps = new GaussParcelSelector();
     
     public void testInitialize() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {

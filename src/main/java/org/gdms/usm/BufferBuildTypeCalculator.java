@@ -22,6 +22,7 @@ import org.gdms.driver.DriverException;
 public final class BufferBuildTypeCalculator extends NearbyBuildTypeCalculator {
 
     private Map<Parcel,Parcel[]> neighbours;
+    public static final int BUFFER_SIZE = 30;
     
     public BufferBuildTypeCalculator() {
         neighbours = new HashMap<Parcel,Parcel[]>();
@@ -35,7 +36,7 @@ public final class BufferBuildTypeCalculator extends NearbyBuildTypeCalculator {
         for (Parcel p : getManager().getParcelList()) {
 
             Geometry consideredGeom = p.getTheGeom();
-            Geometry bufferedGeom = consideredGeom.buffer(30);
+            Geometry bufferedGeom = consideredGeom.buffer(BUFFER_SIZE);
 
             DefaultSpatialIndexQuery query = new DefaultSpatialIndexQuery(bufferedGeom.getEnvelopeInternal(), "the_geom");
             Iterator<Integer> s = sds.queryIndex(query);

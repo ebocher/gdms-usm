@@ -134,22 +134,22 @@ public class ParcelTest extends TestCase {
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("POLYGON((0 0, 0 10, 10 10, 10 0, 0 0))");
         
-        Parcel rez = new Parcel(8,1,2,20,10,50,44109,"AB",geometry, bbtc);
+        Parcel rez = new Parcel(8,1,0.000002,20,10,50,44109,"AB",geometry, bbtc);
         
         rez.updateBuildType();
         assertTrue(rez.getBuildType() == 2);
         rez.updateBuildType();
         assertTrue(rez.getBuildType() == 2);
         
-        Parcel rez2 = new Parcel(8,2,158,2000,10,50,44109,"AB",geometry, bbtc);
+        Parcel rez2 = new Parcel(8,2,0.000158,2000,10,50,44109,"AB",geometry, bbtc);
         rez2.updateBuildType();
         assertTrue(rez2.getBuildType() == 3);
         
-        Parcel rez3 = new Parcel(8,1,1200,2000,10,50,44109,"AB",geometry, bbtc);
+        Parcel rez3 = new Parcel(8,1,0.001200,2000,10,50,44109,"AB",geometry, bbtc);
         rez3.updateBuildType();
         assertTrue(rez3.getBuildType() == 4);
         
-        Parcel rez4 = new Parcel(8,5,1852,2000,10,50,44109,"AB",geometry, bbtc);
+        Parcel rez4 = new Parcel(8,5,0.001852,2000,10,50,44109,"AB",geometry, bbtc);
         assertTrue(rez4.getBuildType() == 5);
     }
     

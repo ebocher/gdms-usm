@@ -8,7 +8,7 @@ package org.gdms.usm;
  *
  * @author Thomas Salliou
  */
-public class SchellingDecisionMaker extends IsMovingDecisionMaker {
+public final class SchellingDecisionMaker extends IsMovingDecisionMaker {
     
     public static final double SEGREGATION_THRESHOLD = 0.8;
     public static final double SEGREGATION_TOLERANCE = 0.2;

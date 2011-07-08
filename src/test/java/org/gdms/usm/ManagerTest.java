@@ -174,7 +174,7 @@ public class ManagerTest extends TestCase {
         assertTrue(m.getParcelList().get(3).getBuildType() == 2);
         System.out.println(m.getParcelList().get(3).getInverseArea());
         System.out.println(m.getParcelList().get(3).getDensity());
-        assertTrue(Math.abs(m.getParcelList().get(3).getDensity()- 0.000177042857497) < 0.000000001);
+        assertTrue(Math.abs(m.getParcelList().get(3).getDensity()- 0.000128758441459) < 0.000000001);
         assertTrue(Math.abs(m.getParcelList().get(3).getMaxDensity()- 0.000155) < 0.000000001);
         assertTrue(m.getParcelList().get(3).getAmenitiesIndex() == 13);
         assertTrue(m.getParcelList().get(3).getConstructibilityIndex() == 16);
@@ -187,15 +187,15 @@ public class ManagerTest extends TestCase {
         Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         
-        assertTrue(m.getParcelList().get(3).getHouseholdList().size() == 22);
+        assertTrue(m.getParcelList().get(3).getHouseholdList().size() == 16);
         assertTrue(m.getParcelList().contains(m.getParcelList().get(3).getHouseholdList().iterator().next().getHousingPlot()));
         assertTrue(m.getParcelList().get(3).getHouseholdList().iterator().next().getMaxWealth() > 34132);
         assertTrue(m.getParcelList().get(3).getHouseholdList().iterator().next().getMaxWealth() < 41717);
-        assertTrue(m.getPopulation() == 262650);
+        assertTrue(m.getPopulation() == 193214);
         
         assertTrue(m.getParcelList().get(6977).getHouseholdList().isEmpty());
         
-        assertTrue(m.getParcelList().get(17).getHouseholdList().size() == 34);
+        assertTrue(m.getParcelList().get(17).getHouseholdList().size() == 23);
         assertTrue(m.getParcelList().contains(m.getParcelList().get(17).getHouseholdList().iterator().next().getHousingPlot()));
         assertTrue(m.getParcelList().get(17).getHouseholdList().iterator().next().getMaxWealth() > 31718);
         assertTrue(m.getParcelList().get(17).getHouseholdList().iterator().next().getMaxWealth() < 38767);
@@ -237,7 +237,7 @@ public class ManagerTest extends TestCase {
         assertTrue(stepDS.getMetadata().getFieldName(0).equals("stepNumber"));
         
         //Now let's test the content itself.
-        assertTrue(householdDS.getRowCount() == 262650);
+        assertTrue(householdDS.getRowCount() == 193214);
         assertTrue(plotSDS.getRowCount() == 6978);
         
         //Did you build my spatial index, dear ?
@@ -309,9 +309,9 @@ public class ManagerTest extends TestCase {
         DataSource householdStateDS = dsf.getDataSource(new File(outputPathForTests+"HouseholdState.gdms"));
         householdStateDS.open();
         assertTrue(householdStateDS.getFieldValue(84125, 1).getAsInt() == 0);
-        assertTrue(householdStateDS.getFieldValue(84125, 2).getAsInt() == 2518);
+        assertTrue(householdStateDS.getFieldValue(84125, 2).getAsInt() == 3466);
         assertTrue(householdStateDS.getFieldValue(84125, 3).getAsInt() < 81);
-        assertTrue(householdStateDS.getFieldValue(84125, 3).getAsInt() > 0);
+        assertTrue(householdStateDS.getFieldValue(84125, 3).getAsInt() > 19);
         assertTrue(householdStateDS.getFieldValue(84125, 4).getAsBoolean());
         householdStateDS.close();
         
@@ -319,7 +319,7 @@ public class ManagerTest extends TestCase {
         stepDS.open();
         assertTrue(stepDS.getFieldValue(0,0).getAsInt() == 0);
         assertTrue(stepDS.getFieldValue(0,1).getAsInt() == 2000);
-        assertTrue(stepDS.getFieldValue(0,2).getAsInt() == 262650);
+        assertTrue(stepDS.getFieldValue(0,2).getAsInt() == 193214);
         stepDS.close();
     }    
     

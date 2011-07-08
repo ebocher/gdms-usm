@@ -8,7 +8,6 @@ import java.util.Map;
 import org.gdms.data.DataSourceCreationException;
 import org.gdms.data.NoSuchTableException;
 import org.gdms.driver.DriverException;
-import org.gdms.driver.driverManager.DriverLoadException;
 
 /**
  *

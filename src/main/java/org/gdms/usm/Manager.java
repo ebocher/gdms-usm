@@ -308,17 +308,7 @@ public final class Manager {
 
                 //Households creation by age bracket
                 int maxWealth = sds.getFieldValue(j, 9).getAsInt();
-
-                //1-19 years old
-                for (int k = 0; k < sds.getFieldValue(j, 10).getAsInt(); k++) {
-                    Household newHousehold = new Household(lastCreatedHouseholdId,
-                            1 + generator.nextInt(19),
-                            (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
-                    lastCreatedHouseholdId++;
-                    householdAdded(newHousehold);
-                    newHousehold.moveIn(newParcel);
-                }
-
+                
                 //20-39 years old
                 for (int k = 0; k < sds.getFieldValue(j, 11).getAsInt(); k++) {
                     Household newHousehold = new Household(lastCreatedHouseholdId,

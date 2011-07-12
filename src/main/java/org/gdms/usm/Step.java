@@ -19,8 +19,6 @@ public final class Step {
 
     private int stepNumber;
     private int year;
-    public static final int IMMIGRANT_NUMBER = 7000;
-    public static final int NUMBER_OF_TURNS = 1;
     private Manager theManager;
 
     /**
@@ -32,8 +30,8 @@ public final class Step {
      * @param sdm the statistical decision maker
      * @param mips the moving in parcel selector
      */
-    public Step(int y, String dP, String oP, NearbyBuildTypeCalculator c, StatisticalDecisionMaker sdm, MovingInParcelSelector mips) {
-        theManager = new Manager(this, dP, oP, c, sdm, mips);
+    public Step(int y, String dP, String gP, String oP, NearbyBuildTypeCalculator c, StatisticalDecisionMaker sdm, MovingInParcelSelector mips) {
+        theManager = new Manager(this, dP, gP, oP, c, sdm, mips);
         stepNumber = 0;
         year = y;
         StatisticalManagerListener sml = new StatisticalManagerListener(sdm);
@@ -52,8 +50,8 @@ public final class Step {
      * @param sdm the schelling decision maker
      * @param mips the moving in parcel selector
      */
-    public Step(int y, String dP, String oP, NearbyBuildTypeCalculator c, SchellingDecisionMaker sdm, MovingInParcelSelector mips) {
-        theManager = new Manager(this, dP, oP, c, sdm, mips);
+    public Step(int y, String dP, String gP, String oP, NearbyBuildTypeCalculator c, SchellingDecisionMaker sdm, MovingInParcelSelector mips) {
+        theManager = new Manager(this, dP, gP, oP, c, sdm, mips);
         stepNumber = 0;
         year = y;
         sdm.setManager(theManager);
@@ -90,7 +88,7 @@ public final class Step {
         stepNumber++;
         theManager.everybodyGrows();
         theManager.whoIsMoving();
-        for (int i = 0; i < IMMIGRANT_NUMBER; i++) {
+        for (int i = 0; i < theManager.getImmigrantNumber(); i++) {
             theManager.createImmigrant();
         }
         theManager.everybodyMovesIn();
@@ -109,7 +107,7 @@ public final class Step {
      */
     public void wholeSimulation() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException, IOException, IndexException {
         initialize();
-        for (int i = 0; i<NUMBER_OF_TURNS; i++) {
+        for (int i = 0; i < theManager.getNumberOfTurns(); i++) {
             wholeStep();
         }
     }

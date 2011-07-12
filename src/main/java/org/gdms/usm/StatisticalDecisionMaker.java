@@ -15,8 +15,6 @@ import java.util.Map;
 public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
 
     private Map<Household, LimitedQueue<Double>> dissatisfactionMemories;
-    public static final int HOUSEHOLD_MEMORY = 3;
-    public static final double MOVING_THRESHOLD = 30;
 
     /**
      * Builds a StatisticalDecisionMaker and initializes the dissatisfactionMemories in a HashMap.
@@ -29,7 +27,7 @@ public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
     public boolean isMoving(Household h) {
         addToDissatisfactionQueue(h, getImmediateDissatisfaction(h));
         double cumulatedDissatisfaction = getCumulatedDissatisfaction(h);
-        return cumulatedDissatisfaction > MOVING_THRESHOLD;
+        return cumulatedDissatisfaction > getManager().getMovingThreshold();
     }
 
     /**
@@ -115,7 +113,7 @@ public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
      * @param h the household to be added
      */
     public void addHousehold(Household h) {
-        dissatisfactionMemories.put(h, new LimitedQueue<Double>(HOUSEHOLD_MEMORY));
+        dissatisfactionMemories.put(h, new LimitedQueue<Double>(getManager().getHouseholdMemory()));
     }
 
     /**

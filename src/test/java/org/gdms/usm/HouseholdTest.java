@@ -7,8 +7,6 @@ package org.gdms.usm;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
-import java.util.ArrayList;
-import java.util.Iterator;
 import junit.framework.TestCase;
 
 /**
@@ -33,22 +31,10 @@ public class HouseholdTest extends TestCase {
 
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     
-    private Parcel defaultParcelBuilderByInseeCode(int codeInsee) throws ParseException{
-        WKTReader wktr = new WKTReader();
-        Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(0,2,30,40,10,50,codeInsee,"AB",geometry, bbtc);
-    }
-    
     private Parcel defaultParcelBuilderByBuildType(int buildType) throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
         return new Parcel(0,buildType,30,40,10,50,44147,"AB",geometry, bbtc);
-    }
-    
-    private Parcel defaultParcelBuilderByAmenitiesIndex(int amenitiesIndex) throws ParseException{
-        WKTReader wktr = new WKTReader();
-        Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(0,2,30,40,amenitiesIndex,50,44109,"AB",geometry, bbtc);
     }
     
     /*

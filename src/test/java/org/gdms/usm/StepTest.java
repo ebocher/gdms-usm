@@ -42,6 +42,7 @@ public class StepTest extends TestCase {
     }
     
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
+    private String globalsPathForTests = "src/test/resources/globals.gdms";
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
@@ -49,8 +50,9 @@ public class StepTest extends TestCase {
     private GaussParcelSelector gps = new GaussParcelSelector();
     
     public void testInitialize() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = s.getManager();
+        m.initializeGlobals();
         s.initialize();
         
         //This test tests exactly the same assertions as in the 3 called methods :
@@ -113,6 +115,7 @@ public class StepTest extends TestCase {
         
         //setNeighbours part
         BufferBuildTypeCalculator a = (BufferBuildTypeCalculator) m.getNbtc();
+        a.setManager(m);
         Parcel[] myNeighbours = a.getNeighbours(m.getParcelList().get(3425));
         assertTrue(myNeighbours.length == 7);
         assertTrue(myNeighbours[0].getId() == 3440);

@@ -43,13 +43,14 @@ public class GaussParcelSelectorTest extends TestCase {
     }
     
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
+    private String globalsPathForTests = "src/test/resources/globals.gdms";
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
     private GaussParcelSelector gps = new GaussParcelSelector();
     
     private Step instanciateDummyParcels() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException, IOException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = s.getManager();
         WKTReader wktr = new WKTReader();
         Geometry g1 = wktr.read("POLYGON ((0 0, 4 0, 4 4, 0 4, 0 0))");
@@ -90,6 +91,7 @@ public class GaussParcelSelectorTest extends TestCase {
         Step s = instanciateDummyParcels();
         Household h = new Household(1, 45, 62000);
         Manager m = s.getManager();
+        m.initializeGlobals();
         m.getNbtc().setNeighbours();
         GaussParcelSelector gp = (GaussParcelSelector) m.getMovingInPS();
         List<Parcel> sortedList = gp.getSortedList(h);
@@ -105,6 +107,7 @@ public class GaussParcelSelectorTest extends TestCase {
         Step s = instanciateDummyParcels();
         Household h = new Household(1, 45, 62000);
         Manager m = s.getManager();
+        m.initializeGlobals();
         m.getNbtc().setNeighbours();
         GaussParcelSelector gp = (GaussParcelSelector) m.getMovingInPS();
         Parcel p = gp.selectedParcel(h);

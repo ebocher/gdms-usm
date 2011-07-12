@@ -10,6 +10,9 @@ import com.vividsolutions.jts.io.WKTReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import junit.framework.TestCase;
+import org.gdms.data.DataSourceCreationException;
+import org.gdms.driver.DriverException;
+import org.gdms.driver.driverManager.DriverLoadException;
 
 /**
  *
@@ -31,7 +34,12 @@ public class StatisticalDecisionMakerTest extends TestCase {
         super.tearDown();
     }
     
+    private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
+    private String globalsPathForTests = "src/test/resources/globals.gdms";
+    private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
+    private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
+    private GaussParcelSelector gps = new GaussParcelSelector();
     
     private Parcel defaultParcelBuilderByInseeCode(int codeInsee) throws ParseException{
         WKTReader wktr = new WKTReader();
@@ -73,9 +81,12 @@ public class StatisticalDecisionMakerTest extends TestCase {
         assertTrue(Math.abs(sdm.getImmediateDissatisfaction(nantesHousehold) - 1.315) < 0.000001);
     }
     
-    //Won't pass if the HOUSEHOLD_MEMORY exceeds 3
-    public void testAddDissQueue() {
+    public void testAddDissQueue() throws DriverLoadException, DataSourceCreationException, DriverException {
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        m.initializeGlobals();
         StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
+        sdm.setManager(m);
         Household annoyedHousehold = new Household(2,47,54789);
         sdm.addHousehold(annoyedHousehold);
         sdm.addToDissatisfactionQueue(annoyedHousehold,1.5478);
@@ -96,8 +107,12 @@ public class StatisticalDecisionMakerTest extends TestCase {
         assertFalse(i.hasNext());
     }
     
-    public void testGetCumulDiss() {
+    public void testGetCumulDiss() throws DriverLoadException, DataSourceCreationException, DriverException {
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        m.initializeGlobals();
         StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
+        sdm.setManager(m);
         Household annoyedHousehold = new Household(2,47,54789);
         sdm.addHousehold(annoyedHousehold);
         sdm.addToDissatisfactionQueue(annoyedHousehold,1.5478);
@@ -126,8 +141,12 @@ public class StatisticalDecisionMakerTest extends TestCase {
         assertTrue(sdm.getIdealHousingCoefficient(oldRich) == 66);
     }
     
-    public void testDeleteHousehold() {
+    public void testDeleteHousehold() throws DriverLoadException, DataSourceCreationException, DriverException {
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        m.initializeGlobals();
         StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
+        sdm.setManager(m);
         Household futurelyDisappearingHousehold = new Household(4,57,65000);
         sdm.addHousehold(futurelyDisappearingHousehold);
         assertTrue(sdm.getDissatisfactionMemories().containsKey(futurelyDisappearingHousehold));
@@ -135,9 +154,12 @@ public class StatisticalDecisionMakerTest extends TestCase {
         assertTrue(sdm.getDissatisfactionMemories().isEmpty());
     }
     
-    //Passes only when MOVING_THRESHOLD is at 30
-    public void testIsMoving() throws ParseException {
+    public void testIsMoving() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException {
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        m.initializeGlobals();
         StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
+        sdm.setManager(m);
         Parcel householdHub = defaultParcelBuilderByAmenitiesIndex(14);
         Household iWannaMove = new Household(5,27,87000, householdHub);
         Household iWannaStay = new Household(6,59,48701, householdHub);

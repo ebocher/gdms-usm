@@ -17,14 +17,16 @@ public final class GaussParcelComparator implements Comparator<Parcel>, Serializ
     public static final double CONSTRUCTIBILITY_WEIGHTING = 1.0;
     public static final double IDEALHOUSING_WEIGHTING = 1.0;
     private Household concernedHousehold;
+    private Manager manager;
     
     /**
      * Builds a gauss parcel comparator with the given household (every sorting 
      * depends on the household).
      * @param h the concerned household
      */
-    public GaussParcelComparator(Household h) {
+    public GaussParcelComparator(Household h, Manager m) {
         this.concernedHousehold = h;
+        this.manager = m;
     }
     
     @Override

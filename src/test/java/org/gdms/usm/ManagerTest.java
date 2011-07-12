@@ -51,7 +51,7 @@ public class ManagerTest extends TestCase {
     }
 
     private Step instanciateDummyParcels() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException, IOException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = s.getManager();
         WKTReader wktr = new WKTReader();
         Geometry g1 = wktr.read("POLYGON ((0 0, 4 0, 4 4, 0 4, 0 0))");
@@ -103,14 +103,15 @@ public class ManagerTest extends TestCase {
     }
     
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
+    private String globalsPathForTests = "src/test/resources/globals.gdms";
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
     private GaussParcelSelector gps = new GaussParcelSelector();
     
     public void testGetPopulation() throws ParseException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
-        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         Parcel a = defaultParcelBuilder();
         Parcel b = defaultParcelBuilder();
         Parcel c = defaultParcelBuilder();
@@ -135,8 +136,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testKill() throws ParseException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
-        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         Parcel a = defaultParcelBuilder();
         Household iWantToDie = defaultHouseholdBuilder();
         iWantToDie.moveIn(a);
@@ -146,8 +147,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateImmigrant() throws ParseException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
-        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         m.createImmigrant();
         assertFalse(m.getHomelessList().empty());
         assertTrue(m.getHomelessList().peek().getAge() > 19 && m.getHomelessList().peek().getAge() < 60);
@@ -155,8 +156,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testCreateNewborn() throws ParseException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
-        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         Household hornyHousehold = new Household(1,60,58741);
         m.createNewborn(hornyHousehold);
         assertFalse(m.getHomelessList().empty());
@@ -165,8 +166,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForParcels() throws DataSourceCreationException, DriverException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
-        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         
         assertTrue(m.getParcelList().size() == 6978);
@@ -183,8 +184,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeForHouseholds() throws DataSourceCreationException, DriverException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
-        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         
         assertTrue(m.getParcelList().get(3).getHouseholdList().size() == 16);
@@ -202,8 +203,8 @@ public class ManagerTest extends TestCase {
     }
     
     public void testInitializeOutputDatabase() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
-        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         m.initializeSimulation();
         m.initializeOutputDatabase();
         
@@ -253,8 +254,8 @@ public class ManagerTest extends TestCase {
     
     public void testMemoryConsumption() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
         Runtime r = Runtime.getRuntime();
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
-        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         System.out.println("Initial memory consumption : "+getMemoryUsage(r));
         m.initializeSimulation();
         r.gc();
@@ -266,16 +267,16 @@ public class ManagerTest extends TestCase {
     }
     
     public void testRegisterManagerListener() {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
-        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         StatisticalManagerListener ml = new StatisticalManagerListener(sdm);
         m.registerManagerListener(ml);
         assertTrue(m.getListeners().contains(ml));
     }
     
     public void testUnregisterManagerListener() {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
-        Manager m = new Manager(s, dataPathForTests,outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         StatisticalManagerListener ml = new StatisticalManagerListener(sdm);
         m.registerManagerListener(ml);
         assertTrue(m.getListeners().contains(ml));
@@ -284,7 +285,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testSaveState() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = s.getManager();
         m.initializeSimulation();
         m.initializeOutputDatabase();
@@ -352,9 +353,10 @@ public class ManagerTest extends TestCase {
         assertTrue(m.getParcelList().get(4).getHouseholdList().isEmpty());
     }
     
-    public void testWhoIsMoving() throws ParseException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+    public void testWhoIsMoving() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException {
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = s.getManager();
+        m.initializeGlobals();
         Parcel householdHub = defaultParcelBuilder();
         m.addParcel(householdHub);
         Household iWannaMove = new Household(5,27,87000);
@@ -376,7 +378,7 @@ public class ManagerTest extends TestCase {
     }
     
     public void testEverybodyMovesIn() throws ParseException, NoSuchTableException, DataSourceCreationException, DriverException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = s.getManager();
         Parcel householdHub = defaultParcelBuilder();
         m.addParcel(householdHub);
@@ -395,5 +397,23 @@ public class ManagerTest extends TestCase {
         assertTrue(householdHub.getHouseholdList().contains(homeless2));
         assertTrue(householdHub.getHouseholdList().contains(homeless3));
         assertTrue(householdHub.getHouseholdList().contains(homeless4));
+    }
+    
+    public void testInitializeGlobals() throws DriverLoadException, DataSourceCreationException, DriverException {
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        m.initializeGlobals();
+        
+        assertTrue(Math.abs(m.getBufferSize() - 30.0) < 0.000001);
+        assertTrue(Math.abs(m.getAmenitiesWeighting() - 1.0) < 0.000001);
+        assertTrue(Math.abs(m.getConstructibilityWeighting() - 1.0) < 0.000001);
+        assertTrue(Math.abs(m.getIdealhousingWeighting() - 1.0) < 0.000001);
+        assertTrue(Math.abs(m.getGaussDeviation() - 0.1) < 0.000001);
+        assertTrue(Math.abs(m.getSegregationThreshold() - 0.8) < 0.000001);
+        assertTrue(Math.abs(m.getSegregationTolerance() - 0.2) < 0.000001);
+        assertTrue(m.getHouseholdMemory() == 3);
+        assertTrue(Math.abs(m.getMovingThreshold() - 30.0) < 0.000001);
+        assertTrue(m.getImmigrantNumber() == 7000);
+        assertTrue(m.getNumberOfTurns() == 1);
     }
 }

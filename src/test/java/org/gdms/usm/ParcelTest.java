@@ -42,6 +42,7 @@ public class ParcelTest extends TestCase {
     }
 
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
+    private String globalsPathForTests = "src/test/resources/globals.gdms";
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
@@ -154,9 +155,10 @@ public class ParcelTest extends TestCase {
     }
     
     public void testGetUpgradePotential() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Step s = new Step(2000, dataPathForTests, dataPathForTests, bbtc, sdm, gps);
-        Manager m = new Manager(s, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = new Manager(s, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         bbtc.setManager(m);
+        m.initializeGlobals();
         m.initializeSimulation();
         m.initializeOutputDatabase();
         m.getNbtc().setNeighbours();

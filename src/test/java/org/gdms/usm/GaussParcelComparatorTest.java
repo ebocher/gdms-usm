@@ -8,6 +8,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import junit.framework.TestCase;
+import org.gdms.data.DataSourceCreationException;
+import org.gdms.driver.DriverException;
+import org.gdms.driver.driverManager.DriverLoadException;
 
 /**
  *
@@ -30,21 +33,30 @@ public class GaussParcelComparatorTest extends TestCase {
     }
     
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
+    private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
+    private String globalsPathForTests = "src/test/resources/globals.gdms";
+    private String outputPathForTests = "src/test/resources/";
+    private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
+    private GaussParcelSelector gps = new GaussParcelSelector();
     
-    //Passes only if the different weightings are set to 1.
-    public void testGetParcelScore() throws ParseException {
+    public void testGetParcelScore() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException {
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        m.initializeGlobals();
         Household iAmHomeless = new Household(1,38,48700);
-        GaussParcelComparator gps = new GaussParcelComparator(iAmHomeless);
+        GaussParcelComparator gpss = new GaussParcelComparator(iAmHomeless, m);
         WKTReader wktr = new WKTReader();
         Geometry g = wktr.read("POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))");
         Parcel p = new Parcel(1,3,140,14,87,44109,"ADR",g,bbtc);
-        assertTrue(Math.abs(gps.getParcelScore(p) - 147.0) < 0.000001);
+        assertTrue(Math.abs(gpss.getParcelScore(p) - 147.0) < 0.000001);
     }
     
-    //Passes if the different weightings are set to 1.
-    public void testCompare() throws ParseException {
+    public void testCompare() throws ParseException, DataSourceCreationException, DriverLoadException, DriverException {
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        m.initializeGlobals();
         Household iAmHomeless = new Household(1,38,48700);
-        GaussParcelComparator gps = new GaussParcelComparator(iAmHomeless);
+        GaussParcelComparator gpss = new GaussParcelComparator(iAmHomeless,m);
         WKTReader wktr = new WKTReader();
         Geometry g = wktr.read("POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))");
         Parcel p = new Parcel(1,3,140,14,87,44109,"ADR",g,bbtc);
@@ -52,19 +64,22 @@ public class GaussParcelComparatorTest extends TestCase {
         Parcel p3 = new Parcel(3,3,140,10,77,44109,"ADR",g,bbtc);
         Parcel p4 = new Parcel(4,3,140,14,87,44109,"ADR",g,bbtc);
         
-        assertTrue(gps.compare(p, p2) == -1);
-        assertTrue(gps.compare(p, p3) == 1);
-        assertTrue(gps.compare(p, p4) == 0);
+        assertTrue(gpss.compare(p, p2) == -1);
+        assertTrue(gpss.compare(p, p3) == 1);
+        assertTrue(gpss.compare(p, p4) == 0);
     }
     
-    public void testEquals() throws ParseException {
+    public void testEquals() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException {
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Manager m = s.getManager();
+        m.initializeGlobals();
         Household iAmHomeless = new Household(1,38,48700);
-        GaussParcelComparator gps = new GaussParcelComparator(iAmHomeless);
+        GaussParcelComparator gpss = new GaussParcelComparator(iAmHomeless,m);
         WKTReader wktr = new WKTReader();
         Geometry g = wktr.read("POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))");
         Parcel p = new Parcel(1,3,140,14,87,44109,"ADR",g,bbtc);
         Parcel p4 = new Parcel(4,3,140,14,87,44109,"ADR",g,bbtc);
         
-        assertTrue(gps.equals(p, p4));
+        assertTrue(gpss.equals(p, p4));
     }
 }

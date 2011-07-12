@@ -28,6 +28,7 @@ import org.gdms.data.types.TypeFactory;
 import org.gdms.data.values.Value;
 import org.gdms.data.values.ValueFactory;
 import org.gdms.driver.DriverException;
+import org.gdms.driver.driverManager.DriverLoadException;
 import org.gdms.driver.gdms.GdmsWriter;
 import org.orbisgis.progress.NullProgressMonitor;
 import org.orbisgis.utils.FileUtils;
@@ -45,12 +46,25 @@ public final class Manager {
     private Stack<Household> newbornList;
     private int lastCreatedHouseholdId;
     private String dataPath;
+    private String globalsPath;
     private String outputPath;
     private DataSourceFactory dsf;
     private NearbyBuildTypeCalculator nbtc;
     private Set<ManagerListener> listeners;
     private IsMovingDecisionMaker isMovingDM;
     private MovingInParcelSelector movingInPS;
+    
+    private double bufferSize;
+    private double amenitiesWeighting;
+    private double constructibilityWeighting;
+    private double idealhousingWeighting;
+    private double gaussDeviation;
+    private double segregationThreshold;
+    private double segregationTolerance;
+    private int householdMemory;
+    private double movingThreshold;
+    private int immigrantNumber;
+    private int numberOfTurns;
 
     /**
      * Builds a new Manager.
@@ -58,13 +72,14 @@ public final class Manager {
      * @param oP the output folder
      * @param c the nearby build type calculator strategy
      */
-    public Manager(Step s, String dP, String oP, NearbyBuildTypeCalculator c, IsMovingDecisionMaker isdm, MovingInParcelSelector mips) {
+    public Manager(Step s, String dP, String gP, String oP, NearbyBuildTypeCalculator c, IsMovingDecisionMaker isdm, MovingInParcelSelector mips) {
         this.step = s;
         this.parcelList = new ArrayList();
         this.homelessList = new Stack();
         this.newbornList = new Stack();
         this.lastCreatedHouseholdId = 0;
         this.dataPath = dP;
+        this.globalsPath = gP;
         this.outputPath = oP;
         FileUtils.deleteDir(new File(oP, "gdms"));
         this.dsf = new DataSourceFactory(oP + "gdms");
@@ -486,5 +501,108 @@ public final class Manager {
      */
     public Stack<Household> getNewbornList() {
         return newbornList;
+    }
+    
+    /**
+     * Initializes the global constants with the values provided by a gdms file.
+     * @throws DriverLoadException
+     * @throws DataSourceCreationException
+     * @throws DriverException 
+     */
+    public void initializeGlobals() throws DriverLoadException, DataSourceCreationException, DriverException {
+        File globalsFile = new File(globalsPath);
+        DataSource globals = dsf.getDataSource(globalsFile);
+        globals.open();
+        
+        bufferSize = globals.getDouble(0,"bufferSize");
+        amenitiesWeighting = globals.getDouble(0,"amenitiesWeighting");
+        constructibilityWeighting = globals.getDouble(0,"constructibilityWeighting");
+        idealhousingWeighting = globals.getDouble(0, "idealhousingWeighting");
+        gaussDeviation = globals.getDouble(0,"gaussDeviation");
+        segregationThreshold = globals.getDouble(0,"segregationThreshold");
+        segregationTolerance = globals.getDouble(0,"segregationTolerance");
+        householdMemory = globals.getInt(0, "householdMemory");
+        movingThreshold = globals.getDouble(0, "movingThreshold");
+        immigrantNumber = globals.getInt(0, "immigrantNumber");
+        numberOfTurns = globals.getInt(0, "numberOfTurns");
+        
+        globals.close();
+    }
+
+    /**
+     * @return the bufferSize
+     */
+    public double getBufferSize() {
+        return bufferSize;
+    }
+
+    /**
+     * @return the amenitiesWeighting
+     */
+    public double getAmenitiesWeighting() {
+        return amenitiesWeighting;
+    }
+
+    /**
+     * @return the constructibilityWeighting
+     */
+    public double getConstructibilityWeighting() {
+        return constructibilityWeighting;
+    }
+
+    /**
+     * @return the idealhousingWeighting
+     */
+    public double getIdealhousingWeighting() {
+        return idealhousingWeighting;
+    }
+
+    /**
+     * @return the gaussDeviation
+     */
+    public double getGaussDeviation() {
+        return gaussDeviation;
+    }
+
+    /**
+     * @return the segregationThreshold
+     */
+    public double getSegregationThreshold() {
+        return segregationThreshold;
+    }
+
+    /**
+     * @return the segregationTolerance
+     */
+    public double getSegregationTolerance() {
+        return segregationTolerance;
+    }
+
+    /**
+     * @return the householdMemory
+     */
+    public int getHouseholdMemory() {
+        return householdMemory;
+    }
+
+    /**
+     * @return the movingThreshold
+     */
+    public double getMovingThreshold() {
+        return movingThreshold;
+    }
+
+    /**
+     * @return the immigrantNumber
+     */
+    public int getImmigrantNumber() {
+        return immigrantNumber;
+    }
+
+    /**
+     * @return the numberOfTurns
+     */
+    public int getNumberOfTurns() {
+        return numberOfTurns;
     }
 }

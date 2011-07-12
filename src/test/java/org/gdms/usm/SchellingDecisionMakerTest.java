@@ -45,13 +45,14 @@ public class SchellingDecisionMakerTest extends TestCase {
     }
     
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
+    private String globalsPathForTests = "src/test/resources/globals.gdms";
     private String outputPathForTests = "src/test/resources/";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private SchellingDecisionMaker sdm = new SchellingDecisionMaker();
     private GaussParcelSelector gps = new GaussParcelSelector();
     
     private Step instanciateDummyParcels() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException, IOException {
-        Step s = new Step(2000, dataPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = s.getManager();
         WKTReader wktr = new WKTReader();
         Geometry g1 = wktr.read("POLYGON ((0 0, 4 0, 4 4, 0 4, 0 0))");
@@ -100,6 +101,8 @@ public class SchellingDecisionMakerTest extends TestCase {
     public void testGetSegregationPart() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException, IOException, NoSuchTableException, IndexException {
         Step s = instanciateDummyParcels();
         Manager m = s.getManager();
+        m.initializeGlobals();
+        m.getNbtc().setManager(m);
         m.getNbtc().setNeighbours();
         
         //Too rich
@@ -137,6 +140,8 @@ public class SchellingDecisionMakerTest extends TestCase {
     public void testIsMoving() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException, IOException, NoSuchTableException {
         Step s = instanciateDummyParcels();
         Manager m = s.getManager();
+        m.initializeGlobals();
+        m.getNbtc().setManager(m);
         m.getNbtc().setNeighbours();
         Household richie1 = new Household(1,60,80000);
         Household richie2 = new Household(2,60,80000);

@@ -47,7 +47,7 @@ public final class GaussParcelSelector extends MovingInParcelSelector {
                 sortedList.add(p);
             }
         }
-        GaussParcelComparator gpc = new GaussParcelComparator(h);
+        GaussParcelComparator gpc = new GaussParcelComparator(h, getManager());
         Collections.sort(sortedList, gpc);
         return sortedList;
     }

@@ -18,8 +18,8 @@ public class UsmPlugIn extends AbstractPlugIn {
     public void initialize(PlugInContext context) throws Exception {
 
         context.getFeatureInstaller().addMainMenuItem(this,
-                new String[]{Names.FILE, "Tripotage"},
-                "Je dirais même trifouillage !", false,
+                new String[]{Names.FILE, "GDMS-USM"},
+                "Launch USM", false,
                 null, null, null, context);
     }
 

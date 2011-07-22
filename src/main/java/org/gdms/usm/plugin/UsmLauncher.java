@@ -4,8 +4,6 @@
  */
 package org.gdms.usm.plugin;
 
-import javax.swing.JFrame;
-
 /**
  *
  * @author Thomas Salliou

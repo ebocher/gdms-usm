@@ -16,7 +16,7 @@ import org.gdms.driver.DriverException;
  * @author Thomas Salliou
  */
 public final class Step {
-
+    
     private int stepNumber;
     private int year;
     private Manager theManager;

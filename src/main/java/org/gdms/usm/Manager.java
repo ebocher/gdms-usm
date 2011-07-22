@@ -19,10 +19,9 @@ import org.gdms.data.DataSourceFactory;
 import org.gdms.data.NoSuchTableException;
 import org.gdms.data.NonEditableDataSourceException;
 import org.gdms.data.SpatialDataSourceDecorator;
-import org.gdms.data.file.FileSourceCreation;
 import org.gdms.data.indexes.IndexException;
-import org.gdms.data.metadata.DefaultMetadata;
-import org.gdms.data.metadata.Metadata;
+import org.gdms.data.schema.DefaultMetadata;
+import org.gdms.data.schema.Metadata;
 import org.gdms.data.types.Type;
 import org.gdms.data.types.TypeFactory;
 import org.gdms.data.values.Value;
@@ -162,30 +161,42 @@ public final class Manager {
 
         //HouseholdState table creation
         File file3 = new File(outputPath + "HouseholdState.gdms");
+        GdmsWriter householdStateGW = new GdmsWriter(file3);
         String[] fieldNames3 = {"householdID", "stepNumber", "plotID", "age", "alive"};
         Type[] fieldTypes3 = {integ, integ, integ, integ, bool};
         Metadata m3 = new DefaultMetadata(fieldTypes3, fieldNames3);
-        FileSourceCreation f3 = new FileSourceCreation(file3, m3);
-        f3.setDataSourceFactory(dsf);
-        dsf.getSourceManager().register("HouseholdState", f3.create());
+        householdStateGW.writeMetadata(0, m3);
+        householdStateGW.writeRowIndexes();
+        householdStateGW.writeExtent();
+        householdStateGW.writeWritenRowCount();
+        householdStateGW.close();
+        dsf.getSourceManager().register("HouseholdState", file3);
 
         //PlotState table creation
         File file4 = new File(outputPath + "PlotState.gdms");
+        GdmsWriter plotStateGW = new GdmsWriter(file4);
         String[] fieldNames4 = {"plotID", "stepNumber", "buildType", "averageWealth"};
         Type[] fieldTypes4 = {integ, integ, integ, integ};
         Metadata m4 = new DefaultMetadata(fieldTypes4, fieldNames4);
-        FileSourceCreation f4 = new FileSourceCreation(file4, m4);
-        f4.setDataSourceFactory(dsf);
-        dsf.getSourceManager().register("PlotState", f4.create());
+        plotStateGW.writeMetadata(0, m4);
+        plotStateGW.writeRowIndexes();
+        plotStateGW.writeExtent();
+        plotStateGW.writeWritenRowCount();
+        plotStateGW.close();
+        dsf.getSourceManager().register("PlotState", file4);
 
         //Step table creation
         File file5 = new File(outputPath + "Step.gdms");
+        GdmsWriter stepGW = new GdmsWriter(file5);
         String[] fieldNames5 = {"stepNumber", "year", "population"};
         Type[] fieldTypes5 = {integ, integ, integ};
         Metadata m5 = new DefaultMetadata(fieldTypes5, fieldNames5);
-        FileSourceCreation f5 = new FileSourceCreation(file5, m5);
-        f5.setDataSourceFactory(dsf);
-        dsf.getSourceManager().register("Step", f5.create());
+        stepGW.writeMetadata(0, m5);
+        stepGW.writeRowIndexes();
+        stepGW.writeExtent();
+        stepGW.writeWritenRowCount();
+        stepGW.close();
+        dsf.getSourceManager().register("Step", file5);
     }
 
     /**
@@ -195,7 +206,7 @@ public final class Manager {
         DataSource householdDS = dsf.getDataSource("Household");
         DataSource householdStateDS = dsf.getDataSource("HouseholdState");
         DataSource plotStateDS = dsf.getDataSource("PlotState");
-        DataSource stepDS = dsf.getDataSource("Step"); //Step table part : not implemented yet.
+        DataSource stepDS = dsf.getDataSource("Step");
 
         //Inserts new household rows corresponding to the newborn
         householdDS.open();

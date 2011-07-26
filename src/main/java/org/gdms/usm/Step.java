@@ -5,6 +5,8 @@
 package org.gdms.usm;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import org.gdms.data.DataSourceCreationException;
 import org.gdms.data.NoSuchTableException;
 import org.gdms.data.NonEditableDataSourceException;
@@ -20,6 +22,7 @@ public final class Step {
     private int stepNumber;
     private int year;
     private Manager theManager;
+    private Set<StepListener> listeners;
 
     /**
      * Builds the Step object for a StatisticalDecisionMaker strategy.
@@ -34,6 +37,7 @@ public final class Step {
         theManager = new Manager(this, dP, gP, oP, c, sdm, mips);
         stepNumber = 0;
         year = y;
+        listeners = new HashSet<StepListener>();
         StatisticalManagerListener sml = new StatisticalManagerListener(sdm);
         theManager.registerManagerListener(sml);
         sdm.setManager(theManager);
@@ -54,6 +58,7 @@ public final class Step {
         theManager = new Manager(this, dP, gP, oP, c, sdm, mips);
         stepNumber = 0;
         year = y;
+        listeners = new HashSet<StepListener>();
         sdm.setManager(theManager);
         mips.setManager(theManager);
         c.setManager(theManager);
@@ -70,6 +75,7 @@ public final class Step {
      * @throws IndexException 
      */
     public void initialize() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
+        theManager.initializeGlobals();
         theManager.initializeSimulation();
         theManager.initializeOutputDatabase();
         theManager.getNbtc().setNeighbours();
@@ -86,6 +92,7 @@ public final class Step {
      */
     public void wholeStep() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException {
         stepNumber++;
+        notifyNextTurn();
         theManager.everybodyGrows();
         theManager.whoIsMoving();
         for (int i = 0; i < theManager.getImmigrantNumber(); i++) {
@@ -131,5 +138,34 @@ public final class Step {
      */
     public Manager getManager() {
         return theManager;
+    }
+    
+    public Set<StepListener> getListeners() {
+        return listeners;
+    }
+    
+    /**
+     * Registers a StepListener to the listeners set.
+     * @param sl the StepListener to register
+     */
+    public void registerStepListener(StepListener sl) {
+        listeners.add(sl);
+    }
+
+    /**
+     * Unregisters a StepListener from the listeners set.
+     * @param sl the StepListener to unregister
+     */
+    public void unregisterStepListener(StepListener sl) {
+        listeners.remove(sl);
+    }
+    
+    /**
+     * Notify method, called when the next turn is engaged.
+     */
+    private void notifyNextTurn() {
+        for (StepListener sl : listeners) {
+            sl.nextTurn();
+        }
     }
 }

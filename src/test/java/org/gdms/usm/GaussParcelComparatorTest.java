@@ -35,7 +35,7 @@ public class GaussParcelComparatorTest extends TestCase {
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String globalsPathForTests = "src/test/resources/globals.gdms";
-    private String outputPathForTests = "src/test/resources/";
+    private String outputPathForTests = "src/test/resources";
     private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
     private GaussParcelSelector gps = new GaussParcelSelector();
     

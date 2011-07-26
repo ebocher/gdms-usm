@@ -43,11 +43,11 @@ public class ManagerTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        new File(outputPathForTests+"Household.gdms").delete();
-        new File(outputPathForTests+"HouseholdState.gdms").delete();
-        new File(outputPathForTests+"Plot.gdms").delete();
-        new File(outputPathForTests+"PlotState.gdms").delete();
-        new File(outputPathForTests+"Step.gdms").delete();
+        new File(outputPathForTests+"/Household.gdms").delete();
+        new File(outputPathForTests+"/HouseholdState.gdms").delete();
+        new File(outputPathForTests+"/Plot.gdms").delete();
+        new File(outputPathForTests+"/PlotState.gdms").delete();
+        new File(outputPathForTests+"/Step.gdms").delete();
     }
 
     private Step instanciateDummyParcels() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException, IOException {
@@ -73,7 +73,7 @@ public class ManagerTest extends TestCase {
         Parcel p7 = new Parcel(7,7,0,10,47,44780,"PCT",g7,bbtc);
         m.addParcel(p7);
         
-        File file1 = new File(outputPathForTests + "MiniPlot.gdms");
+        File file1 = new File(outputPathForTests + "/MiniPlot.gdms");
         GdmsWriter plotGW = new GdmsWriter(file1);
         String[] fieldNames1 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex", "constructibilityIndex"};
         Type[] fieldTypes1 = {TypeFactory.createType(Type.INT), TypeFactory.createType(Type.GEOMETRY), TypeFactory.createType(Type.DOUBLE), TypeFactory.createType(Type.INT), TypeFactory.createType(Type.INT)};
@@ -104,7 +104,7 @@ public class ManagerTest extends TestCase {
     
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String globalsPathForTests = "src/test/resources/globals.gdms";
-    private String outputPathForTests = "src/test/resources/";
+    private String outputPathForTests = "src/test/resources";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
     private GaussParcelSelector gps = new GaussParcelSelector();
@@ -223,11 +223,11 @@ public class ManagerTest extends TestCase {
         stepDS.open();
         
         //Let's see if our files are created for real.
-        assertTrue(new File(outputPathForTests+"Household.gdms").exists());
-        assertTrue(new File(outputPathForTests+"HouseholdState.gdms").exists());
-        assertTrue(new File(outputPathForTests+"Plot.gdms").exists());
-        assertTrue(new File(outputPathForTests+"PlotState.gdms").exists());
-        assertTrue(new File(outputPathForTests+"Step.gdms").exists());
+        assertTrue(new File(outputPathForTests+"/Household.gdms").exists());
+        assertTrue(new File(outputPathForTests+"/HouseholdState.gdms").exists());
+        assertTrue(new File(outputPathForTests+"/Plot.gdms").exists());
+        assertTrue(new File(outputPathForTests+"/PlotState.gdms").exists());
+        assertTrue(new File(outputPathForTests+"/Step.gdms").exists());
         
         //Now let's see if our tables are filled with correct metadata.
         assertTrue(householdDS.getMetadata().getFieldName(1).equals("maximumWealth"));
@@ -293,13 +293,13 @@ public class ManagerTest extends TestCase {
         m.saveState();
         
         DataSourceFactory dsf = new DataSourceFactory();
-        DataSource householdDS = dsf.getDataSource(new File(outputPathForTests+"Household.gdms"));
+        DataSource householdDS = dsf.getDataSource(new File(outputPathForTests+"/Household.gdms"));
         householdDS.open();
         assertTrue(householdDS.getFieldValue(m.getPopulation(), 0).getAsInt() == m.getPopulation());
         assertTrue(householdDS.getFieldValue(m.getPopulation(), 1).getAsInt() == 47478);
         householdDS.close();
         
-        DataSource plotStateDS = dsf.getDataSource(new File(outputPathForTests+"PlotState.gdms"));
+        DataSource plotStateDS = dsf.getDataSource(new File(outputPathForTests+"/PlotState.gdms"));
         plotStateDS.open();
         assertTrue(plotStateDS.getFieldValue(4157, 0).getAsInt() == 4157);
         assertTrue(plotStateDS.getFieldValue(4157, 1).getAsInt() == 0);
@@ -307,7 +307,7 @@ public class ManagerTest extends TestCase {
         assertTrue(plotStateDS.getFieldValue(4157, 3).getAsInt() == 0);
         plotStateDS.close();
         
-        DataSource householdStateDS = dsf.getDataSource(new File(outputPathForTests+"HouseholdState.gdms"));
+        DataSource householdStateDS = dsf.getDataSource(new File(outputPathForTests+"/HouseholdState.gdms"));
         householdStateDS.open();
         assertTrue(householdStateDS.getFieldValue(84125, 1).getAsInt() == 0);
         assertTrue(householdStateDS.getFieldValue(84125, 2).getAsInt() == 3466);
@@ -316,7 +316,7 @@ public class ManagerTest extends TestCase {
         assertTrue(householdStateDS.getFieldValue(84125, 4).getAsBoolean());
         householdStateDS.close();
         
-        DataSource stepDS = dsf.getDataSource(new File(outputPathForTests+"Step.gdms"));
+        DataSource stepDS = dsf.getDataSource(new File(outputPathForTests+"/Step.gdms"));
         stepDS.open();
         assertTrue(stepDS.getFieldValue(0,0).getAsInt() == 0);
         assertTrue(stepDS.getFieldValue(0,1).getAsInt() == 2000);

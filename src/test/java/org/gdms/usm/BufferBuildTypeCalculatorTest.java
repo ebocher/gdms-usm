@@ -32,16 +32,16 @@ public class BufferBuildTypeCalculatorTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        new File(outputPathForTests+"Household.gdms").delete();
-        new File(outputPathForTests+"HouseholdState.gdms").delete();
-        new File(outputPathForTests+"Plot.gdms").delete();
-        new File(outputPathForTests+"PlotState.gdms").delete();
-        new File(outputPathForTests+"Step.gdms").delete();
+        new File(outputPathForTests+"/Household.gdms").delete();
+        new File(outputPathForTests+"/HouseholdState.gdms").delete();
+        new File(outputPathForTests+"/Plot.gdms").delete();
+        new File(outputPathForTests+"/PlotState.gdms").delete();
+        new File(outputPathForTests+"/Step.gdms").delete();
     }
     
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String globalsPathForTests = "src/test/resources/globals.gdms";
-    private String outputPathForTests = "src/test/resources/";
+    private String outputPathForTests = "src/test/resources";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
     private GaussParcelSelector gps = new GaussParcelSelector();

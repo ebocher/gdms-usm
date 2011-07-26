@@ -41,12 +41,12 @@ public class SchellingDecisionMakerTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        new File(outputPathForTests + "MiniPlot.gdms").delete();
+        new File(outputPathForTests + "/MiniPlot.gdms").delete();
     }
     
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String globalsPathForTests = "src/test/resources/globals.gdms";
-    private String outputPathForTests = "src/test/resources/";
+    private String outputPathForTests = "src/test/resources";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private SchellingDecisionMaker sdm = new SchellingDecisionMaker();
     private GaussParcelSelector gps = new GaussParcelSelector();
@@ -74,7 +74,7 @@ public class SchellingDecisionMakerTest extends TestCase {
         Parcel p7 = new Parcel(6,7,0,10,47,44780,"PCT",g7,bbtc);
         m.addParcel(p7);
         
-        File file1 = new File(outputPathForTests + "MiniPlot.gdms");
+        File file1 = new File(outputPathForTests + "/MiniPlot.gdms");
         GdmsWriter plotGW = new GdmsWriter(file1);
         String[] fieldNames1 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex", "constructibilityIndex"};
         Type[] fieldTypes1 = {TypeFactory.createType(Type.INT), TypeFactory.createType(Type.GEOMETRY), TypeFactory.createType(Type.DOUBLE), TypeFactory.createType(Type.INT), TypeFactory.createType(Type.INT)};

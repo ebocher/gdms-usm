@@ -34,16 +34,16 @@ public class StepTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        new File(outputPathForTests+"Household.gdms").delete();
-        new File(outputPathForTests+"HouseholdState.gdms").delete();
-        new File(outputPathForTests+"Plot.gdms").delete();
-        new File(outputPathForTests+"PlotState.gdms").delete();
-        new File(outputPathForTests+"Step.gdms").delete();
+        new File(outputPathForTests+"/Household.gdms").delete();
+        new File(outputPathForTests+"/HouseholdState.gdms").delete();
+        new File(outputPathForTests+"/Plot.gdms").delete();
+        new File(outputPathForTests+"/PlotState.gdms").delete();
+        new File(outputPathForTests+"/Step.gdms").delete();
     }
     
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String globalsPathForTests = "src/test/resources/globals.gdms";
-    private String outputPathForTests = "src/test/resources/";
+    private String outputPathForTests = "src/test/resources";
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
     private SchellingDecisionMaker schdm = new SchellingDecisionMaker();
@@ -52,7 +52,6 @@ public class StepTest extends TestCase {
     public void testInitialize() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
         Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
         Manager m = s.getManager();
-        m.initializeGlobals();
         s.initialize();
         
         //This test tests exactly the same assertions as in the 3 called methods :
@@ -93,11 +92,11 @@ public class StepTest extends TestCase {
         householdStateDS.open();
         plotStateDS.open();
         stepDS.open();
-        assertTrue(new File(outputPathForTests+"Household.gdms").exists());
-        assertTrue(new File(outputPathForTests+"HouseholdState.gdms").exists());
-        assertTrue(new File(outputPathForTests+"Plot.gdms").exists());
-        assertTrue(new File(outputPathForTests+"PlotState.gdms").exists());
-        assertTrue(new File(outputPathForTests+"Step.gdms").exists());
+        assertTrue(new File(outputPathForTests+"/Household.gdms").exists());
+        assertTrue(new File(outputPathForTests+"/HouseholdState.gdms").exists());
+        assertTrue(new File(outputPathForTests+"/Plot.gdms").exists());
+        assertTrue(new File(outputPathForTests+"/PlotState.gdms").exists());
+        assertTrue(new File(outputPathForTests+"/Step.gdms").exists());
         assertTrue(householdDS.getMetadata().getFieldName(1).equals("maximumWealth"));
         assertTrue(householdStateDS.getMetadata().getFieldName(3).equals("age"));
         assertTrue(plotDS.getMetadata().getFieldName(1).equals("the_geom"));

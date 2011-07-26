@@ -8,18 +8,29 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.gdms.data.DataSourceCreationException;
+import org.gdms.data.NoSuchTableException;
+import org.gdms.data.NonEditableDataSourceException;
+import org.gdms.data.indexes.IndexException;
 import org.gdms.driver.Driver;
 import org.gdms.driver.DriverException;
 import org.gdms.driver.FileDriver;
 import org.gdms.driver.driverManager.DriverManager;
 import org.gdms.source.FileDriverFilter;
 import org.gdms.source.SourceManager;
+import org.gdms.usm.BufferBuildTypeCalculator;
+import org.gdms.usm.GaussParcelSelector;
+import org.gdms.usm.SchellingDecisionMaker;
+import org.gdms.usm.StatisticalDecisionMaker;
+import org.gdms.usm.Step;
 import org.orbisgis.core.DataManager;
 import org.orbisgis.core.Services;
 
@@ -34,10 +45,12 @@ public class LaunchFrame extends JFrame implements ActionListener {
     private JTextField dataPath;
     private JFileChooser outputFc;
     private JTextField outputPath;
+    private String configPath;
     
     public LaunchFrame(File configFile, String choice) throws DataSourceCreationException, DriverException {
         super("Urban Sprawl Model - Launch");
         modelChoice = choice;
+        configPath = configFile.getAbsolutePath();
         
         //Check panel
         ReadParameterPanel rpp = new ReadParameterPanel(configFile, choice);
@@ -85,10 +98,16 @@ public class LaunchFrame extends JFrame implements ActionListener {
         //Button panel
         JPanel buttonPanel = new JPanel();
         JButton launchButton = new JButton("Launch");
+        launchButton.addActionListener(this);
+        launchButton.setActionCommand("launch");
         buttonPanel.add(launchButton);
         JButton modifyButton = new JButton("Modify");
+        modifyButton.addActionListener(this);
+        modifyButton.setActionCommand("modify");
         buttonPanel.add(modifyButton);
         JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(this);
+        cancelButton.setActionCommand("cancel");
         buttonPanel.add(cancelButton);
         add(buttonPanel, BorderLayout.SOUTH);
         
@@ -100,7 +119,53 @@ public class LaunchFrame extends JFrame implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(e.getActionCommand().equals("dataBrowse")) {
+            int val = dataFc.showDialog(this, "Choose data");
+            if (val == JFileChooser.APPROVE_OPTION) {
+                dataPath.setText(dataFc.getSelectedFile().getAbsolutePath());
+            }
+        }
+        else if(e.getActionCommand().equals("outputBrowse")) {
+            int val = outputFc.showDialog(this, "Choose destination");
+            if (val == JFileChooser.APPROVE_OPTION) {
+                outputPath.setText(outputFc.getSelectedFile().getAbsolutePath());
+            }
+        }
+        else if(e.getActionCommand().equals("launch")) {
+            BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
+            GaussParcelSelector gps = new GaussParcelSelector();
+            Step s;
+            if(modelChoice.equals("schelling")) {
+                SchellingDecisionMaker dm = new SchellingDecisionMaker();
+                s = new Step(2000, dataPath.getText(), configPath, outputPath.getText(), bbtc, dm, gps);
+            }
+            else {
+                StatisticalDecisionMaker dm = new StatisticalDecisionMaker();
+                s = new Step(2000, dataPath.getText(), configPath, outputPath.getText(), bbtc, dm, gps);
+            }
+            try {
+                s.wholeSimulation();
+                dispose();
+            } catch (NoSuchTableException ex) {
+                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (DataSourceCreationException ex) {
+                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (DriverException ex) {
+                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NonEditableDataSourceException ex) {
+                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IndexException ex) {
+                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else if(e.getActionCommand().equals("modify")) {
+            System.out.println("Config modification, not implemented yet.");
+        }
+        else {
+            new ConfigFrame();
+            dispose();
+        }
     }
-    
 }

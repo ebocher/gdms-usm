@@ -80,8 +80,8 @@ public final class Manager {
         this.dataPath = dP;
         this.globalsPath = gP;
         this.outputPath = oP;
-        FileUtils.deleteDir(new File(oP, "gdms"));
-        this.dsf = new DataSourceFactory(oP + "gdms");
+        FileUtils.deleteDir(new File(oP, "/gdms"));
+        this.dsf = new DataSourceFactory(oP + "/gdms");
         this.nbtc = c;
         this.listeners = new HashSet<ManagerListener>();
         this.isMovingDM = isdm;
@@ -116,7 +116,7 @@ public final class Manager {
         Type doubl = TypeFactory.createType(16);
 
         //Plot table creation
-        File file1 = new File(outputPath + "Plot.gdms");
+        File file1 = new File(outputPath + "/Plot.gdms");
         GdmsWriter plotGW = new GdmsWriter(file1);
         String[] fieldNames1 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex", "constructibilityIndex"};
         Type[] fieldTypes1 = {integ, geometry, doubl, integ, integ};
@@ -124,7 +124,7 @@ public final class Manager {
         plotGW.writeMetadata(0, m1);
 
         //Household table creation
-        File file2 = new File(outputPath + "Household.gdms");
+        File file2 = new File(outputPath + "/Household.gdms");
         GdmsWriter householdGW = new GdmsWriter(file2);
         String[] fieldNames2 = {"householdID", "maximumWealth"};
         Type[] fieldTypes2 = {integ, integ};
@@ -160,7 +160,7 @@ public final class Manager {
         dsf.getSourceManager().register("Household", file2);
 
         //HouseholdState table creation
-        File file3 = new File(outputPath + "HouseholdState.gdms");
+        File file3 = new File(outputPath + "/HouseholdState.gdms");
         GdmsWriter householdStateGW = new GdmsWriter(file3);
         String[] fieldNames3 = {"householdID", "stepNumber", "plotID", "age", "alive"};
         Type[] fieldTypes3 = {integ, integ, integ, integ, bool};
@@ -173,7 +173,7 @@ public final class Manager {
         dsf.getSourceManager().register("HouseholdState", file3);
 
         //PlotState table creation
-        File file4 = new File(outputPath + "PlotState.gdms");
+        File file4 = new File(outputPath + "/PlotState.gdms");
         GdmsWriter plotStateGW = new GdmsWriter(file4);
         String[] fieldNames4 = {"plotID", "stepNumber", "buildType", "averageWealth"};
         Type[] fieldTypes4 = {integ, integ, integ, integ};
@@ -186,7 +186,7 @@ public final class Manager {
         dsf.getSourceManager().register("PlotState", file4);
 
         //Step table creation
-        File file5 = new File(outputPath + "Step.gdms");
+        File file5 = new File(outputPath + "/Step.gdms");
         GdmsWriter stepGW = new GdmsWriter(file5);
         String[] fieldNames5 = {"stepNumber", "year", "population"};
         Type[] fieldTypes5 = {integ, integ, integ};
@@ -217,15 +217,21 @@ public final class Manager {
         householdDS.commit();
         householdDS.close();
 
-        //Saves plots and households states
+        //Saves plots state
         plotStateDS.open();
-        householdStateDS.open();
         for (Parcel p : parcelList) {
             plotStateDS.insertFilledRow(new Value[]{ValueFactory.createValue(p.getId()),
                         ValueFactory.createValue(step.getStepNumber()),
                         ValueFactory.createValue(p.getBuildType()),
                         ValueFactory.createValue(p.getAverageWealth())
                     });
+        }
+        plotStateDS.commit();
+        plotStateDS.close();
+        
+        //Saves households state
+        householdStateDS.open();
+        for (Parcel p : parcelList) {
             for (Household hh : p.getHouseholdList()) {
                 householdStateDS.insertFilledRow(new Value[]{ValueFactory.createValue(hh.getId()),
                             ValueFactory.createValue(step.getStepNumber()),
@@ -235,8 +241,6 @@ public final class Manager {
                         });
             }
         }
-        plotStateDS.commit();
-        plotStateDS.close();
         householdStateDS.commit();
         householdStateDS.close();
         
@@ -455,7 +459,9 @@ public final class Manager {
             h.moveIn(movingInPS.selectedParcel(h));
         }
         for (Parcel p : parcelList) {
-            p.updateBuildType();
+            if (p.getBuildType() != 7) {
+                p.updateBuildType();
+            }
         }
     }
 

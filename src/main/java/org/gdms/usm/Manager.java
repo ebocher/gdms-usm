@@ -202,38 +202,97 @@ public final class Manager {
     /**
      * Saves relevant information about plots and households into the output database.
      */
-    public void saveState() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException {
+    public void saveState() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException, IOException {
+        Type integ = TypeFactory.createType(64);
+        Type geometry = TypeFactory.createType(4096);
+        Type bool = TypeFactory.createType(2);
+        Type doubl = TypeFactory.createType(16);
+        
+        //Household table
+        File file1 = new File(outputPath + "/Household_temp.gdms");
+        GdmsWriter householdGW = new GdmsWriter(file1);
+        String[] fieldNames1 = {"householdID", "maximumWealth"};
+        Type[] fieldTypes1 = {integ, integ};
+        Metadata m1 = new DefaultMetadata(fieldTypes1, fieldNames1);
+        householdGW.writeMetadata(0, m1);
+        
+            //Recreate table and copy old data
         DataSource householdDS = dsf.getDataSource("Household");
-        DataSource householdStateDS = dsf.getDataSource("HouseholdState");
-        DataSource plotStateDS = dsf.getDataSource("PlotState");
-        DataSource stepDS = dsf.getDataSource("Step");
-
-        //Inserts new household rows corresponding to the newborn
         householdDS.open();
+        for (int i = 0; i < householdDS.getRowCount(); i++) {
+            householdGW.addValues(householdDS.getRow(i));
+        }
+        householdDS.close();
+        
+            //Fill in new data
         while (!newbornList.empty()) {
             Household h = newbornList.pop();
-            householdDS.insertFilledRow(new Value[]{ValueFactory.createValue(h.getId()), ValueFactory.createValue(h.getMaxWealth())});
+            householdGW.addValues(new Value[]{ValueFactory.createValue(h.getId()), ValueFactory.createValue(h.getMaxWealth())});
         }
-        householdDS.commit();
-        householdDS.close();
+        
+        householdGW.writeRowIndexes();
+        householdGW.writeExtent();
+        householdGW.writeWritenRowCount();
+        householdGW.close();
+        dsf.getSourceManager().delete("Household");
+        File file1b = new File(outputPath + "/Household.gdms");
+        file1.renameTo(file1b);
+        dsf.getSourceManager().register("Household", file1b);
 
-        //Saves plots state
+        //PlotState table
+        File file2 = new File(outputPath + "/PlotState_temp.gdms");
+        GdmsWriter plotStateGW = new GdmsWriter(file2);
+        String[] fieldNames2 = {"plotID", "stepNumber", "buildType", "averageWealth"};
+        Type[] fieldTypes2 = {integ, integ, integ, integ};
+        Metadata m2 = new DefaultMetadata(fieldTypes2, fieldNames2);
+        plotStateGW.writeMetadata(0, m2);
+        
+            //Recreate and copy
+        DataSource plotStateDS = dsf.getDataSource("PlotState");
         plotStateDS.open();
+        for (int i = 0; i < plotStateDS.getRowCount(); i++) {
+            plotStateGW.addValues(plotStateDS.getRow(i));
+        }
+        plotStateDS.close();
+        
+            //Fill in new data
         for (Parcel p : parcelList) {
-            plotStateDS.insertFilledRow(new Value[]{ValueFactory.createValue(p.getId()),
+            plotStateGW.addValues(new Value[]{ValueFactory.createValue(p.getId()),
                         ValueFactory.createValue(step.getStepNumber()),
                         ValueFactory.createValue(p.getBuildType()),
                         ValueFactory.createValue(p.getAverageWealth())
                     });
         }
-        plotStateDS.commit();
-        plotStateDS.close();
         
-        //Saves households state
+        plotStateGW.writeRowIndexes();
+        plotStateGW.writeExtent();
+        plotStateGW.writeWritenRowCount();
+        plotStateGW.close();
+        dsf.getSourceManager().delete("PlotState");
+        File file2b = new File(outputPath + "/PlotState.gdms");
+        file2.renameTo(file2b);
+        dsf.getSourceManager().register("PlotState", file2b);
+        
+        //HouseholdState table
+        File file3 = new File(outputPath + "/HouseholdState_temp.gdms");
+        GdmsWriter householdStateGW = new GdmsWriter(file3);
+        String[] fieldNames3 = {"householdID", "stepNumber", "plotID", "age", "alive"};
+        Type[] fieldTypes3 = {integ, integ, integ, integ, bool};
+        Metadata m3 = new DefaultMetadata(fieldTypes3, fieldNames3);
+        householdStateGW.writeMetadata(0, m3);
+        
+            //Old data
+        DataSource householdStateDS = dsf.getDataSource("HouseholdState");
         householdStateDS.open();
+        for (int i = 0; i < householdStateDS.getRowCount(); i++) {
+            householdStateGW.addValues(householdStateDS.getRow(i));
+        }
+        householdStateDS.close();
+        
+            //New data
         for (Parcel p : parcelList) {
             for (Household hh : p.getHouseholdList()) {
-                householdStateDS.insertFilledRow(new Value[]{ValueFactory.createValue(hh.getId()),
+                householdStateGW.addValues(new Value[]{ValueFactory.createValue(hh.getId()),
                             ValueFactory.createValue(step.getStepNumber()),
                             ValueFactory.createValue(p.getId()),
                             ValueFactory.createValue(hh.getAge()),
@@ -241,16 +300,45 @@ public final class Manager {
                         });
             }
         }
-        householdStateDS.commit();
-        householdStateDS.close();
         
-        //Saves step state
+        householdStateGW.writeRowIndexes();
+        householdStateGW.writeExtent();
+        householdStateGW.writeWritenRowCount();
+        householdStateGW.close();
+        dsf.getSourceManager().delete("HouseholdState");
+        File file3b = new File(outputPath + "/HouseholdState.gdms");
+        file3.renameTo(file3b);
+        dsf.getSourceManager().register("HouseholdState", file3b);
+        
+        //Step table
+        File file4 = new File(outputPath + "/Step_temp.gdms");
+        GdmsWriter stepGW = new GdmsWriter(file4);
+        String[] fieldNames4 = {"stepNumber", "year", "population"};
+        Type[] fieldTypes4 = {integ, integ, integ};
+        Metadata m4 = new DefaultMetadata(fieldTypes4, fieldNames4);
+        stepGW.writeMetadata(0, m4);
+        
+            //Old data
+        DataSource stepDS = dsf.getDataSource("Step");
         stepDS.open();
-        stepDS.insertFilledRow(new Value[]{ValueFactory.createValue(step.getStepNumber()),
+        for (int i = 0; i < stepDS.getRowCount(); i++) {
+            stepGW.addValues(stepDS.getRow(i));
+        }
+        stepDS.close();
+        
+            //New data
+        stepGW.addValues(new Value[]{ValueFactory.createValue(step.getStepNumber()),
             ValueFactory.createValue(step.getYear()),
             ValueFactory.createValue(getPopulation())});
-        stepDS.commit();
-        stepDS.close();
+        
+        stepGW.writeRowIndexes();
+        stepGW.writeExtent();
+        stepGW.writeWritenRowCount();
+        stepGW.close();
+        dsf.getSourceManager().delete("Step");
+        File file4b = new File(outputPath + "/Step.gdms");
+        file4.renameTo(file4b);
+        dsf.getSourceManager().register("Step", file4b);
     }
 
     /**

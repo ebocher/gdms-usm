@@ -90,7 +90,7 @@ public final class Step {
      * @throws DriverException
      * @throws NonEditableDataSourceException 
      */
-    public void wholeStep() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException {
+    public void wholeStep() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException, IOException {
         stepNumber++;
         notifyNextTurn();
         theManager.everybodyGrows();

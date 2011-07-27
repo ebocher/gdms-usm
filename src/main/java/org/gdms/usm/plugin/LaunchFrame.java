@@ -33,6 +33,7 @@ import org.gdms.usm.StatisticalDecisionMaker;
 import org.gdms.usm.Step;
 import org.orbisgis.core.DataManager;
 import org.orbisgis.core.Services;
+import org.orbisgis.core.background.BackgroundManager;
 
 /**
  *
@@ -143,22 +144,9 @@ public class LaunchFrame extends JFrame implements ActionListener {
                 StatisticalDecisionMaker dm = new StatisticalDecisionMaker();
                 s = new Step(2000, dataPath.getText(), configPath, outputPath.getText(), bbtc, dm, gps);
             }
-            try {
-                s.wholeSimulation();
-                dispose();
-            } catch (NoSuchTableException ex) {
-                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (DataSourceCreationException ex) {
-                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (DriverException ex) {
-                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NonEditableDataSourceException ex) {
-                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IndexException ex) {
-                Logger.getLogger(LaunchFrame.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            new ProgressFrame(s);
+            BackgroundManager bm = Services.getService(BackgroundManager.class);
+            bm.backgroundOperation(new ExecuteSimulation(s));
         }
         else if(e.getActionCommand().equals("modify")) {
             System.out.println("Config modification, not implemented yet.");

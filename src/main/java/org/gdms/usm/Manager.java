@@ -65,6 +65,10 @@ public final class Manager {
     private int immigrantNumber;
     private int numberOfTurns;
 
+    private int newbornNumber;
+    private int deadNumber;
+    private int moversCount;
+    
     /**
      * Builds a new Manager.
      * @param dP the initialization data source
@@ -86,6 +90,9 @@ public final class Manager {
         this.listeners = new HashSet<ManagerListener>();
         this.isMovingDM = isdm;
         this.movingInPS = mips;
+        newbornNumber = 0;
+        deadNumber = 0;
+        moversCount = 0;
     }
 
     /**
@@ -346,7 +353,7 @@ public final class Manager {
      */
     public void createImmigrant() {
         Random generator = new Random();
-        Household immigrant = new Household(lastCreatedHouseholdId, 20 + generator.nextInt(40), 25000 + generator.nextInt(75000));
+        Household immigrant = new Household(lastCreatedHouseholdId, 20 + generator.nextInt(40), 10000 + generator.nextInt(50000));
         homelessList.add(immigrant);
         newbornList.add(immigrant);
         householdAdded(immigrant);
@@ -520,7 +527,7 @@ public final class Manager {
      * @return moversCount
      */
     public int whoIsMoving() {
-        int moversCount = 0;
+        moversCount = 0;
         for (Parcel p : parcelList) {
             Stack<Household> areGoingToMove = new Stack<Household>();
             for (Household h : p.getHouseholdList()) {
@@ -565,13 +572,17 @@ public final class Manager {
      */
     public void everybodyGrows() {
         LinkedList<Household> deadPeople = new LinkedList<Household>();
+        newbornNumber = 0;
+        deadNumber = 0;
         for (Parcel p : parcelList) {
             for (Household h : p.getHouseholdList()) {
                 h.grow();
-                if (h.getAge() > 80) {
+                if (h.getAge() > 79) {
                     deadPeople.add(h);
+                    deadNumber++;
                 } else if (h.getAge() == 60) {
                     createNewborn(h);
+                    newbornNumber++;
                 }
             }
         }
@@ -709,5 +720,33 @@ public final class Manager {
      */
     public int getNumberOfTurns() {
         return numberOfTurns;
+    }
+
+    /**
+     * @return the step
+     */
+    public Step getStep() {
+        return step;
+    }
+
+    /**
+     * @return the newbornNumber
+     */
+    public int getNewbornNumber() {
+        return newbornNumber;
+    }
+
+    /**
+     * @return the deadNumber
+     */
+    public int getDeadNumber() {
+        return deadNumber;
+    }
+
+    /**
+     * @return the moversCount
+     */
+    public int getMoversCount() {
+        return moversCount;
     }
 }

@@ -28,6 +28,12 @@ public final class GaussParcelSelector extends MovingInParcelSelector {
     public Parcel selectedParcel(Household h) throws NoSuchTableException, DataSourceCreationException, DriverException {
         List<Parcel> sortedList = getSortedList(h);
         Random generator = new Random();
+        if (sortedList.isEmpty()) {
+            for (StepListener sl : getManager().getStep().getListeners()) {
+                sl.householdDisappeared(h);
+                return null;
+            }
+        }
         return sortedList.get(- (int) (Math.abs(generator.nextGaussian())*DEVIATION*sortedList.size()) + sortedList.size() - 1);
     }
     

@@ -114,6 +114,7 @@ public final class Step {
      */
     public void wholeSimulation() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException, IOException, IndexException {
         initialize();
+        notifyInitializationDone();
         for (int i = 0; i < theManager.getNumberOfTurns(); i++) {
             wholeStep();
         }
@@ -166,6 +167,12 @@ public final class Step {
     private void notifyNextTurn() {
         for (StepListener sl : listeners) {
             sl.nextTurn();
+        }
+    }
+
+    private void notifyInitializationDone() {
+        for (StepListener sl : listeners) {
+            sl.initializationDone();
         }
     }
 }

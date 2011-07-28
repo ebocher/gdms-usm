@@ -198,8 +198,10 @@ public final class Household {
      * @param p a Parcel
      */
     public void moveIn(Parcel p) {
-        p.addHousehold(this);
-        housingPlot = p;
+        if (p != null) {
+          p.addHousehold(this);
+          housingPlot = p;
+        }
     }
 
     /**

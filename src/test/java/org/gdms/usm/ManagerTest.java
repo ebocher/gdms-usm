@@ -152,7 +152,7 @@ public class ManagerTest extends TestCase {
         m.createImmigrant();
         assertFalse(m.getHomelessList().empty());
         assertTrue(m.getHomelessList().peek().getAge() > 19 && m.getHomelessList().peek().getAge() < 60);
-        assertTrue(m.getHomelessList().peek().getMaxWealth() > 24999 && m.getHomelessList().peek().getMaxWealth() < 100001);
+        assertTrue(m.getHomelessList().peek().getMaxWealth() > 9999 && m.getHomelessList().peek().getMaxWealth() < 60001);
     }
     
     public void testCreateNewborn() throws ParseException {

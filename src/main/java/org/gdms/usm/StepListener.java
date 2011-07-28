@@ -12,4 +12,8 @@ public interface StepListener {
     
     void nextTurn();
     
+    void initializationDone();
+    
+    void householdDisappeared(Household h);
+    
 }

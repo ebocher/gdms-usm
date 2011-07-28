@@ -47,6 +47,9 @@ public class LaunchFrame extends JFrame implements ActionListener {
     private JFileChooser outputFc;
     private JTextField outputPath;
     private String configPath;
+    private JButton launchButton;
+    private JButton modifyButton;
+    private JButton cancelButton;
     
     public LaunchFrame(File configFile, String choice) throws DataSourceCreationException, DriverException {
         super("Urban Sprawl Model - Launch");
@@ -98,15 +101,15 @@ public class LaunchFrame extends JFrame implements ActionListener {
         
         //Button panel
         JPanel buttonPanel = new JPanel();
-        JButton launchButton = new JButton("Launch");
+        launchButton = new JButton("Launch");
         launchButton.addActionListener(this);
         launchButton.setActionCommand("launch");
         buttonPanel.add(launchButton);
-        JButton modifyButton = new JButton("Modify");
+        modifyButton = new JButton("Modify");
         modifyButton.addActionListener(this);
         modifyButton.setActionCommand("modify");
         buttonPanel.add(modifyButton);
-        JButton cancelButton = new JButton("Cancel");
+        cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(this);
         cancelButton.setActionCommand("cancel");
         buttonPanel.add(cancelButton);
@@ -145,6 +148,9 @@ public class LaunchFrame extends JFrame implements ActionListener {
                 s = new Step(2000, dataPath.getText(), configPath, outputPath.getText(), bbtc, dm, gps);
             }
             new ProgressFrame(s);
+            launchButton.setEnabled(false);
+            modifyButton.setEnabled(false);
+            cancelButton.setEnabled(false);
             BackgroundManager bm = Services.getService(BackgroundManager.class);
             bm.backgroundOperation(new ExecuteSimulation(s));
         }

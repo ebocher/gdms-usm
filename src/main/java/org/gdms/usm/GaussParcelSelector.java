@@ -18,8 +18,6 @@ import org.gdms.driver.DriverException;
  */
 public final class GaussParcelSelector extends MovingInParcelSelector {
     
-    private static final double DEVIATION = 0.1;
-    
     public GaussParcelSelector() {
         //TGV
     }
@@ -34,7 +32,7 @@ public final class GaussParcelSelector extends MovingInParcelSelector {
                 return null;
             }
         }
-        return sortedList.get(- (int) (Math.abs(generator.nextGaussian())*DEVIATION*sortedList.size()) + sortedList.size() - 1);
+        return sortedList.get(- (int) (Math.abs(generator.nextGaussian())*getManager().getGaussDeviation()*sortedList.size()) + sortedList.size() - 1);
     }
     
     /**

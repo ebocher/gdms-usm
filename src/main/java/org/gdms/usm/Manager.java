@@ -523,11 +523,9 @@ public final class Manager {
 
     /**
      * Checks which households wants to move and moves them out. Warns the listeners when a household moves.
-     * Returns the moving households count, for statistical purposes.
-     * @return moversCount
      */
-    public int whoIsMoving() {
-        moversCount = 0;
+    public void whoIsMoving() {
+        int moversTempCount = 0;
         for (Parcel p : parcelList) {
             Stack<Household> areGoingToMove = new Stack<Household>();
             for (Household h : p.getHouseholdList()) {
@@ -539,10 +537,10 @@ public final class Manager {
                 h.moveOut();
                 homelessList.add(h);
                 householdMoved(h);
-                moversCount++;
+                moversTempCount++;
             }
         }
-        return moversCount;
+        moversCount = moversTempCount;
     }
 
     /**

@@ -371,7 +371,8 @@ public class ManagerTest extends TestCase {
         sdm.addToDissatisfactionQueue(iWannaMove, 29.9);
         sdm.addToDissatisfactionQueue(iWannaMove2, 29.9);
         
-        int moversCount = m.whoIsMoving();
+        m.whoIsMoving();
+        int moversCount = m.getMoversCount();
         assertTrue(moversCount == 2);
         assertTrue(householdHub.getHouseholdList().size() == 1);
         assertTrue(m.getHomelessList().size() == 2);

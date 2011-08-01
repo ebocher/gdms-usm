@@ -166,7 +166,7 @@ public final class Step {
      */
     private void notifyNextTurn() {
         for (StepListener sl : listeners) {
-            sl.nextTurn();
+            sl.nextTurn(stepNumber, theManager.getNumberOfTurns(), theManager.getPopulation(), theManager.getDeadNumber(), theManager.getNewbornNumber(), theManager.getMoversCount());
         }
     }
 

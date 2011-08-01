@@ -13,9 +13,6 @@ import java.util.Comparator;
  */
 public final class GaussParcelComparator implements Comparator<Parcel>, Serializable {
 
-    public static final double AMENITIES_WEIGHTING = 1.0;
-    public static final double CONSTRUCTIBILITY_WEIGHTING = 1.0;
-    public static final double IDEALHOUSING_WEIGHTING = 1.0;
     private Household concernedHousehold;
     private Manager manager;
     
@@ -49,9 +46,9 @@ public final class GaussParcelComparator implements Comparator<Parcel>, Serializ
      * @return the specified parcel score
      */
     public double getParcelScore(Parcel p) {
-        double amenitiesPart = AMENITIES_WEIGHTING*((double) p.getAmenitiesIndex());
-        double constructibilityPart = CONSTRUCTIBILITY_WEIGHTING*((double) p.getConstructibilityIndex());
-        double idealHousingPart = IDEALHOUSING_WEIGHTING*(100.0 - (double) concernedHousehold.getIdealHousingCoefficient(p));
+        double amenitiesPart = manager.getAmenitiesWeighting()*((double) p.getAmenitiesIndex());
+        double constructibilityPart = manager.getConstructibilityWeighting()*((double) p.getConstructibilityIndex());
+        double idealHousingPart = manager.getIdealhousingWeighting()*(100.0 - (double) concernedHousehold.getIdealHousingCoefficient(p));
         
         return amenitiesPart+constructibilityPart+idealHousingPart;
     }

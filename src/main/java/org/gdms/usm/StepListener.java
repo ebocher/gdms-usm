@@ -10,7 +10,7 @@ package org.gdms.usm;
  */
 public interface StepListener {
     
-    void nextTurn();
+    void nextTurn(int cT, int nT, int pop, int dead, int newb, int mov);
     
     void initializationDone();
     

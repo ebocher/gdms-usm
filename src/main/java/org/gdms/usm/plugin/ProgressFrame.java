@@ -8,16 +8,25 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import org.gdms.usm.Household;
 import org.gdms.usm.Step;
 import org.gdms.usm.StepListener;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.orbisgis.core.Services;
 
 /**
@@ -27,19 +36,27 @@ import org.orbisgis.core.Services;
 public class ProgressFrame extends JFrame implements StepListener {
     
     private int totalSeconds;
+    private List<Integer> stepSeconds;
     private JLabel currentTurn;
     private JLabel currentPopulation;
     private JLabel initialPopulationCount;
     private JLabel lastDeathToll;
     private JLabel lastNewbornCount;
     private JLabel lastMoversCount;
+    private XYSeries timeChart;
+    private XYSeries currentPopulationChart;
+    private XYSeries deathTollChart;
+    private XYSeries newbornCountChart;
+    private XYSeries moversCountChart;
     private Step simulation;
     
     public ProgressFrame(Step s) {
         super("Progress");
         simulation = s;
         s.registerStepListener(this);
+        stepSeconds = new LinkedList<Integer>();
         
+        JPanel statusPanel = new JPanel(new BorderLayout());
         JPanel globalPanel = new JPanel(new SpringLayout());
         
         //Time elapsed panel
@@ -49,7 +66,7 @@ public class ProgressFrame extends JFrame implements StepListener {
         timePanel.add(timeLabel, BorderLayout.SOUTH);
         JLabel elapsed = new JLabel("Time Elapsed :",SwingConstants.CENTER);
         timePanel.add(elapsed, BorderLayout.NORTH);
-        add(timePanel, BorderLayout.NORTH);
+        statusPanel.add(timePanel, BorderLayout.NORTH);
         
         ActionListener timerListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -136,9 +153,25 @@ public class ProgressFrame extends JFrame implements StepListener {
         globalPanel.add(newbornPanel);
         
         SpringUtilities.makeCompactGrid(globalPanel, 3, 2, 5, 5, 20, 10);
-        add(globalPanel, BorderLayout.SOUTH);
+        statusPanel.add(globalPanel, BorderLayout.SOUTH);
         
-        getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(statusPanel, BorderLayout.WEST);
+        
+        //Graph tabbed pane
+        JTabbedPane tabbedPane = new JTabbedPane();
+        timeChart = new XYSeries("Step time", true, false);
+        tabbedPane.addTab("Step time", createChartPanel("Step time", timeChart));
+        currentPopulationChart = new XYSeries("Population", true, false);
+        tabbedPane.addTab("Population", createChartPanel("Population", currentPopulationChart));
+        deathTollChart = new XYSeries("Deaths", true, false);
+        tabbedPane.addTab("Deaths", createChartPanel("Deaths", deathTollChart));
+        newbornCountChart = new XYSeries("Newborn", true, false);
+        tabbedPane.addTab("Newborn", createChartPanel("Newborn", newbornCountChart));
+        moversCountChart = new XYSeries("Movers", true, false);
+        tabbedPane.addTab("Movers", createChartPanel("Movers", moversCountChart));
+        add(tabbedPane, BorderLayout.EAST);
+        
+        getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
         setLocationRelativeTo(null);
@@ -146,12 +179,24 @@ public class ProgressFrame extends JFrame implements StepListener {
     }
 
     @Override
-    public void nextTurn() {
-        currentTurn.setText(simulation.getStepNumber()+"/"+simulation.getManager().getNumberOfTurns());
-        currentPopulation.setText(""+simulation.getManager().getPopulation());
-        lastDeathToll.setText(""+simulation.getManager().getDeadNumber());
-        lastNewbornCount.setText(""+simulation.getManager().getNewbornNumber());
-        lastMoversCount.setText(""+simulation.getManager().getMoversCount());
+    public void nextTurn(int cT, int nT, int pop, int dead, int newb, int mov) {
+        //Labels updating
+        currentTurn.setText(cT+"/"+nT);
+        currentPopulation.setText(""+pop);
+        lastDeathToll.setText(""+dead);
+        lastNewbornCount.setText(""+newb);
+        lastMoversCount.setText(""+mov);
+        
+        //Charts updating
+        //NB : data is recorded at current turn minus one, because this is last-turn data.
+        if (cT > 1) {
+            timeChart.add(cT-1, totalSeconds-stepSeconds.get(cT-1));
+            currentPopulationChart.add(cT-1, pop);
+            deathTollChart.add(cT-1, dead);
+            newbornCountChart.add(cT-1, newb);
+            moversCountChart.add(cT-1, mov);
+        }    
+        stepSeconds.add(totalSeconds);
     }
 
     @Override
@@ -162,5 +207,15 @@ public class ProgressFrame extends JFrame implements StepListener {
     @Override
     public void initializationDone() {
         initialPopulationCount.setText(""+simulation.getManager().getPopulation());
+        stepSeconds.add(totalSeconds);
+        currentTurn.setText("1/"+simulation.getManager().getNumberOfTurns());
+    }
+    
+    private ChartPanel createChartPanel(String valueName, XYSeries data) {
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(data);
+        JFreeChart chart = ChartFactory.createXYLineChart(null, "Step", valueName, dataset, PlotOrientation.VERTICAL, true, true, false);
+        chart.removeLegend();
+        return new ChartPanel(chart);
     }
 }

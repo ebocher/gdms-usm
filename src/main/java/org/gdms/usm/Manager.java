@@ -75,7 +75,7 @@ public final class Manager {
      * @param oP the output folder
      * @param c the nearby build type calculator strategy
      */
-    public Manager(Step s, String dP, String gP, String oP, NearbyBuildTypeCalculator c, IsMovingDecisionMaker isdm, MovingInParcelSelector mips) {
+    public Manager(Step s, String dP, String gP, String oP, NearbyBuildTypeCalculator c, IsMovingDecisionMaker isdm, MovingInParcelSelector mips, DataSourceFactory dsf) {
         this.step = s;
         this.parcelList = new ArrayList();
         this.homelessList = new Stack();
@@ -85,7 +85,7 @@ public final class Manager {
         this.globalsPath = gP;
         this.outputPath = oP;
         FileUtils.deleteDir(new File(oP, "/gdms"));
-        this.dsf = new DataSourceFactory(oP + "/gdms");
+        this.dsf = dsf;
         this.nbtc = c;
         this.listeners = new HashSet<ManagerListener>();
         this.isMovingDM = isdm;

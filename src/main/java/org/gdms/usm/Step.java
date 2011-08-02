@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import org.gdms.data.DataSourceCreationException;
+import org.gdms.data.DataSourceFactory;
 import org.gdms.data.NoSuchTableException;
 import org.gdms.data.NonEditableDataSourceException;
 import org.gdms.data.indexes.IndexException;
@@ -33,8 +34,8 @@ public final class Step {
      * @param sdm the statistical decision maker
      * @param mips the moving in parcel selector
      */
-    public Step(int y, String dP, String gP, String oP, NearbyBuildTypeCalculator c, StatisticalDecisionMaker sdm, MovingInParcelSelector mips) {
-        theManager = new Manager(this, dP, gP, oP, c, sdm, mips);
+    public Step(int y, String dP, String gP, String oP, NearbyBuildTypeCalculator c, StatisticalDecisionMaker sdm, MovingInParcelSelector mips, DataSourceFactory dsf) {
+        theManager = new Manager(this, dP, gP, oP, c, sdm, mips, dsf);
         stepNumber = 0;
         year = y;
         listeners = new HashSet<StepListener>();
@@ -54,8 +55,8 @@ public final class Step {
      * @param sdm the schelling decision maker
      * @param mips the moving in parcel selector
      */
-    public Step(int y, String dP, String gP, String oP, NearbyBuildTypeCalculator c, SchellingDecisionMaker sdm, MovingInParcelSelector mips) {
-        theManager = new Manager(this, dP, gP, oP, c, sdm, mips);
+    public Step(int y, String dP, String gP, String oP, NearbyBuildTypeCalculator c, SchellingDecisionMaker sdm, MovingInParcelSelector mips, DataSourceFactory dsf) {
+        theManager = new Manager(this, dP, gP, oP, c, sdm, mips, dsf);
         stepNumber = 0;
         year = y;
         listeners = new HashSet<StepListener>();
@@ -118,6 +119,7 @@ public final class Step {
         for (int i = 0; i < theManager.getNumberOfTurns(); i++) {
             wholeStep();
         }
+        notifySimulationDone();
     }
 
     /**
@@ -173,6 +175,12 @@ public final class Step {
     private void notifyInitializationDone() {
         for (StepListener sl : listeners) {
             sl.initializationDone();
+        }
+    }
+    
+    private void notifySimulationDone() {
+        for (StepListener sl : listeners) {
+            sl.simulationDone();
         }
     }
 }

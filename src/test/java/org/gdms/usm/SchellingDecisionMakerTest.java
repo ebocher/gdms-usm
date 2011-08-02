@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import junit.framework.TestCase;
 import org.gdms.data.DataSourceCreationException;
+import org.gdms.data.DataSourceFactory;
 import org.gdms.data.NoSuchTableException;
 import org.gdms.data.indexes.IndexException;
 import org.gdms.data.schema.DefaultMetadata;
@@ -47,12 +48,13 @@ public class SchellingDecisionMakerTest extends TestCase {
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String globalsPathForTests = "src/test/resources/globals.gdms";
     private String outputPathForTests = "src/test/resources";
+    private DataSourceFactory dsf = new DataSourceFactory(outputPathForTests + "/gdms");
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private SchellingDecisionMaker sdm = new SchellingDecisionMaker();
     private GaussParcelSelector gps = new GaussParcelSelector();
     
     private Step instanciateDummyParcels() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException, IOException {
-        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps, dsf);
         Manager m = s.getManager();
         WKTReader wktr = new WKTReader();
         Geometry g1 = wktr.read("POLYGON ((0 0, 4 0, 4 4, 0 4, 0 0))");

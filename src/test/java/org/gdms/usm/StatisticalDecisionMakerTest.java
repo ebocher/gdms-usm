@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import junit.framework.TestCase;
 import org.gdms.data.DataSourceCreationException;
+import org.gdms.data.DataSourceFactory;
 import org.gdms.driver.DriverException;
 import org.gdms.driver.driverManager.DriverLoadException;
 
@@ -37,6 +38,7 @@ public class StatisticalDecisionMakerTest extends TestCase {
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String globalsPathForTests = "src/test/resources/globals.gdms";
     private String outputPathForTests = "src/test/resources";
+    private DataSourceFactory dsf = new DataSourceFactory(outputPathForTests + "/gdms");
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
     private GaussParcelSelector gps = new GaussParcelSelector();
@@ -82,7 +84,7 @@ public class StatisticalDecisionMakerTest extends TestCase {
     }
     
     public void testAddDissQueue() throws DriverLoadException, DataSourceCreationException, DriverException {
-        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps, dsf);
         Manager m = s.getManager();
         m.initializeGlobals();
         StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
@@ -108,7 +110,7 @@ public class StatisticalDecisionMakerTest extends TestCase {
     }
     
     public void testGetCumulDiss() throws DriverLoadException, DataSourceCreationException, DriverException {
-        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps, dsf);
         Manager m = s.getManager();
         m.initializeGlobals();
         StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
@@ -142,7 +144,7 @@ public class StatisticalDecisionMakerTest extends TestCase {
     }
     
     public void testDeleteHousehold() throws DriverLoadException, DataSourceCreationException, DriverException {
-        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps, dsf);
         Manager m = s.getManager();
         m.initializeGlobals();
         StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
@@ -155,7 +157,7 @@ public class StatisticalDecisionMakerTest extends TestCase {
     }
     
     public void testIsMoving() throws ParseException, DriverLoadException, DataSourceCreationException, DriverException {
-        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps, dsf);
         Manager m = s.getManager();
         m.initializeGlobals();
         StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();

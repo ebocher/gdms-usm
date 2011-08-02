@@ -16,4 +16,5 @@ public interface StepListener {
     
     void householdDisappeared(Household h);
     
+    void simulationDone();
 }

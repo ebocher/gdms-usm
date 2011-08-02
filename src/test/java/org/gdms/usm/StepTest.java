@@ -44,13 +44,14 @@ public class StepTest extends TestCase {
     private String dataPathForTests = "src/test/resources/initialdatabase.gdms";
     private String globalsPathForTests = "src/test/resources/globals.gdms";
     private String outputPathForTests = "src/test/resources";
+    private DataSourceFactory dsf = new DataSourceFactory(outputPathForTests + "/gdms");
     private BufferBuildTypeCalculator bbtc = new BufferBuildTypeCalculator();
     private StatisticalDecisionMaker sdm = new StatisticalDecisionMaker();
     private SchellingDecisionMaker schdm = new SchellingDecisionMaker();
     private GaussParcelSelector gps = new GaussParcelSelector();
     
     public void testInitialize() throws DataSourceCreationException, DriverException, NoSuchTableException, NonEditableDataSourceException, IOException, IndexException {
-        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps);
+        Step s = new Step(2000, dataPathForTests, globalsPathForTests, outputPathForTests, bbtc, sdm, gps, dsf);
         Manager m = s.getManager();
         s.initialize();
         

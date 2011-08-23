@@ -211,9 +211,7 @@ public final class Manager {
      */
     public void saveState() throws NoSuchTableException, DataSourceCreationException, DriverException, NonEditableDataSourceException, IOException {
         Type integ = TypeFactory.createType(64);
-        Type geometry = TypeFactory.createType(4096);
         Type bool = TypeFactory.createType(2);
-        Type doubl = TypeFactory.createType(16);
         
         //Household table
         File file1 = new File(outputPath + "/Household_temp.gdms");
@@ -418,13 +416,13 @@ public final class Manager {
         long size = sds.getRowCount();
         for (int j = 0; j < size; j++) {
             //Parcel creation
-            Parcel newParcel = new Parcel(sds.getFieldValue(j, 20).getAsInt(), //id
-                    sds.getFieldValue(j, 1).getAsInt(), //buildType
-                    sds.getFieldValue(j, 17).getAsDouble() / 1000000, //maxDensity (WARNING : km² input)
-                    sds.getFieldValue(j, 19).getAsInt(), //amenitiesIndex
-                    sds.getFieldValue(j, 16).getAsInt(), //constructibilityIndex
-                    sds.getFieldValue(j, 18).getAsInt(), //inseeCode
-                    sds.getFieldValue(j, 15).getAsString(), //zoning
+            Parcel newParcel = new Parcel(sds.getInt(j, "id"), //id
+                    sds.getInt(j, "buildType"), //buildType
+                    sds.getDouble(j, "maxDensity") / 1000000, //maxDensity (WARNING : km² input)
+                    sds.getInt(j, "amenIndex"), //amenitiesIndex
+                    sds.getInt(j, "constIndex"), //constructibilityIndex
+                    sds.getInt(j, "inseeCode"), //inseeCode
+                    sds.getString(j, "zoning"), //zoning
                     sds.getGeometry(j), //geometry
                     nbtc);                                  //nearbyBuildTypeCalculator
             this.addParcel(newParcel);
@@ -432,10 +430,10 @@ public final class Manager {
             if (newParcel.getBuildType() != 7) {
 
                 //Households creation by age bracket
-                int maxWealth = sds.getFieldValue(j, 9).getAsInt();
+                int maxWealth = sds.getInt(j, "wealth");
                 
                 //20-39 years old
-                for (int k = 0; k < sds.getFieldValue(j, 11).getAsInt(); k++) {
+                for (int k = 0; k < sds.getInt(j, "localPop20"); k++) {
                     Household newHousehold = new Household(lastCreatedHouseholdId,
                             20 + generator.nextInt(20),
                             (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
@@ -445,7 +443,7 @@ public final class Manager {
                 }
 
                 //40-59 years old
-                for (int k = 0; k < sds.getFieldValue(j, 12).getAsInt(); k++) {
+                for (int k = 0; k < sds.getInt(j, "localPop40"); k++) {
                     Household newHousehold = new Household(lastCreatedHouseholdId,
                             40 + generator.nextInt(20),
                             (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
@@ -455,7 +453,7 @@ public final class Manager {
                 }
 
                 //60-79 years old
-                for (int k = 0; k < sds.getFieldValue(j, 13).getAsInt(); k++) {
+                for (int k = 0; k < sds.getInt(j, "localPop60"); k++) {
                     Household newHousehold = new Household(lastCreatedHouseholdId,
                             60 + generator.nextInt(20),
                             (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
@@ -623,7 +621,7 @@ public final class Manager {
      * @throws DataSourceCreationException
      * @throws DriverException 
      */
-    public void initializeGlobals() throws DriverLoadException, DataSourceCreationException, DriverException {
+    public void initializeGlobals() throws DataSourceCreationException, DriverException {
         File globalsFile = new File(globalsPath);
         DataSource globals = dsf.getDataSource(globalsFile);
         globals.open();

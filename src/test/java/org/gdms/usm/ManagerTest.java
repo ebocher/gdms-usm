@@ -15,7 +15,6 @@ import org.gdms.data.DataSourceCreationException;
 import org.gdms.data.DataSourceFactory;
 import org.gdms.data.NoSuchTableException;
 import org.gdms.data.NonEditableDataSourceException;
-import org.gdms.data.SpatialDataSourceDecorator;
 import org.gdms.data.indexes.IndexException;
 import org.gdms.data.schema.DefaultMetadata;
 import org.gdms.data.schema.Metadata;
@@ -215,10 +214,9 @@ public class ManagerTest extends TestCase {
         DataSource householdStateDS = dsf.getDataSource("HouseholdState");
         DataSource plotStateDS = dsf.getDataSource("PlotState");
         DataSource stepDS = dsf.getDataSource("Step");
-        SpatialDataSourceDecorator plotSDS = new SpatialDataSourceDecorator(plotDS);
         
         householdDS.open();
-        plotSDS.open();
+        plotDS.open();
         householdStateDS.open();
         plotStateDS.open();
         stepDS.open();
@@ -240,14 +238,14 @@ public class ManagerTest extends TestCase {
         
         //Now let's test the content itself.
         assertTrue(householdDS.getRowCount() == 193214);
-        assertTrue(plotSDS.getRowCount() == 6978);
+        assertTrue(plotDS.getRowCount() == 6978);
         
         //Did you build my spatial index, dear ?
         assertTrue(m.getDsf().getIndexManager().isIndexed("Plot", "the_geom"));
         
         //And don't forget to close your datasources, folks.
         householdDS.close();
-        plotSDS.close();
+        plotDS.close();
         householdStateDS.close();
         plotStateDS.close();
         stepDS.close();

@@ -12,7 +12,6 @@ import org.gdms.data.DataSourceCreationException;
 import org.gdms.data.DataSourceFactory;
 import org.gdms.data.NoSuchTableException;
 import org.gdms.data.NonEditableDataSourceException;
-import org.gdms.data.SpatialDataSourceDecorator;
 import org.gdms.data.indexes.IndexException;
 import org.gdms.driver.DriverException;
 
@@ -87,9 +86,8 @@ public class StepTest extends TestCase {
         DataSource householdStateDS = dsf.getDataSource("HouseholdState");
         DataSource plotStateDS = dsf.getDataSource("PlotState");
         DataSource stepDS = dsf.getDataSource("Step");
-        SpatialDataSourceDecorator plotSDS = new SpatialDataSourceDecorator(plotDS);
         householdDS.open();
-        plotSDS.open();
+        plotDS.open();
         householdStateDS.open();
         plotStateDS.open();
         stepDS.open();
@@ -105,10 +103,10 @@ public class StepTest extends TestCase {
         assertTrue(plotStateDS.getMetadata().getFieldName(2).equals("buildType"));
         assertTrue(stepDS.getMetadata().getFieldName(0).equals("stepNumber"));
         assertTrue(householdDS.getRowCount() == 193214);
-        assertTrue(plotSDS.getRowCount() == 6978);
+        assertTrue(plotDS.getRowCount() == 6978);
         assertTrue(m.getDsf().getIndexManager().isIndexed("Plot", "the_geom"));
         householdDS.close();
-        plotSDS.close();
+        plotDS.close();
         householdStateDS.close();
         plotStateDS.close();
         stepDS.close();

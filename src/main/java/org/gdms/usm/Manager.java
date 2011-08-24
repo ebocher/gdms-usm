@@ -18,7 +18,6 @@ import org.gdms.data.DataSourceCreationException;
 import org.gdms.data.DataSourceFactory;
 import org.gdms.data.NoSuchTableException;
 import org.gdms.data.NonEditableDataSourceException;
-import org.gdms.data.SpatialDataSourceDecorator;
 import org.gdms.data.indexes.IndexException;
 import org.gdms.data.schema.DefaultMetadata;
 import org.gdms.data.schema.Metadata;
@@ -410,30 +409,29 @@ public final class Manager {
         Random generator = new Random();
         File initialFile = new File(dataPath);
         DataSource initialBase = dsf.getDataSource(initialFile);
-        SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(initialBase);
-        sds.open();
+        initialBase.open();
 
-        long size = sds.getRowCount();
+        long size = initialBase.getRowCount();
         for (int j = 0; j < size; j++) {
             //Parcel creation
-            Parcel newParcel = new Parcel(sds.getInt(j, "id"), //id
-                    sds.getInt(j, "buildType"), //buildType
-                    sds.getDouble(j, "maxDensity") / 1000000, //maxDensity (WARNING : km² input)
-                    sds.getInt(j, "amenIndex"), //amenitiesIndex
-                    sds.getInt(j, "constIndex"), //constructibilityIndex
-                    sds.getInt(j, "inseeCode"), //inseeCode
-                    sds.getString(j, "zoning"), //zoning
-                    sds.getGeometry(j), //geometry
+            Parcel newParcel = new Parcel(initialBase.getInt(j, "id"), //id
+                    initialBase.getInt(j, "buildType"), //buildType
+                    initialBase.getDouble(j, "maxDensity") / 1000000, //maxDensity (WARNING : km² input)
+                    initialBase.getInt(j, "amenIndex"), //amenitiesIndex
+                    initialBase.getInt(j, "constIndex"), //constructibilityIndex
+                    initialBase.getInt(j, "inseeCode"), //inseeCode
+                    initialBase.getString(j, "zoning"), //zoning
+                    initialBase.getGeometry(j), //geometry
                     nbtc);                                  //nearbyBuildTypeCalculator
             this.addParcel(newParcel);
 
             if (newParcel.getBuildType() != 7) {
 
                 //Households creation by age bracket
-                int maxWealth = sds.getInt(j, "wealth");
+                int maxWealth = initialBase.getInt(j, "wealth");
                 
                 //20-39 years old
-                for (int k = 0; k < sds.getInt(j, "localPop20"); k++) {
+                for (int k = 0; k < initialBase.getInt(j, "localPop20"); k++) {
                     Household newHousehold = new Household(lastCreatedHouseholdId,
                             20 + generator.nextInt(20),
                             (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
@@ -443,7 +441,7 @@ public final class Manager {
                 }
 
                 //40-59 years old
-                for (int k = 0; k < sds.getInt(j, "localPop40"); k++) {
+                for (int k = 0; k < initialBase.getInt(j, "localPop40"); k++) {
                     Household newHousehold = new Household(lastCreatedHouseholdId,
                             40 + generator.nextInt(20),
                             (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));
@@ -453,7 +451,7 @@ public final class Manager {
                 }
 
                 //60-79 years old
-                for (int k = 0; k < sds.getInt(j, "localPop60"); k++) {
+                for (int k = 0; k < initialBase.getInt(j, "localPop60"); k++) {
                     Household newHousehold = new Household(lastCreatedHouseholdId,
                             60 + generator.nextInt(20),
                             (int) ((int) (0.90 * maxWealth)) + generator.nextInt((int) (0.20 * maxWealth)));

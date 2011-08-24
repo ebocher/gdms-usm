@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import org.gdms.data.DataSource;
 import org.gdms.data.DataSourceCreationException;
 import org.gdms.data.NoSuchTableException;
-import org.gdms.data.SpatialDataSourceDecorator;
 import org.gdms.data.indexes.DefaultSpatialIndexQuery;
 import org.gdms.driver.DriverException;
 
@@ -29,7 +29,7 @@ public final class BufferBuildTypeCalculator extends NearbyBuildTypeCalculator {
     
     @Override
     public void setNeighbours() throws NoSuchTableException, DataSourceCreationException, DriverException {
-        SpatialDataSourceDecorator sds = new SpatialDataSourceDecorator(getManager().getDsf().getDataSource("Plot"));
+        DataSource sds = getManager().getDsf().getDataSource("Plot");
         sds.open();
         
         for (Parcel p : getManager().getParcelList()) {

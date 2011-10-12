@@ -38,12 +38,7 @@
         <dependency>
             <groupId>org.gdms.sql</groupId>
             <artifactId>gdmsql</artifactId>
-            <version>0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.13</version>
+            <version>0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>jfree</groupId>
@@ -61,31 +56,6 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.2.1</version>
-                    <configuration>
-                            <descriptors>
-                                    <descriptor>src/main/assembly/src.xml</descriptor>
-                            </descriptors>
-                    </configuration>
-            </plugin>
-            <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.2</version>
-                    <configuration>
-                            <executable>java</executable>
-                            <classpathScope>runtime</classpathScope>
-                            <arguments>
-                                    <argument>-classpath</argument>
-                                    <classpath />
-                                    <argument>org.orbisgis.core.Main</argument>
-                                    <argument>-pluginDir</argument>
-                                    <argument>target</argument>
-                            </arguments>
-                    </configuration>
             </plugin>
         </plugins>
     </build>

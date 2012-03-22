@@ -121,6 +121,10 @@ public final class Manager {
         Type bool = TypeFactory.createType(2);
         Type doubl = TypeFactory.createType(16);
 
+        //Folder creation (only if not existing)
+        File folder = new File(outputPath+"/");
+        folder.mkdirs();
+        
         //Plot table creation
         File file1 = new File(outputPath + "/Plot.gdms");
         GdmsWriter plotGW = new GdmsWriter(file1);

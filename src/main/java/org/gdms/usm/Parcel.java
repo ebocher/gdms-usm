@@ -111,22 +111,22 @@ public final class Parcel {
      * Changes the build type if needed.
      * WARNING : lack of break statements is VOLUNTARY.
      */
-    public void updateBuildType() {
+    public void updateBuildType(double threshold_1, double threshold_2, double threshold_3, double threshold_4) {
         switch (buildType) {
             case 1:
-                if (density > 0) {
+                if (density > threshold_1) {
                     buildType = 2;
                 }
             case 2:
-                if (density > 0.000155) {
+                if (density > threshold_2) {
                     buildType = 3;
                 }
             case 3:
-                if (density > 0.001000) {
+                if (density > threshold_3) {
                     buildType = 4;
                 }
             case 4:
-                if (density > 0.001466) {
+                if (density > threshold_4) {
                     buildType = 5;
                 }
             case 5:

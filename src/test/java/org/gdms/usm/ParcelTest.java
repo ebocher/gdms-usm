@@ -139,17 +139,17 @@ public class ParcelTest extends TestCase {
         
         Parcel rez = new Parcel(8,1,0.000002,20,10,50,44109,"AB",geometry, bbtc);
         
-        rez.updateBuildType();
+        rez.updateBuildType(0, 0.000155, 0.001000, 0.001466);
         assertTrue(rez.getBuildType() == 2);
-        rez.updateBuildType();
+        rez.updateBuildType(0, 0.000155, 0.001000, 0.001466);
         assertTrue(rez.getBuildType() == 2);
         
         Parcel rez2 = new Parcel(8,2,0.000158,2000,10,50,44109,"AB",geometry, bbtc);
-        rez2.updateBuildType();
+        rez2.updateBuildType(0, 0.000155, 0.001000, 0.001466);
         assertTrue(rez2.getBuildType() == 3);
         
         Parcel rez3 = new Parcel(8,1,0.001200,2000,10,50,44109,"AB",geometry, bbtc);
-        rez3.updateBuildType();
+        rez3.updateBuildType(0, 0.000155, 0.001000, 0.001466);
         assertTrue(rez3.getBuildType() == 4);
         
         Parcel rez4 = new Parcel(8,5,0.001852,2000,10,50,44109,"AB",geometry, bbtc);

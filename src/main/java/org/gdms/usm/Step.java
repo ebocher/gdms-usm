@@ -183,4 +183,15 @@ public final class Step {
             sl.simulationDone();
         }
     }
+    /**
+     * Set the thresholds in the manager
+     * @param t1 a threshold
+     * @param t2 a threshold
+     * @param t3 a threshold
+     * @param t4 a threshold
+     */
+    public void setThresholds(double t1, double t2, double t3, double t4)
+    {
+        theManager.setThresholds(t1, t2, t3, t4);
+    }
 }

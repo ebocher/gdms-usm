@@ -7,6 +7,8 @@ package org.gdms.usm;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +69,12 @@ public final class Manager {
     private int newbornNumber;
     private int deadNumber;
     private int moversCount;
+    
+    //threshold of buildtypes
+    private double threshold_1;
+    private double threshold_2;
+    private double threshold_3;
+    private double threshold_4;
     
     /**
      * Builds a new Manager.
@@ -553,7 +561,7 @@ public final class Manager {
         }
         for (Parcel p : parcelList) {
             if (p.getBuildType() != 7) {
-                p.updateBuildType();
+                p.updateBuildType(threshold_1, threshold_2, threshold_3, threshold_4);
             }
         }
     }
@@ -639,6 +647,10 @@ public final class Manager {
         movingThreshold = globals.getDouble(0, "movingThreshold");
         immigrantNumber = globals.getInt(0, "immigrantNumber");
         numberOfTurns = globals.getInt(0, "numberOfTurns");
+        threshold_1 = globals.getDouble(0, "threshold_1");
+        threshold_2 = globals.getDouble(0, "threshold_2");
+        threshold_3 = globals.getDouble(0, "threshold_3");
+        threshold_4 = globals.getDouble(0, "threshold_4");
         
         globals.close();
     }
@@ -747,4 +759,24 @@ public final class Manager {
     public int getMoversCount() {
         return moversCount;
     }
+
+    /**
+     * Sort the thresohlds then set them in the right order
+     * @param t_1 a threshold
+     * @param t_2 a threshold
+     * @param t_3 a threshold
+     * @param t_4 a threshold
+     */
+    public void setThresholds(double t_1, double t_2, double t_3, double t_4)
+    {
+        double[] thresholds = new double[] {t_1, t_2, t_3, t_4};
+        Arrays.sort(thresholds);
+        
+        threshold_1 = thresholds[0];
+        threshold_2 = thresholds[1];
+        threshold_3 = thresholds[2];
+        threshold_4 = thresholds[3];
+        return;
+    }
+    
 }

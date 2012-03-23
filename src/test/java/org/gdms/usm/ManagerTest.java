@@ -410,7 +410,7 @@ public class ManagerTest extends TestCase {
         assertTrue(Math.abs(m.getIdealhousingWeighting() - 1.0) < 0.000001);
         assertTrue(Math.abs(m.getGaussDeviation() - 0.1) < 0.000001);
         assertTrue(Math.abs(m.getSegregationThreshold() - 0.8) < 0.000001);
-        assertTrue(Math.abs(m.getSegregationTolerance() - 0.2) < 0.000001);
+        assertTrue(Math.abs(m.getSegregationTolerance() - 0.3) < 0.000001);
         assertTrue(m.getHouseholdMemory() == 3);
         assertTrue(Math.abs(m.getMovingThreshold() - 30.0) < 0.000001);
         assertTrue(m.getImmigrantNumber() == 7000);

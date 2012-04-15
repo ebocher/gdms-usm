@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.gdms.data.DataSource;
 import org.gdms.data.DataSourceCreationException;
 import org.gdms.data.DataSourceFactory;
@@ -75,6 +77,8 @@ public final class Manager {
     private double threshold_2;
     private double threshold_3;
     private double threshold_4;
+    private boolean modifyThresholds;
+    private ManagerAdvisor advisor = null;
     
     /**
      * Builds a new Manager.
@@ -100,6 +104,12 @@ public final class Manager {
         newbornNumber = 0;
         deadNumber = 0;
         moversCount = 0;
+        modifyThresholds = true;
+        advisor = null;
+    }
+
+    public void setModifyThresholds(boolean modifyThresholds) {
+        this.modifyThresholds = modifyThresholds;
     }
 
     /**
@@ -552,13 +562,31 @@ public final class Manager {
     }
 
     /**
-     * Moves in every homeless household and updates build type if necessary.
+     * Moves in every homeless household
      */
     public void everybodyMovesIn() throws NoSuchTableException, DataSourceCreationException, DriverException {
         while (!homelessList.isEmpty()) {
             Household h = homelessList.pop();
             h.moveIn(movingInPS.selectedParcel(h));
         }
+    }
+    
+    /**
+     * Update buildtypes if necessary.
+     */
+    public void updateBuildType()
+    {
+        if (modifyThresholds) {
+            advisor.waitingUpdatedThresholds(this);
+            while (!advisor.thresholdsUpOnDate()) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Manager.class.getName()).log(Level.WARNING, null, ex);
+                }
+            }
+        }
+            
         for (Parcel p : parcelList) {
             if (p.getBuildType() != 7) {
                 p.updateBuildType(threshold_1, threshold_2, threshold_3, threshold_4);
@@ -779,4 +807,20 @@ public final class Manager {
         return;
     }
     
+    /**
+     * 
+     * @return the list of thresholds
+     */
+    public double[] getThresholds()
+    {
+        double[] ret = {threshold_1, threshold_2, threshold_3, threshold_4};
+        return ret;
+    }
+
+    public void setAdvisor(ManagerAdvisor advisor) {
+        this.advisor = advisor;
+    }
+
 }
+
+

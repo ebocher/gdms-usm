@@ -104,7 +104,7 @@ public final class Manager {
         newbornNumber = 0;
         deadNumber = 0;
         moversCount = 0;
-        modifyThresholds = true;
+        modifyThresholds = false;
         advisor = null;
     }
 
@@ -578,9 +578,10 @@ public final class Manager {
     {
         if (modifyThresholds) {
             advisor.waitingUpdatedThresholds(this);
+            //Here is the worst thing I ever did... 
             while (!advisor.thresholdsUpOnDate()) {
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(50);  
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Manager.class.getName()).log(Level.WARNING, null, ex);
                 }

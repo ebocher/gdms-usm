@@ -23,6 +23,9 @@ public final class Parcel {
     private double density;
     private double maxDensity;
     private final int amenitiesIndex;
+    private final int amenitiesIndex1;
+    private final int amenitiesIndex2;
+    private final int amenitiesIndex3;
     private final int constructibilityIndex;
     private final double inverseArea;
     private final int inseeCode;
@@ -37,20 +40,26 @@ public final class Parcel {
      * @param bT a build type
      * @param d a density
      * @param mD a maximum density
-     * @param aI an amenities index
+     * @param aI a general amenities index
+     * @param aI1 an amenities index for first class age
+     * @param aI2 an amenities index for second class age
+     * @param aI3 an amenities index for third class age
      * @param iA the inverse of the area
      * @param cI a constructibility index
      * @param iC an insee code
      * @param z a zoning
      * @param geom a geometry
      */
-    public Parcel(int id, int bT, double d, double mD, int aI, int cI, int iC, String z, Geometry geom, NearbyBuildTypeCalculator c) {
+    public Parcel(int id, int bT, double d, double mD, int aI, int aI1, int aI2, int aI3, int cI, int iC, String z, Geometry geom, NearbyBuildTypeCalculator c) {
 
         this.id = id;
         this.buildType = bT;
         this.density = d;
         this.maxDensity = mD;
         this.amenitiesIndex = aI;
+        this.amenitiesIndex1 = aI1;
+        this.amenitiesIndex2 = aI2;
+        this.amenitiesIndex3 = aI3;
         this.inverseArea = 1.0 / geom.getArea();
         this.constructibilityIndex = cI;
         this.inseeCode = iC;
@@ -67,18 +76,24 @@ public final class Parcel {
      * @param bT
      * @param mD
      * @param aI
+     * @param aI1
+     * @param aI2
+     * @param aI3
      * @param cI
      * @param iC
      * @param z
      * @param geom 
      */
-    public Parcel(int id, int bT, double mD, int aI, int cI, int iC, String z, Geometry geom, NearbyBuildTypeCalculator c) {
+    public Parcel(int id, int bT, double mD, int aI, int aI1, int aI2, int aI3, int cI, int iC, String z, Geometry geom, NearbyBuildTypeCalculator c) {
 
         this.id = id;
         this.buildType = bT;
         this.density = 0;
         this.maxDensity = mD;
         this.amenitiesIndex = aI;
+        this.amenitiesIndex1 = aI1;
+        this.amenitiesIndex2 = aI2;
+        this.amenitiesIndex3 = aI3;
         this.inverseArea = 1.0 / geom.getArea();
         this.constructibilityIndex = cI;
         this.inseeCode = iC;
@@ -183,6 +198,27 @@ public final class Parcel {
     public int getAmenitiesIndex() {
         return amenitiesIndex;
     }
+    
+     /**
+     * @return the amenitiesIndex1
+     */
+    public int getAmenitiesIndex1() {
+        return amenitiesIndex1;
+    }
+    
+     /**
+     * @return the amenitiesIndex
+     */
+    public int getAmenitiesIndex2() {
+        return amenitiesIndex2;
+    }
+    
+     /**
+     * @return the amenitiesIndex
+     */
+    public int getAmenitiesIndex3() {
+        return amenitiesIndex3;
+    }
 
     /**
      * @return the constructibilityIndex
@@ -241,7 +277,7 @@ public final class Parcel {
             return total / this.getLocalPopulation();
         }
     }
-
+        
     /**
      * @return the inverseArea
      */

@@ -46,9 +46,19 @@ public final class GaussParcelComparator implements Comparator<Parcel>, Serializ
      * @return the specified parcel score
      */
     public double getParcelScore(Parcel p) {
-        double amenitiesPart = manager.getAmenitiesWeighting()*((double) p.getAmenitiesIndex());
+        double amenitiesPart = 0;
         double constructibilityPart = manager.getConstructibilityWeighting()*((double) p.getConstructibilityIndex());
         double idealHousingPart = manager.getIdealhousingWeighting()*(100.0 - (double) concernedHousehold.getIdealHousingCoefficient(p));
+        
+         if (concernedHousehold.getAge() < 35) {
+            amenitiesPart = manager.getAmenitiesWeighting()*((double) p.getAmenitiesIndex1());
+        }
+        else if (concernedHousehold.getAge() < 65) {
+            amenitiesPart = manager.getAmenitiesWeighting()*((double) p.getAmenitiesIndex2());
+        }
+        else {
+            amenitiesPart = manager.getAmenitiesWeighting()*((double) p.getAmenitiesIndex3());
+        }
         
         return amenitiesPart+constructibilityPart+idealHousingPart;
     }

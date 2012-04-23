@@ -65,9 +65,19 @@ public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
      * @return the immediate dissatisfaction index
      */
     public double getImmediateDissatisfaction(Household h) {
-        double amenitiesPart = (20.0 - h.getHousingPlot().getAmenitiesIndex()) / 20.0;
+        double amenitiesPart = 0;
         double willMoveCoeffPart = getWillMoveCoefficient(h) / 48.0;
         double idealHousingCoeffPart = h.getMovingIHC() / 100.0;
+        
+        if (h.getAge() < 35) {
+            amenitiesPart = (20.0 - h.getHousingPlot().getAmenitiesIndex1()) / 20.0;
+        }
+        else if (h.getAge() < 65) {
+            amenitiesPart = (20.0 - h.getHousingPlot().getAmenitiesIndex2()) / 20.0;
+        }
+        else {
+            amenitiesPart = (20.0 - h.getHousingPlot().getAmenitiesIndex3()) / 20.0;
+        }
 
         return amenitiesPart + willMoveCoeffPart + idealHousingCoeffPart;
     }

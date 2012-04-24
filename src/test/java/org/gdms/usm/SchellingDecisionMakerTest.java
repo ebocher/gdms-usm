@@ -78,8 +78,8 @@ public class SchellingDecisionMakerTest extends TestCase {
         
         File file1 = new File(outputPathForTests + "/MiniPlot.gdms");
         GdmsWriter plotGW = new GdmsWriter(file1);
-        String[] fieldNames1 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex", "constructibilityIndex"};
-        Type[] fieldTypes1 = {TypeFactory.createType(Type.INT), TypeFactory.createType(Type.GEOMETRY), TypeFactory.createType(Type.DOUBLE), TypeFactory.createType(Type.INT), TypeFactory.createType(Type.INT)};
+        String[] fieldNames1 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex1", "amenitiesIndex2", "amenitiesIndex3", "constructibilityIndex"};
+        Type[] fieldTypes1 = {TypeFactory.createType(Type.INT), TypeFactory.createType(Type.GEOMETRY), TypeFactory.createType(Type.DOUBLE), TypeFactory.createType(Type.INT), TypeFactory.createType(Type.INT), TypeFactory.createType(Type.INT), TypeFactory.createType(Type.INT)};
         Metadata m1 = new DefaultMetadata(fieldTypes1, fieldNames1);
         plotGW.writeMetadata(0, m1);
         
@@ -87,7 +87,9 @@ public class SchellingDecisionMakerTest extends TestCase {
             plotGW.addValues(new Value[]{ValueFactory.createValue(p.getId()),
                         ValueFactory.createValue(p.getTheGeom()),
                         ValueFactory.createValue(p.getMaxDensity()),
-                        ValueFactory.createValue(p.getAmenitiesIndex()),
+                        ValueFactory.createValue(p.getAmenitiesIndex1()),
+                        ValueFactory.createValue(p.getAmenitiesIndex2()),
+                        ValueFactory.createValue(p.getAmenitiesIndex3()),
                         ValueFactory.createValue(p.getConstructibilityIndex())});
         }
         

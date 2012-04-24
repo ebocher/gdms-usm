@@ -90,7 +90,7 @@ public class ManagerTest extends TestCase {
     private Parcel defaultParcelBuilder() throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(7,2,30,40,0,0,0,10,50,44109,"AB",geometry, bbtc);
+        return new Parcel(7,2,30,40,40,40,10,50,44109,"AB",geometry, bbtc);
     }
     
     private Household defaultHouseholdBuilder() {
@@ -177,7 +177,9 @@ public class ManagerTest extends TestCase {
         System.out.println(m.getParcelList().get(3).getDensity());
         assertTrue(Math.abs(m.getParcelList().get(3).getDensity()- 0.000128758441459) < 0.000000001);
         assertTrue(Math.abs(m.getParcelList().get(3).getMaxDensity()- 0.000155) < 0.000000001);
-        assertTrue(m.getParcelList().get(3).getAmenitiesIndex() == 13);
+        assertTrue(m.getParcelList().get(3).getAmenitiesIndex1() == 13);
+        assertTrue(m.getParcelList().get(3).getAmenitiesIndex2() == 13);
+        assertTrue(m.getParcelList().get(3).getAmenitiesIndex3() == 13);
         assertTrue(m.getParcelList().get(3).getConstructibilityIndex() == 16);
         assertTrue(m.getParcelList().get(3).getInseeCode() == 44171);
         assertTrue("A".equals(m.getParcelList().get(3).getZoning()));

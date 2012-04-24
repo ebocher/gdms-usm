@@ -146,8 +146,8 @@ public final class Manager {
         //Plot table creation
         File file1 = new File(outputPath + "/Plot.gdms");
         GdmsWriter plotGW = new GdmsWriter(file1);
-        String[] fieldNames1 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex", "constructibilityIndex"};
-        Type[] fieldTypes1 = {integ, geometry, doubl, integ, integ};
+        String[] fieldNames1 = {"plotID", "the_geom", "densityOfPopulationMax", "amenitiesIndex1", "amenitiesIndex2", "amenitiesIndex3", "constructibilityIndex"};
+        Type[] fieldTypes1 = {integ, geometry, doubl, integ, integ, integ, integ};
         Metadata m1 = new DefaultMetadata(fieldTypes1, fieldNames1);
         plotGW.writeMetadata(0, m1);
 
@@ -164,7 +164,9 @@ public final class Manager {
             plotGW.addValues(new Value[]{ValueFactory.createValue(p.getId()),
                         ValueFactory.createValue(p.getTheGeom()),
                         ValueFactory.createValue(p.getMaxDensity()),
-                        ValueFactory.createValue(p.getAmenitiesIndex()),
+                        ValueFactory.createValue(p.getAmenitiesIndex1()),
+                        ValueFactory.createValue(p.getAmenitiesIndex2()),
+                        ValueFactory.createValue(p.getAmenitiesIndex3()),
                         ValueFactory.createValue(p.getConstructibilityIndex())});
             for (Household h : p.getHouseholdList()) {
                 householdGW.addValues(new Value[]{ValueFactory.createValue(h.getId()), ValueFactory.createValue(h.getMaxWealth())});
@@ -439,10 +441,9 @@ public final class Manager {
             Parcel newParcel = new Parcel(initialBase.getInt(j, "id"), //id
                     initialBase.getInt(j, "buildType"), //buildType
                     initialBase.getDouble(j, "maxDensity") / 1000000, //maxDensity (WARNING : km² input)
-                    initialBase.getInt(j, "amenIndex"), //amenitiesIndex
-                    0,  //amenitiesIndex1
-                    0,  //amenitiesIndex2
-                    0,  //amenitiesIndex3
+                    initialBase.getInt(j, "amenIndex1"), //amenitiesIndex
+                    initialBase.getInt(j, "amenIndex2"), //amenitiesIndex
+                    initialBase.getInt(j, "amenIndex3"), //amenitiesIndex
                     initialBase.getInt(j, "constIndex"), //constructibilityIndex
                     initialBase.getInt(j, "inseeCode"), //inseeCode
                     initialBase.getString(j, "zoning"), //zoning
@@ -824,7 +825,11 @@ public final class Manager {
     public void setAdvisor(ManagerAdvisor advisor) {
         this.advisor = advisor;
     }
-
+    
+    public void setBufferSize(double value)
+    {
+        this.bufferSize = value;
+    }
 }
 
 

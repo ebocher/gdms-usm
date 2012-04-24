@@ -22,7 +22,6 @@ public final class Parcel {
     private int buildType;
     private double density;
     private double maxDensity;
-    private final int amenitiesIndex;
     private final int amenitiesIndex1;
     private final int amenitiesIndex2;
     private final int amenitiesIndex3;
@@ -50,13 +49,12 @@ public final class Parcel {
      * @param z a zoning
      * @param geom a geometry
      */
-    public Parcel(int id, int bT, double d, double mD, int aI, int aI1, int aI2, int aI3, int cI, int iC, String z, Geometry geom, NearbyBuildTypeCalculator c) {
+    public Parcel(int id, int bT, double d, double mD, int aI1, int aI2, int aI3, int cI, int iC, String z, Geometry geom, NearbyBuildTypeCalculator c) {
 
         this.id = id;
         this.buildType = bT;
         this.density = d;
         this.maxDensity = mD;
-        this.amenitiesIndex = aI;
         this.amenitiesIndex1 = aI1;
         this.amenitiesIndex2 = aI2;
         this.amenitiesIndex3 = aI3;
@@ -84,13 +82,12 @@ public final class Parcel {
      * @param z
      * @param geom 
      */
-    public Parcel(int id, int bT, double mD, int aI, int aI1, int aI2, int aI3, int cI, int iC, String z, Geometry geom, NearbyBuildTypeCalculator c) {
+    public Parcel(int id, int bT, double mD, int aI1, int aI2, int aI3, int cI, int iC, String z, Geometry geom, NearbyBuildTypeCalculator c) {
 
         this.id = id;
         this.buildType = bT;
         this.density = 0;
         this.maxDensity = mD;
-        this.amenitiesIndex = aI;
         this.amenitiesIndex1 = aI1;
         this.amenitiesIndex2 = aI2;
         this.amenitiesIndex3 = aI3;
@@ -192,12 +189,6 @@ public final class Parcel {
         return maxDensity;
     }
 
-    /**
-     * @return the amenitiesIndex
-     */
-    public int getAmenitiesIndex() {
-        return amenitiesIndex;
-    }
     
      /**
      * @return the amenitiesIndex1

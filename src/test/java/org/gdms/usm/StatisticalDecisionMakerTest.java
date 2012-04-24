@@ -46,19 +46,19 @@ public class StatisticalDecisionMakerTest extends TestCase {
     private Parcel defaultParcelBuilderByInseeCode(int codeInsee) throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(0,2,30,40,0,0,0,10,50,codeInsee,"AB",geometry, bbtc);
+        return new Parcel(0,2,30,40,40,40,10,50,codeInsee,"AB",geometry, bbtc);
     }
     
     private Parcel defaultParcelBuilderByAmenitiesIndex(int amenitiesIndex) throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(0,2,30,40,amenitiesIndex,0,0,0,50,44109,"AB",geometry, bbtc);
+        return new Parcel(0,2,30,40,amenitiesIndex,amenitiesIndex,amenitiesIndex,50,44109,"AB",geometry, bbtc);
     }
     
     private Parcel defaultParcelBuilderByBuildType(int buildType) throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(0,buildType,30,0,0,0,40,10,50,44147,"AB",geometry, bbtc);
+        return new Parcel(0,buildType,30,30,30,40,10,50,44147,"AB",geometry, bbtc);
     }
     
     public void testGetWMC() throws ParseException {

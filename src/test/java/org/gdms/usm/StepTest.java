@@ -64,7 +64,7 @@ public class StepTest extends TestCase {
         assertTrue(m.getParcelList().get(3).getBuildType() == 2);
         assertTrue(Math.abs(m.getParcelList().get(3).getDensity()- 0.000128758441459) < 0.000000001);
         assertTrue(Math.abs(m.getParcelList().get(3).getMaxDensity()- 0.000155) < 0.000000001);
-        assertTrue(m.getParcelList().get(3).getAmenitiesIndex() == 13);
+        assertTrue(m.getParcelList().get(3).getAmenitiesIndex1() == 13);
         assertTrue(m.getParcelList().get(3).getConstructibilityIndex() == 16);
         assertTrue(m.getParcelList().get(3).getInseeCode() == 44171);
         assertTrue("A".equals(m.getParcelList().get(3).getZoning()));

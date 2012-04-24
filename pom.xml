@@ -45,6 +45,12 @@
             <artifactId>jfreechart</artifactId>
             <version>1.0.12</version>
         </dependency>
+        <dependency>
+            <artifactId>jproj</artifactId>
+            <groupId>org.jproj</groupId>
+            <type>jar</type>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     
     <build>

@@ -441,14 +441,14 @@ public final class Manager {
             Parcel newParcel = new Parcel(initialBase.getInt(j, "id"), //id
                     initialBase.getInt(j, "buildType"), //buildType
                     initialBase.getDouble(j, "maxDensity") / 1000000, //maxDensity (WARNING : km² input)
-                    initialBase.getInt(j, "amenIndex1"), //amenitiesIndex
-                    initialBase.getInt(j, "amenIndex2"), //amenitiesIndex
-                    initialBase.getInt(j, "amenIndex3"), //amenitiesIndex
+                    initialBase.getInt(j, "amenIndex"), //amenitiesIndex1
+                    initialBase.getInt(j, "amenIndex"), //amenitiesIndex2
+                    initialBase.getInt(j, "amenIndex"), //amenitiesIndex3
                     initialBase.getInt(j, "constIndex"), //constructibilityIndex
                     initialBase.getInt(j, "inseeCode"), //inseeCode
                     initialBase.getString(j, "zoning"), //zoning
                     initialBase.getGeometry(j), //geometry
-                    nbtc);                                  //nearbyBuildTypeCalculator
+                    nbtc);                              //nearbyBuildTypeCalculator
             this.addParcel(newParcel);
 
             if (newParcel.getBuildType() != 7) {

@@ -49,7 +49,7 @@ public final class GaussParcelComparator implements Comparator<Parcel>, Serializ
         double amenitiesPart = 0;
         double constructibilityPart = manager.getConstructibilityWeighting()*((double) p.getConstructibilityIndex());
         double idealHousingPart = manager.getIdealhousingWeighting()*(100.0 - (double) concernedHousehold.getIdealHousingCoefficient(p));
-        
+        /*
          if (concernedHousehold.getAge() < 35) {
             amenitiesPart = manager.getAmenitiesWeighting()*((double) p.getAmenitiesIndex1());
         }
@@ -59,7 +59,8 @@ public final class GaussParcelComparator implements Comparator<Parcel>, Serializ
         else {
             amenitiesPart = manager.getAmenitiesWeighting()*((double) p.getAmenitiesIndex3());
         }
-        
+        */
+        amenitiesPart = manager.getAmenitiesWeighting()* p.getAmenitiesIndex();
         return amenitiesPart+constructibilityPart+idealHousingPart;
     }
     

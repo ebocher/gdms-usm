@@ -54,22 +54,22 @@ public class ManagerTest extends TestCase {
         Manager m = s.getManager();
         WKTReader wktr = new WKTReader();
         Geometry g1 = wktr.read("POLYGON ((0 0, 4 0, 4 4, 0 4, 0 0))");
-        Parcel p1 = new Parcel(1,1,100,5,80,44578,"AUY",g1,bbtc);
+        Parcel p1 = new Parcel(1,1,100,5,0,0,0,80,44578,"AUY",g1,bbtc);
         m.addParcel(p1);
         Geometry g2 = wktr.read("POLYGON ((4 0, 10 0, 10 4, 4 4, 4 0))");
-        Parcel p2 = new Parcel(3,3,300,14,70,44109,"OPH",g2,bbtc);
+        Parcel p2 = new Parcel(3,3,300,14,0,0,0,70,44109,"OPH",g2,bbtc);
         m.addParcel(p2);
         Geometry g3 = wktr.read("POLYGON ((0 4, 4 4, 4 7, 0 7, 0 4))");
-        Parcel p3 = new Parcel(4,4,400,15,90,44710,"AHA",g3,bbtc);
+        Parcel p3 = new Parcel(4,4,400,15,0,0,0,90,44710,"AHA",g3,bbtc);
         m.addParcel(p3);
         Geometry g4 = wktr.read("POLYGON ((4 4, 10 4, 10 7, 4 7, 4 4))");
-        Parcel p4 = new Parcel(2,2,200,12,80,44109,"PLU",g4,bbtc);
+        Parcel p4 = new Parcel(2,2,200,12,0,0,0,80,44109,"PLU",g4,bbtc);
         m.addParcel(p4);
         Geometry g5 = wktr.read("POLYGON ((10 0, 13 0, 13 7, 10 7, 10 0))");
-        Parcel p5 = new Parcel(5,5,500,18,100,44109,"POT",g5,bbtc);
+        Parcel p5 = new Parcel(5,5,500,18,0,0,0,100,44109,"POT",g5,bbtc);
         m.addParcel(p5);
         Geometry g7 = wktr.read("POLYGON ((13 0, 16 0, 16 7, 13 7, 13 0))");
-        Parcel p7 = new Parcel(7,7,0,10,47,44780,"PCT",g7,bbtc);
+        Parcel p7 = new Parcel(7,7,0,10,0,0,0,47,44780,"PCT",g7,bbtc);
         m.addParcel(p7);
         
         File file1 = new File(outputPathForTests + "/MiniPlot.gdms");
@@ -90,7 +90,7 @@ public class ManagerTest extends TestCase {
     private Parcel defaultParcelBuilder() throws ParseException{
         WKTReader wktr = new WKTReader();
         Geometry geometry = wktr.read("MULTIPOLYGON (((30 20, 10 40, 45 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))");
-        return new Parcel(7,2,30,40,10,50,44109,"AB",geometry, bbtc);
+        return new Parcel(7,2,30,40,0,0,0,10,50,44109,"AB",geometry, bbtc);
     }
     
     private Household defaultHouseholdBuilder() {

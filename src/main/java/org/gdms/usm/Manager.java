@@ -440,6 +440,9 @@ public final class Manager {
                     initialBase.getInt(j, "buildType"), //buildType
                     initialBase.getDouble(j, "maxDensity") / 1000000, //maxDensity (WARNING : km² input)
                     initialBase.getInt(j, "amenIndex"), //amenitiesIndex
+                    0,  //amenitiesIndex1
+                    0,  //amenitiesIndex2
+                    0,  //amenitiesIndex3
                     initialBase.getInt(j, "constIndex"), //constructibilityIndex
                     initialBase.getInt(j, "inseeCode"), //inseeCode
                     initialBase.getString(j, "zoning"), //zoning

@@ -68,7 +68,7 @@ public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
         double amenitiesPart = 0;
         double willMoveCoeffPart = getWillMoveCoefficient(h) / 48.0;
         double idealHousingCoeffPart = h.getMovingIHC() / 100.0;
-        
+        /*
         if (h.getAge() < 35) {
             amenitiesPart = (20.0 - h.getHousingPlot().getAmenitiesIndex1()) / 20.0;
         }
@@ -78,7 +78,9 @@ public final class StatisticalDecisionMaker extends IsMovingDecisionMaker {
         else {
             amenitiesPart = (20.0 - h.getHousingPlot().getAmenitiesIndex3()) / 20.0;
         }
-
+        */
+        
+        amenitiesPart = (20.0 - h.getHousingPlot().getAmenitiesIndex()) / 20.0;
         return amenitiesPart + willMoveCoeffPart + idealHousingCoeffPart;
     }
 

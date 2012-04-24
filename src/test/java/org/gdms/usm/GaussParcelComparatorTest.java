@@ -49,7 +49,7 @@ public class GaussParcelComparatorTest extends TestCase {
         GaussParcelComparator gpss = new GaussParcelComparator(iAmHomeless, m);
         WKTReader wktr = new WKTReader();
         Geometry g = wktr.read("POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))");
-        Parcel p = new Parcel(1,3,140,14,87,44109,"ADR",g,bbtc);
+        Parcel p = new Parcel(1,3,140,14,0,0,0,87,44109,"ADR",g,bbtc);
         assertTrue(Math.abs(gpss.getParcelScore(p) - 147.0) < 0.000001);
     }
     
@@ -61,10 +61,10 @@ public class GaussParcelComparatorTest extends TestCase {
         GaussParcelComparator gpss = new GaussParcelComparator(iAmHomeless,m);
         WKTReader wktr = new WKTReader();
         Geometry g = wktr.read("POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))");
-        Parcel p = new Parcel(1,3,140,14,87,44109,"ADR",g,bbtc);
-        Parcel p2 = new Parcel(2,3,140,18,97,44109,"ADR",g,bbtc);
-        Parcel p3 = new Parcel(3,3,140,10,77,44109,"ADR",g,bbtc);
-        Parcel p4 = new Parcel(4,3,140,14,87,44109,"ADR",g,bbtc);
+        Parcel p = new Parcel(1,3,140,14,0,0,0,87,44109,"ADR",g,bbtc);
+        Parcel p2 = new Parcel(2,3,140,18,0,0,0,97,44109,"ADR",g,bbtc);
+        Parcel p3 = new Parcel(3,3,140,10,0,0,0,77,44109,"ADR",g,bbtc);
+        Parcel p4 = new Parcel(4,3,140,14,0,0,0,87,44109,"ADR",g,bbtc);
         
         assertTrue(gpss.compare(p, p2) == -1);
         assertTrue(gpss.compare(p, p3) == 1);
@@ -79,8 +79,8 @@ public class GaussParcelComparatorTest extends TestCase {
         GaussParcelComparator gpss = new GaussParcelComparator(iAmHomeless,m);
         WKTReader wktr = new WKTReader();
         Geometry g = wktr.read("POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))");
-        Parcel p = new Parcel(1,3,140,14,87,44109,"ADR",g,bbtc);
-        Parcel p4 = new Parcel(4,3,140,14,87,44109,"ADR",g,bbtc);
+        Parcel p = new Parcel(1,3,140,14,0,0,0,87,44109,"ADR",g,bbtc);
+        Parcel p4 = new Parcel(4,3,140,14,0,0,0,87,44109,"ADR",g,bbtc);
         
         assertTrue(gpss.equals(p, p4));
     }

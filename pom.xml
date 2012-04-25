@@ -38,18 +38,12 @@
         <dependency>
             <groupId>org.gdms.sql</groupId>
             <artifactId>gdmsql</artifactId>
-            <version>0.3-SNAPSHOT</version>
+            <version>0.3</version>
         </dependency>
         <dependency>
             <groupId>jfree</groupId>
             <artifactId>jfreechart</artifactId>
             <version>1.0.12</version>
-        </dependency>
-        <dependency>
-            <artifactId>jproj</artifactId>
-            <groupId>org.jproj</groupId>
-            <type>jar</type>
-            <version>0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
     
@@ -58,6 +52,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>

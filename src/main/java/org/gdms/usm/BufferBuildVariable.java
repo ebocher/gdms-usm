@@ -64,7 +64,7 @@ public class BufferBuildVariable extends NearbyBuildTypeCalculator {
                 
                 //setBufferSizer(buffervariable);
                 Geometry bufferedGeom = consideredGeom.buffer(getManager().getBufferSize());
-                DefaultSpatialIndexQuery query = new DefaultSpatialIndexQuery(bufferedGeom.getEnvelopeInternal(), "the_geom");
+                DefaultSpatialIndexQuery query = new DefaultSpatialIndexQuery("the_geom", bufferedGeom.getEnvelopeInternal());
                 Iterator<Integer> s = sds.queryIndex(query);
                 LinkedList<Integer> intersectedRowIds = new LinkedList<Integer>();
 

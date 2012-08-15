@@ -10,7 +10,7 @@
  * Gdms-USM is distributed under GPL 3 license. It is maintained by the "Atelier SIG" team of
  * the IRSTV Institute <http://www.irstv.fr/> CNRS FR 2488.
  *
- * Copyright (C) 2011-1012 IRSTV (FR CNRS 2488)
+ * Copyright (C) 2011-2012 IRSTV (FR CNRS 2488)
  *
  * Gdms-USM is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
